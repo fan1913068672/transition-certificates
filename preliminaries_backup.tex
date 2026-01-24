@@ -1,0 +1,224 @@
+\subsection{Notation}
+\label{notation123}
+We use \(\mathbb{N}\) and \(\mathbb{R}\) to represent the set of natural numbers and the set of real numbers, respectively. We define:
+\begin{align*}
+  \mathbb{N}_{\sim i} &= \{n \in \mathbb{N} \mid n \sim i\}, \quad \text{where } i \in \mathbb{N}, \sim \in \{\geq, \leq, >, <\}, \\
+  \mathbb{R}_{\sim i} &= \{r \in \mathbb{R} \mid r \sim i\}, \quad \text{where } i \in \mathbb{R}, \sim \in \{\geq, \leq, >, <\}.
+\end{align*}
+Given a set \( S \) and a set $S_1 \subseteq S$, we define an indicator function:
+$$I_S(x) =
+  \begin{cases}
+  1, & \text{if } x \in S \\
+  0, & \text{if } x \not\in S
+  \end{cases}$$
+$|S|$ denotes the cardinality of $S$ and $S\backslash S_1$ denotes $\{x \in S \mid x \not\in S_1\}$.
+
+Given a sequence \( s = \langle s_0, s_1, \dots \rangle \), where $s_i \in S$ for $i \in \mathbb{N}$:
+\begin{itemize}
+  \item \( s[i] \) denotes \( s_i \);
+  \item \( s[i:j] \) denotes \( \langle s_i, \dots, s_j \rangle \) for \( j \geq i \);
+  \item \( s[i:\infty] \) denotes \( \langle s_i, s_{i+1}, \dots \rangle \).
+\end{itemize}
+We say $s$ visits $S$ if there exists $i \in \mathbb{N}$ such that $s_i \in S$. $Inf(s)$ denotes the set of elements that appear in $s$ infinitely often. $S^{\omega}$ denotes the set of infinite sequences over $S$, i.e., $S^{\omega} = \{s \mid s=\langle s_0, s_1, \dots \rangle \text{ and } s_i \in S \text{ for } i \in \mathbb{N}\}$. A function $f: S \rightarrow \mathbb{R}$ is bounded if and only if there exist $a, b \in \mathbb{R}$ such that $a \leq f(x) \leq b$ for all $x \in S$.
+% Let $AP$ be the set of atomic propositions, and $\Sigma = 2^{AP}$ denote the alphabet. The labelling function is denoted as $\mathcal{L}: \mathcal{X} \rightarrow \Sigma$. Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$ and an LTL formula $\phi$ based on $AP$, construct NBA $\mathcal{A} = (\Sigma, Q, Q_0, \delta, $Acc$)$ for $\lnot \phi$. If the acceptance conditions are state-based, $Acc$ will be subscripted as $Acc_{state}$. The set of all system trajectories is denoted as $\mathfrak{T}(\mathfrak{S})$. Given a trajectory $\tau \in \mathfrak{T}(\mathfrak{S})$ on the system, $\mathcal{L}(\tau)$ represents the letter corresponding to the trajectory that is input to $\mathcal{A}$. The \emph{language} consisting of all system trajectories' letters is denoted as $\mathcal{L}(\mathfrak{S})$. Assume a given trajectory $\tau = \langle x_0, x_1, \dots \rangle$, where $x_0 \in \mathcal{X}_0$, and $x_{i+1}^{pre}$ denotes the predecessor of $x_{i+1}$ for any $i \in \mathbb{N}$. The set of accepting transition state pairs is defined as $Acc_{transition} = \{(q_i, q_j) \mid (q_i, \mathcal{L}(x), q_j) \in \delta \land q_j \in Acc_{state}\}$. For $K \in \mathcal{N}, \bar{K} = \{0, 1, \dots, K+1\}$.
+\subsection{Discrete-time Dynamical System}
+\label{dtds}
+A discrete-time dynamical system $\mathfrak{S}$ is a tuple $(\mathcal{X}, \mathcal{X}_0, f)$, where $\mathcal{X} \subseteq \mathbb{R}^n$ represents system states, $\mathcal{X}_{0} \subseteq \mathcal{X}$ represents initial states, and $f: \mathcal{X} \rightarrow \mathcal{X}$ represents the transition function. The evolution of the system state is described as follows:
+\[
+\mathfrak{S}: x_{t+1} = f(x_t)
+\]
+% A system is \emph{deterministic} if $ |f(x)|  = 1$ for $x \in \mathcal{X}$. If $\mathfrak{S}$ is deterministic, then $f$ can be regarded as a \emph{state transition function}.
+The state space is compact. An infinite sequence of states $\langle x_0, x_1, x_2, \dots \rangle$ is called a \emph{trajectory} of the system if $x_0 \in \mathcal{X}_0$ and $x_{i+1} = f(x_{i})$ for $i \in \mathbb{N}$. We use $\mathfrak{T}(\mathfrak{S})$ to represent all \emph{trajectories} on $\mathfrak{S}$. The \emph{predecessor} of \(x_{i+1}\) is \(x_i\) for \(i \in \mathbb{N}\). In a given \emph{trajectory}, \(x_{i+1}\) has only one \emph{predecessor}. We use the notation \(x_{i+1}^{pre}\) to denote the \emph{predecessor} of \(x_{i+1}\) in a \emph{trajectory}.
+\subsection{Specification}
+\label{specification123}
+Safety, persistence, LTL, and $\omega$-regular properties are interested in this paper. For these specifications, we propose certificates to demonstrate that the discrete-time dynamical system satisfies the specifications.
+
+% % The specifications of interest in this paper are persistence, LTL, and $\omega$-regular specifications.
+\textbf{Safety:} A system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ is \emph{safe} with respect to a set of unsafe states $\mathcal{X}_u \subseteq \mathcal{X}$ if and only if for any \emph{trajectory} $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, we have $x_i \not\in \mathcal{X}_u$ for $i \in \mathbb{N}$.
+
+\textbf{Persistence:} A system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ is \emph{persistent} with respect to a set of states $\mathcal{X}_{VF} \subseteq \mathcal{X}$ if and only if for any \emph{trajectory} $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, elements of $\mathcal{X}_{VF}$ appear finitely often in $\tau$.
+
+% there exists $j \in \mathbb{N}$ such that $x_i \not\in \mathcal{X}_{VF}$ for $i \in \mathbb{N}_{>j}$.
+
+% \emph{Persistence} means that for any \emph{trajectory} $\tau$ in $\mathfrak{T}(\mathfrak{S})$, it visits $\mathcal{X}_{VF}$ finitely often.
+% Note that we can consider $\mathcal{X}_{VF}$ as an unsafe set.
+% We verify \emph{persistence} by leveraging \emph{safety} verification
+% because if we can verify \emph{safety} of the system with respect to $\mathcal{X}_{VF}$,
+% then we can conclude \emph{trajectories} in $\mathfrak{T}(\mathfrak{S})$ never visit $\mathcal{X}_{VF}$. That means \emph{safety} implies \emph{persistence}, but the converse is not true.
+
+% If we can verify the \emph{safety} of $\mathfrak{S}$ with respect to $\mathcal{X}_{VF}$, then we can conclude $\mathfrak{S}$ is \emph{persistent} because $\mathcal{X}_{VF}$ will not be visited. That means safety implies persistence, but the reverse is not true.
+
+\textbf{Linear Temporal Logic:} Formulae in LTL \cite{pnueli1977temporal} are defined with respect to a set of atomic propositions $AP$. $AP$ is used to describe properties of system states. A subset of $AP$ is a \emph{letter}, and the set of all subsets of $AP$ is called the \emph{alphabet}, denoted as $\Sigma$. Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$ maps system states to corresponding \emph{letters}. Given a \emph{trajectory} $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, we can use $\mathfrak{L}$ to mark the propositions from $AP$ for each $x_i$. We refer to $w_i = \mathfrak{L}(x_i)$ as the \emph{letter} corresponding to the system state $x_i$. Then, we use the notation $\mathfrak{L}(\tau)$ to represent $\langle \mathfrak{L}(x_0), \mathfrak{L}(x_1), \dots \rangle$, which denotes the infinite sequence of \emph{letters} corresponding to all states in $\tau$.
+% We call $\mathfrak{L}(\tau)$ the \emph{word} of $\tau$.
+
+The syntax of LTL is defined inductively as follows:
+\[
+\phi := \top \mid a \mid \lnot \phi \mid \phi \land \phi \mid X \phi \mid \phi U \phi
+\]
+where $\top$ indicates true, $a \in AP$ denotes an atomic proposition. \(\land\) and \(\lnot\) can be used to derive boolean operators such as or (\(\lor\)), implication (\(\Rightarrow\)). $X$ and $U$ can be used to derive temporal operators such as finally (\(F\)), always (\(G\)).
+
+Given a \emph{word} $w = \mathfrak{L}(\tau)$ and a LTL formula $\phi$, the semantics of $\phi$ is defined inductively as follows:
+\begin{itemize}
+    \item \(w \models \top \) always holds
+    \item \(w \models a\)  iff  \(a \in w[0]\)
+    \item \(w \models \phi_1 \land \phi_2\)  iff  \(w \models \phi_1\) and \(w \models \phi_2\)
+    \item \(w \models \lnot \phi_1\)  iff  \(w \not\models \phi_1\)
+    \item \(w \models X \phi_1\)  iff  \(w[1:\infty] \models \phi_1\)
+    \item \(w \models \phi_1 U \phi_2\)  iff  there exists \(j \in \mathbb{N}\) such that \(w[j:\infty] \models \phi_2\) and for all \(i \in \mathbb{N}_{<j}\), \(w[i:\infty] \models \phi_1\)
+\end{itemize}
+
+We use $\mathfrak{S} \models_{\mathfrak{L}} \phi$ to indicate that for any $\tau \in \mathfrak{T}(\mathfrak{S})$, $\mathfrak{L}(\tau) \models \phi$.
+
+\textbf{Nondeterministic Büchi Automaton:} A Nondeterministic Büchi Automaton (NBA) is a tuple $(\Sigma, Q, q_0, \delta, Acc)$, where:
+\begin{itemize}
+  \item $\Sigma$ is the \emph{alphabet},
+  \item $Q$ is a finite set of states,
+  \item $q_0 \in Q$ is an initial state,
+  \item $\delta \subseteq Q \times \Sigma \times Q$ is the transition relation, and
+  \item $Acc \subseteq \delta$ is the set of \emph{accepting transitions}.
+\end{itemize}
+Given a word $w = \langle w_0, w_1, \ldots \rangle \in \Sigma^{\omega}$, a \textbf{run} on $w$ is a sequence of transitions $r = \langle (r_0, w_0, r_1), (r_1, w_1, r_2), \ldots \rangle$, where $r_0 = q_0$ and $(r_i, w_i, r_{i+1}) \in \delta$ for all $i \in \mathbb{N}$. An NBA $\mathcal{A}$ accepts a word $w$ if and only if there exists a run $r$ on $w$ such that accepting transitions occur infinitely often, i.e., $\mathit{Inf}(r) \cap Acc \neq \emptyset$.
+
+For an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$ representing LTL specifications, we define the following sets:
+\begin{align}
+  & Acc^{pair} = \{(p, q) \mid \exists \sigma \in \Sigma. (p, \sigma, q) \in Acc \}, \label{atpair}\\
+  & Acc^{start} = \{p \mid (p, \sigma, q) \in Acc \}, \label{atstart}\\
+  & Acc^{k, l} = \{(q_k, \sigma, q_l) \mid (q_k, \sigma, q_l) \in Acc \}, \label{atkl}
+\end{align}
+\begin{itemize}
+    \item $Acc^{k,l}$: The set of accepting transitions from $q_k$ to $q_l$.
+    \item $Acc^{start}$: The set of starting states of accepting transitions.
+\end{itemize}
+
+% % Two acceptance conditions are
+% There are two types of acceptance conditions, which we denote as $Acc_{state}$ and $Acc_{transition}$ respectively. Given a transition $t = (q, \sigma, p) \in \delta$, $q$ is the \emph{start state} of $t$ and $p$ is the \emph{end state} of $t$.
+
+% Given an NBA $\mathcal{A}=(\Sigma, Q, q_0, \delta, Acc_{state})$, $Acc_{state} \subseteq Q$ is an acceptance condition based on the states of the automaton. Given an input \emph{word} $w = \langle w_0, w_1, \dots \rangle$ where $w_i \in \Sigma$ to the automaton, the corresponding sequence of states is called the \emph{state-based run} on \emph{word} $w$, denoted as $r_{state} = \langle r_0, r_1, \dots \rangle$, where $r_0 = q_0, (q_i, w_i, q_{i+1}) \in \delta$ for $i \in \mathbb{N}$. $\mathcal{A}$ accepts $w$ if and only if $Inf(r_{state}) \cap Acc_{state} \neq \emptyset$. We refer to this type of NBA as a \emph{state-based} NBA and refer to a state in $Acc_{state}$ as a accepting state. We define:
+% \begin{align}
+%   & Acc_{state}^{pair} = \{(p, q) \mid p \in Q \land q \in Acc_{state} \land \exists \sigma \in \Sigma. (p, \sigma, q) \in \delta \}, \label{aspair} \\
+%   & Acc_{state}^{start} = Acc_{state}, \label{asstart} \\
+%   & Acc_{state}^{k, l} = \{(q_k, \sigma, q_l) \mid (q_k, \sigma, q_l) \in \delta \land (q_k, q_l) \in Acc_{state}^{pair} \}, \label{askl}
+% \end{align}
+% % \begin{equation}
+% % \end{equation}
+% % to represent all state pairs that may move to accepting states. We define
+% % \begin{equation}
+% % \end{equation}
+% %  to represent all transitions from $q_k$ to the accepting state $q_l$.
+% % Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ and a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$, we define
+% % \begin{equation}
+% % \end{equation}
+
+% Given an NBA $\mathcal{A}=(\Sigma, Q, q_0, \delta, Acc_{transition})$, $Acc_{transition} \subseteq \delta$ is an acceptance condition based on the transitions of the automaton. Given an input \emph{word} $w = \langle w_0, w_1, \dots \rangle$ where $w_i \in \Sigma$ to the automaton, the corresponding sequence of transitions is called the \emph{transition-based run}  on \emph{word} $w$, denoted as $r_{transition} = \langle (r_0, w_0, r_1), (r_1, w_1, r_2), \dots \rangle$, where $r_0 = q_0, (q_i, w_i, q_{i+1}) \in \delta$ for $i \in \mathbb{N}$. $\mathcal{A}$ accepts $w$ if and only if $Inf(r_{transition}) \cap Acc_{transition} \neq \emptyset$. We refer to this type of NBA as a \emph{transition-based} NBA and refer to a transition in $Acc_{transition}$ as a accepting transition. We define:
+% \begin{align}
+%   & Acc_{transition}^{pair} = \{(p, q) \mid \exists \sigma \in \Sigma. (p, \sigma, q) \in Acc_{transition} \}, \label{atpair}\\
+%   & Acc_{transition}^{start} = \{p \mid (p, \sigma, q) \in Acc_{transition} \}, \label{atstart}\\
+%   & Acc_{transition}^{k, l} = \{(q_k, \sigma, q_l) \mid (q_k, \sigma, q_l) \in Acc_{transition} \}, \label{atkl}
+% \end{align}
+% \begin{equation}
+% \end{equation}
+% to represent all state pairs that may be accepting transitions. We define $$$$ to represent all \emph{start states} of accepting transitions. We define
+% \begin{equation}
+% \end{equation}
+% to represent all accepting transitions from $q_k$ to $q_l$. Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ and a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$, we define
+% \begin{equation}
+% .
+% \end{equation}
+We denote $\mathfrak{L}(\mathfrak{S})$ as all labelled \emph{trajectories}, i.e., $\mathfrak{L}(\mathfrak{S})=\{\mathfrak{L}(\tau) \mid \tau \in \mathfrak{T}(\mathfrak{S})\}$. This set is referred to as the \emph{language} of \(\mathfrak{S}\). The set of \emph{words} accepted by an NBA \(\mathcal{A}\) is denoted as \(\mathfrak{L}(\mathcal{A})\), which is called the \emph{language} of $\mathcal{A}$. The set of \emph{words} satisfying an LTL formula \(\phi\) is called the \emph{language} of \(\phi\) and is denoted as \(\mathfrak{L}(\phi)\). NBAs can express $\omega$-regular and LTL specifications \cite{vardi2005automata}. In this paper, we use NBAs with transition-based acceptance conditions to represent LTL specifications.
+Since specifications are expressed via automata, we can reduce the verification problem of $\mathfrak{S}$ to a \emph{language} inclusion problem. Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$ and an NBA $\mathcal{A} = (2^{AP}, Q, q_0, \delta, Acc)$ to express the specification, we say $\mathfrak{S}$ satisfies $\mathcal{A}$ under the labelling function $\mathfrak{L}(x): \mathcal{X} \rightarrow 2^{AP}$  if and only if  for any \emph{trajectory} $\tau$ in $\mathfrak{T}(\mathfrak{S})$, $\mathcal{A}$ accepts the \emph{word} $\mathfrak{L}(\tau)$, i.e. $\mathfrak{L}(\mathfrak{S}) \subseteq \mathfrak{L}(\mathcal{A})$. We denote $\mathfrak{S}$ satisfies $\mathcal{A}$ under $\mathfrak{L}$ as $\mathfrak{S} \models_{\mathfrak{L}} \mathcal{A}$.
+
+% Given a system \(\mathfrak{S} = (X, X_0, f)\), a set of atomic propositions \(AP\), a \emph{transition-based} NBA \(\mathcal{A}_1 = (\Sigma, Q_1, q_1, \delta_1, Acc_{transition})\) representing the negation \(\lnot \phi_1\) of an LTL specification, and a \emph{state-based} NBA \(\mathcal{A}_2 = (\Sigma, Q_2, q_2, \delta_2, Acc_{state})\) representing an \(\omega\)-regular specification \(\phi_2\), where \(\Sigma = 2^{AP}\):
+
+% We denote by \(\mathfrak{L}(\mathfrak{S}) = \{\mathfrak{L}(\tau) \mid \tau \in \mathfrak{T}(\mathfrak{S})\}\) the set of all labelled trajectories of \(\mathfrak{S}\), referred to as the \emph{language} of \(\mathfrak{S}\). The \emph{language} accepted by an NBA \(\mathcal{A}\) is denoted as \(\mathfrak{L}(\mathcal{A})\). The set of letters satisfying an LTL formula \(\phi\) under the labelling function \(\mathfrak{L}\) is called the \emph{language} of \(\phi\) and is denoted as \(\mathfrak{L}(\phi)\).
+
+% \paragraph{Verification of LTL Specification \(\phi_1\):}
+% \label{vltl}
+% Given a system \(\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)\), a set of atomic propositions \(AP\), a \emph{transition-based} NBA \(\mathcal{A}_1 = (\Sigma, Q_1, q_1, \delta_1, Acc_{transition})\) representing the negation \(\lnot \phi_1\) of an LTL specification where \(\Sigma = 2^{AP}\) and a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$, we need to show that \(\mathfrak{L}(\mathfrak{S}) \subseteq \mathfrak{L}(\phi_1)\). This can be achieved by demonstrating that no \emph{trajectory} in \(\mathfrak{L}(\mathfrak{S})\) is accepted by \(\mathcal{A}_1\), implying \(\mathfrak{L}(\mathfrak{S}) \subseteq \Sigma^{\omega} \setminus \mathfrak{L}(\mathcal{A}_1)\). Since \(\mathfrak{L}(\lnot \phi_1) = \mathfrak{L}(\mathcal{A}_1)\), it follows that \(\Sigma^{\omega} \setminus \mathfrak{L}(\mathcal{A}_1) = \Sigma^{\omega} \setminus \mathfrak{L}(\lnot \phi_1) = \mathfrak{L}(\phi_1)\). Therefore, \(\mathfrak{L}(\mathfrak{S}) \subseteq \mathfrak{L}(\phi_1)\).
+% Thus, verifying that all system trajectories are rejected by the automaton corresponding to the negation of the LTL specification suffices to validate the specification.
+
+% \paragraph{Verification of \(\omega\)-Regular Specification \(\phi_2\):}
+% \label{vomega}
+% Given a system \(\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)\), a set of atomic propositions \(AP\), \emph{state-based} NBA \(\mathcal{A}_2 = (\Sigma, Q_2, q_2, \delta_2, Acc_{state})\) representing an \(\omega\)-regular specification \(\phi_2\) where \(\Sigma = 2^{AP}\) and a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$,
+% % . To prove that \(\mathfrak{S}\) satisfies the \(\omega\)-regular property \(\phi_2\), i.e., \(\mathfrak{S} \models_{\mathfrak{L}} \mathcal{A}_2\),
+% we need to show that \(\mathfrak{L}(\mathfrak{S}) \subseteq \mathfrak{L}(\mathcal{A}_2)\). This can be accomplished by constructing the complement automaton \(\lnot \mathcal{A}_2\), which accepts all \emph{words} not accepted by \(\mathcal{A}_2\). If we can demonstrate that all \emph{trajectories} in \(\mathfrak{L}(\mathfrak{S})\) are not accepted by \(\lnot \mathcal{A}_2\), then \(\mathfrak{L}(\mathfrak{S}) \subseteq \Sigma^{\omega} \setminus \mathfrak{L}(\lnot \mathcal{A}_2) = \mathfrak{L}(\mathcal{A}_2)\).
+
+\subsection{Certificates}
+Barrier certificates and closure certificates are used to verify safety\cite{prajna2004safety}, persistence\cite{murali2024closure}, and LTL properties\cite{murali2024closure}, respectively. We will provide their definitions and related conclusions.
+
+\begin{definition}[barrier certificate]
+  \label{SCDEF}
+  Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$ and $\mathcal{X}_{u} \subseteq \mathcal{X}$, a bounded function $B(x): \mathcal{X} \rightarrow \mathbb{R}$ is a \emph{barrier certificate} with respect to $\mathcal{X}_{u}$ such that $x_0 \in \mathcal{X}_0, x_u \in \mathcal{X}_u, x \in \mathcal{X}$ and $x^{\prime} = f(x)$. We have:
+  \begin{align}
+    &B(x_0) \geq 0, \label{bsinn0} \\ % initial state is non-negative
+    &B(x_u) < 0 \label{bsun0} \\ % accepting state is negative
+    &B(x) \geq 0 \Rightarrow B(x^{\prime}) \geq 0. \label{bstnn0} % transition will remain non-negative
+  \end{align}
+\end{definition}
+\begin{theorem}[Non-Negativity]
+  If a barrier certificate \( B(x) \) can be found, then it can be guaranteed that $B(x_i) \geq 0$ for any trajectory $\tau=\langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$.
+\end{theorem}
+\begin{corollary}[safety]
+  \label{corollary_tbsc}
+  If a barrier certificate \( B(x) \) can be found such that it ensures all \emph{trajectories} in $\mathfrak{T}(\mathfrak{S})$ can not visit $\mathcal{X}_{u}$
+\end{corollary}
+
+\begin{definition}[closure certificate for persistence]
+\label{pcc-def}
+Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ and $\mathcal{X}_{VF} \subseteq \mathcal{X}$, a bounded function $T:\mathcal{X} \times \mathcal{X} \rightarrow \mathbb{R}$ is a closure certificate if there exists a value $\epsilon \in \mathbb{R}_{>0}$ such that for all states $x, y \in \mathcal{X}, x^{\prime} = f(x), x_0 \in \mathcal{X}_0, y^{\prime}, y^{\prime\prime} \in \mathcal{X}_{VF}$. We have:
+\begin{align}
+  &T(x, x^{\prime}) \geq 0, \label{cc1}\\
+  &T(x^{\prime}, y) \geq 0 \Rightarrow T(x, y) \geq 0, \label{cc2} \\
+  &T(x_0, y^{\prime}) \geq 0 \land T(y^{\prime}, y^{\prime\prime}) \Rightarrow T(x_0, y^{\prime\prime}) \leq T(x_0, y^{\prime}) - \epsilon. \label{cc3}
+\end{align}
+\end{definition}
+
+\begin{lemma}[Non-Negativity]
+\label{cc-lemma}
+Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ and $\mathcal{X}_{VF} \subseteq \mathcal{X}$, if a persistence closure certificate $T$ can be found, then it can be guaranteed that $T(x_i, x_j) \geq 0$, where $i < j$ and $\langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$.
+\end{lemma}
+
+\begin{theorem}[persistence]
+  Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ and $\mathcal{X}_{VF} \subseteq \mathcal{X}$, if a persistence closure certificate $T$ can be found, then it can be guaranteed that all \emph{trajectories} of $\mathfrak{S}$ visit \(\mathcal{X}_{VF}\) finitely often.
+\end{theorem}
+
+\begin{definition}[closure certificate for LTL]
+\label{LTLCC}
+Consider a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a labelling function $\mathfrak{L} : \mathcal{X} \rightarrow \Sigma$ and an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$ representing the negation of an LTL formula $\phi$. A bounded function $T : \mathcal{X} \times Q \times \mathcal{X} \times Q \rightarrow \mathbb{R}$ is an closure certificate for $\phi$ if there exists a value $\epsilon \in \mathbb{R}_{> 0}$ such that for all states $x, y, y' \in \mathcal{X}$, $x' = f(x)$, states $q_i, q_j \in Q$, and $q_i' \in \delta(q_i, \mathfrak{L}(x))$, we have:
+\begin{align}
+    &T((x, q_i), (x', q_i')) \geq 0 \label{eq:closure1} \\
+    &T((x', q_i'), (y, q_j)) \geq 0 \Rightarrow T((x, q_i), (y, q_j)) \geq 0 \label{eq:closure2}
+\end{align}
+and for all states $x_0 \in \mathcal{X}_0$, and $\ell, \ell' \in Acc$, we have:
+
+\begin{align}
+  & T((x_0, q_0), (y, \ell)) \geq 0 \land T((y, \ell), (y', \ell')) \geq 0 \notag \\
+  &\Rightarrow T((x_0, q_0), (y', \ell')) \leq T((x_0, q_0), (y, \ell)) - \epsilon. \label{eq:closure3}
+\end{align}
+\end{definition}
+
+\begin{theorem}[LTL]
+Consider a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, a set of atomic propositions $AP$, a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow 2^{AP}$ and an LTL formula $\phi$. Let an NBA $\mathcal{A} = (2^{AP}, Q, q_0, \delta, Acc)$ represent $\neg \phi$. The existence of a closure certificate satisfying conditions \eqref{eq:closure1}-\eqref{eq:closure3} implies that $\mathfrak{S} \models_\mathfrak{L} \phi$.
+\end{theorem}
+
+% 假设给定系统\mathfrak{S} = (X, X_0, f), 原子命题集合AP, \emph{transition-based} NBA \mathcal{A}_1 = (\Sigma, Q_1, q_1, \delta_1, Acc_{transition})表示LTL规约的否定\lnot \phi， 使用transition-based NBA \mathcal{A}_2 = (\Sigma, Q_2, q_2, \delta_2, Acc_{state})表示$\omega-$regular规约$\phi_2$. 其中\Sigma = 2^{AP}.
+
+% 我们用符号\mathfrak{L}(\mathfrak{S}) = \{\mathfrak{L}(\tau) | \tau \in \mathfrak{T}(\mathfrak(S))\}表示系统上所有轨迹构成的句子集合，称为S的\emph{language}。我们将NBA \mathcal{A}接受的句子记为\mathfrak{L}(\mathcal{A})。我们将基于标签函数\mathfrak{L}下能够满足LTL \phi的句子集合叫做LTL的\language记为\mathfrak{L}(\phi)
+
+% 假设希望证明\mathfrak{S}满足\phi_1, 即\mathfrak{S} \models_{\mathfrak{L}} \phi_1. 如果能够说明L(S) \subseteq L(\phi_1), 那么就可以说明系统行为满足LTL规约\phi_1, 如果能够证明L(S)中没有一个句子被A_1所接受，那么L(S) \subseteq \Sigma^{\omega} \backslash L(A_1). 因为L(\lnot \phi) \subseteq L(A_1), 所以\Sigma^{\omega} \backslash L(A_1) \subseteq \Sigma^{\omega} \backslash L(\lnot \phi_1) = L(\phi_1). 那么 L(S) \subseteq L(\phi_1). 所以通过检查是否所有系统轨迹都被LTL规约的反对应自动机所拒绝,从而达到验证LTL规约。
+
+% % 构造公式的反和公式长度呈线性复杂度，根据LTL构建NBA和公式长度呈指数复杂度
+
+% 假设我们想证明系统\mathfrak{S}能够满足omega正则性质\phi_2,  即证明\mathfrak{S} \models_{\mathfrak{L}} \mathcal{A}_2. 如果能够证明L(S) \subseteq L(A_2), 那就可以说明系统行为都是能够被接受的，即系统满足\phi_2。 通过构建A的补自动机\lnot A, \lnot A能够接受所有A不能接受的句子，如果能够证明L(S)中所有句子都是不被L(\lnot A)所接受的即L(S) \subseteq \Sigma^{\omega} \backslash L(\lnot A) = L(A).
+
+% 构造补自动机复杂性呈2^{O(|Q_1|log|Q_1|)}[safra]。
+% Let $\mathfrak{L}(\mathfrak{S})$ represent the \emph{language} consisting of all trajectories of the system. Here is a conclusion: if $\mathcal{A}$ rejects the \emph{language} $\mathfrak{L}(\mathfrak{S})$ (i.e., the \emph{language} accepted by $\mathcal{A}$ is a subset of $\Sigma^{\omega} \backslash \mathfrak{L}(\mathfrak{S})$), then since $\omega$-regular languages are closed under complementation, we can construct a corresponding NBA $\lnot\mathcal{A}$ that accepts $\mathfrak{L}(\mathfrak{S})$, and thus $\mathfrak{S} \models_{\mathfrak{L}} \lnot\mathcal{A}$.
+
+\subsection{Problem Statement}
+%  Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$ and a finite set $AP= \{p_0,p_1,\dots, p_N \}$. Define a labeling
+%  function $\mathfrak{L}(x): \mathcal{X} \rightarrow 2^{AP}$ such that for any trajectory $\tau=\langle x_1, x_2, \dots\rangle$ of $\mathfrak{S}$, there is a corresponding word $\mathfrak{L}(\tau) = \langle \mathfrak{L}(x_1), \mathfrak{L}(x_2),\dots \rangle$ where each $\mathfrak{L}(x_i) \in 2^{AP}$. Let $\mathfrak{L}(\mathfrak{S})$ be the set of all words induced by $\mathfrak{S}$. Any LTL or $\omega$-regular property $\phi$ over $2^{AP}$ can be translated in to an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$ that accepts the same language of $\phi$, i.e., $\mathfrak{L}(\phi)=\mathfrak{L}(\mathcal{A})$\cite{duret2004spot}.
+%  Note that $\mathfrak{S} \models_{\mathfrak{L}} \phi$ iff $\mathfrak{L}(\mathfrak{S}) \subseteq \mathfrak{L}(\phi)$.\\
+%  \textbf{Problem Statement}.
+%  How to prove that $\mathfrak{S}$ satisfy $\phi$, i.e., $\mathfrak{S} \models_{\mathfrak{L}} \phi$?
+ How do we efficiently prove LTL properties $\phi$ for discrete-time dynamical systems, i.e., $\mathfrak{S} \models_{\mathfrak{L}} \phi$, and what advantages does this method offer compared to the state-triplet method and closure certificates?
+
+ %2) Does the triplet-based method reduce conservatism compared to the state-triplete method and the search space compared to closure certificates?

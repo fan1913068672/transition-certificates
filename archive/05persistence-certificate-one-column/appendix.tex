@@ -1,0 +1,44 @@
+\section{Proof}
+
+\begin{theorem}
+  \label{transition-safety-lemma}
+  Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a trajectory $\tau=\langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, a labelling function $\mathfrak{L}:\mathcal{X} \rightarrow \Sigma$ and an NBA $\mathcal{A}=(\Sigma, Q, q_0, \delta, Acc)$, if a transition safety certificate $B_{k}(x, q)$ with respect to $q_k \in Acc^{start}$ can be found, then it can be guaranteed that all runs of all \emph{words} in $\mathfrak{L}(\mathfrak{S})$ cannot visit the state $q_k$.
+\end{theorem}
+
+\begin{proof}
+  By Definition~\ref{transition-safety-certificate-definition}, we have $\mathcal{Y}_u = \{(x, q_k) \mid x \in \mathcal{X}\}$ as the unsafe set in the product system $\mathfrak{S} \times \mathcal{A}$. We verify that $B_k$ satisfies the barrier certificate conditions (\ref{bsinn0}, \ref{bsun0}, \ref{bstnn0}) with respect to $\mathcal{Y}_u$:
+  \begin{itemize}
+    \item Condition (\ref{btsc1}) states $B_k(x_0, q_0) \geq 0$ for all $(x_0, q_0) \in \mathcal{Y}_0$, which corresponds to condition (\ref{bsinn0}).
+    \item Condition (\ref{btsc2}) states $B_k(x, q_k) < 0$ for all $(x, q_k) \in \mathcal{Y}_u$, which corresponds to condition (\ref{bsun0}).
+    \item Condition (\ref{btsc3}) states $B_k(x, q) \geq 0 \Rightarrow B_k(x', q') \geq 0$ for all $(x', q') \in F(x, q)$, which corresponds to condition (\ref{bstnn0}).
+  \end{itemize}
+
+  By Corollary~(\ref{corollary_tbsc}), any trajectory of the product system $\mathfrak{S} \times \mathcal{A}$ cannot visit $\mathcal{Y}_u$.
+
+  Now we establish the connection to automaton runs. For any word $w = \mathfrak{L}(\tau) \in \mathfrak{L}(\mathfrak{S})$ where $\tau = \langle x_0, x_1, \dots \rangle$ is a trajectory of $\mathfrak{S}$, the corresponding run $r$ of $w$ on $\mathcal{A}$ is a sequence $r = \langle (r_0, w_0, r_1), (r_1, w_1, r_2), \ldots \rangle$ where $r_0 = q_0$. The sequence of product states $\langle (x_0, r_0), (x_1, r_1), \ldots \rangle$ forms a trajectory in $\mathfrak{S} \times \mathcal{A}$. Since this trajectory cannot visit $\mathcal{Y}_u = \{(x, q_k) \mid x \in \mathcal{X}\}$, we have $r_i \neq q_k$ for all $i$. Therefore, runs of all words in $\mathfrak{L}(\mathfrak{S})$ cannot visit state $q_k$.
+\end{proof}
+
+\begin{theorem}
+  \label{transition-persistence-lemma}
+  Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$, and $(k, l) \in Acc^{pair}$, if a transition persistence certificate $B_{k, l}$ can be found, then it can be guaranteed that all runs of the words in $\mathfrak{L}(\mathfrak{S})$ make accepting transitions from $q_k$ to $q_l$ happen finitely often.
+\end{theorem}
+
+\begin{proof}
+We define $\mathcal{X}_{k, l}=\{x \mid (q_k, \mathfrak{L}(x), q_l) \in Acc^{k,l}\}$ as the set of states where accepting transitions from $q_k$ to $q_l$ can occur.
+
+Consider any trajectory $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$ and its corresponding word $w = \mathfrak{L}(\tau)$. Let $r$ be a run of $w$ on $\mathcal{A}$ starting from $q_0$. An accepting transition from $q_k$ to $q_l$ can occur at step $i$ only if $(q_k, \mathfrak{L}(x_i), q_l) \in Acc^{k,l}$, which is equivalent to $x_i \in \mathcal{X}_{k,l}$. Therefore, the number of accepting transitions from $q_k$ to $q_l$ is bounded by the number of times the trajectory visits $\mathcal{X}_{k,l}$.
+
+By Definition~\ref{transition-persistence-certificate-definition}, we have:
+\begin{itemize}
+  \item $B_{k,l}(x_0) \geq 0$ by condition (\ref{btpc1}).
+  \item $B_{k,l}(x_i) \geq 0$ for all $i$ by condition (\ref{btpc2}), since $B_{k,l}$ remains non-negative along the trajectory.
+  \item $B_{k,l}(x_i) \geq B_{k,l}(x_{i+1}) + I_{k,l}(x_i)\epsilon$ by condition (\ref{btpc3}), where $I_{k,l}(x_i) = 1$ if $x_i \in \mathcal{X}_{k,l}$ and $0$ otherwise.
+\end{itemize}
+
+Suppose the trajectory visits $\mathcal{X}_{k,l}$ at indices $i_1, i_2, \dots, i_m$ where $m$ is the number of times accepting transitions occur. At each visit, $B_{k,l}$ decreases by at least $\epsilon$:
+\begin{align}
+B_{k,l}(x_0) \geq B_{k,l}(x_{i_1}) + \epsilon \geq B_{k,l}(x_{i_2}) + 2\epsilon \geq \cdots \geq B_{k,l}(x_{i_m}) + m\epsilon.
+\end{align}
+
+Since $B_{k,l}(x_{i_m}) \geq 0$ by condition (\ref{btpc2}), we have $B_{k,l}(x_0) \geq m\epsilon$, which gives $m \leq \frac{B_{k,l}(x_0)}{\epsilon}$. Therefore, the number of accepting transitions from $q_k$ to $q_l$ is bounded, ensuring they occur only finitely often.
+\end{proof}

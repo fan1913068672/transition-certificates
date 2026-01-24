@@ -1,0 +1,1438 @@
+%%
+%% This is file `sample-acmlarge.tex',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% samples.dtx  (with options: `all,journal,bibtex,acmlarge')
+%% 
+%% IMPORTANT NOTICE:
+%% 
+%% For the copyright see the source file.
+%% 
+%% Any modified versions of this file must be renamed
+%% with new filenames distinct from sample-acmlarge.tex.
+%% 
+%% For distribution of the original source see the terms
+%% for copying and modification in the file samples.dtx.
+%% 
+%% This generated file may be distributed as long as the
+%% original source files, as listed above, are part of the
+%% same distribution. (The sources need not necessarily be
+%% in the same archive or directory.)
+%%
+%%
+%% Commands for TeXCount
+%TC:macro \cite [option:text,text]
+%TC:macro \citep [option:text,text]
+%TC:macro \citet [option:text,text]
+%TC:envir table 0 1
+%TC:envir table* 0 1
+%TC:envir tabular [ignore] word
+%TC:envir displaymath 0 word
+%TC:envir math 0 word
+%TC:envir comment 0 0
+%%
+%% The first command in your LaTeX source must be the \documentclass
+%% command.
+%%
+%% For submission and review of your manuscript please change the
+%% command to \documentclass[manuscript, screen, review]{acmart}.
+%%
+%% When submitting camera ready or to TAPS, please change the command
+%% to \documentclass[sigconf]{acmart} or whichever template is required
+%% for your publication.
+%%
+%%
+\documentclass[acmlarge]{acmart}
+%%
+%% \BibTeX command to typeset BibTeX logo in the docs
+\AtBeginDocument{%
+  \providecommand\BibTeX{{%
+    Bib\TeX}}}
+
+%% Rights management information.  This information is sent to you
+%% when you complete the rights form.  These commands have SAMPLE
+%% values in them; it is your responsibility as an author to replace
+%% the commands and values with those provided to you when you
+%% complete the rights form.
+\setcopyright{acmlicensed}
+\copyrightyear{2018}
+\acmYear{2018}
+\acmDOI{XXXXXXX.XXXXXXX}
+
+%%
+%% These commands are for a JOURNAL article.
+\acmJournal{POMACS}
+\acmVolume{37}
+\acmNumber{4}
+\acmArticle{111}
+\acmMonth{8}
+
+%%
+%% Submission ID.
+%% Use this when submitting an article to a sponsored event. You'll
+%% receive a unique submission ID from the organizers
+%% of the event, and this ID should be used as the parameter to this command.
+%%\acmSubmissionID{123-A56-BU3}
+
+%%
+%% For managing citations, it is recommended to use bibliography
+%% files in BibTeX format.
+%%
+%% You can then either use BibTeX with the ACM-Reference-Format style,
+%% or BibLaTeX with the acmnumeric or acmauthoryear sytles, that include
+%% support for advanced citation of software artefact from the
+%% biblatex-software package, also separately available on CTAN.
+%%
+%% Look at the sample-*-biblatex.tex files for templates showcasing
+%% the biblatex styles.
+%%
+
+%%
+%% The majority of ACM publications use numbered citations and
+%% references.  The command \citestyle{authoryear} switches to the
+%% "author year" style.
+%%
+%% If you are preparing content for an event
+%% sponsored by ACM SIGGRAPH, you must use the "author year" style of
+%% citations and references.
+%% Uncommenting
+%% the next command will enable that style.
+%%\citestyle{acmauthoryear}
+
+
+%%
+%% end of the preamble, start of the body of the document source.
+\begin{document}
+
+%%
+%% The "title" command has an optional parameter,
+%% allowing the author to define a "short title" to be used in page headers.
+\title{Efficient Verification of LTL Properties via Proof Certificates}
+
+%%
+%% The "author" command and its associated commands are used to define
+%% the authors and their affiliations.
+%% Of note is the shared affiliation of the first two authors, and the
+%% "authornote" and "authornotemark" commands
+%% used to denote shared contribution to the research.
+% \author{Ben Trovato}
+% \authornote{Both authors contributed equally to this research.}
+% \email{trovato@corporation.com}
+% \orcid{1234-5678-9012}
+% \author{G.K.M. Tobin}
+% \authornotemark[1]
+% \email{webmaster@marysville-ohio.com}
+% \affiliation{%
+%   \institution{Institute for Clarity in Documentation}
+%   \city{Dublin}
+%   \state{Ohio}
+%   \country{USA}
+% }
+
+% \author{Lars Th{\o}rv{\"a}ld}
+% \affiliation{%
+%   \institution{The Th{\o}rv{\"a}ld Group}
+%   \city{Hekla}
+%   \country{Iceland}}
+% \email{larst@affiliation.org}
+
+% \author{Valerie B\'eranger}
+% \affiliation{%
+%   \institution{Inria Paris-Rocquencourt}
+%   \city{Rocquencourt}
+%   \country{France}
+% }
+
+% \author{Aparna Patel}
+% \affiliation{%
+%  \institution{Rajiv Gandhi University}
+%  \city{Doimukh}
+%  \state{Arunachal Pradesh}
+%  \country{India}}
+
+% \author{Huifen Chan}
+% \affiliation{%
+%   \institution{Tsinghua University}
+%   \city{Haidian Qu}
+%   \state{Beijing Shi}
+%   \country{China}}
+
+% \author{Charles Palmer}
+% \affiliation{%
+%   \institution{Palmer Research Laboratories}
+%   \city{San Antonio}
+%   \state{Texas}
+%   \country{USA}}
+% \email{cpalmer@prl.com}
+
+% \author{John Smith}
+% \affiliation{%
+%   \institution{The Th{\o}rv{\"a}ld Group}
+%   \city{Hekla}
+%   \country{Iceland}}
+% \email{jsmith@affiliation.org}
+
+% \author{Julius P. Kumquat}
+% \affiliation{%
+%   \institution{The Kumquat Consortium}
+%   \city{New York}
+%   \country{USA}}
+% \email{jpkumquat@consortium.net}
+
+%%
+%% By default, the full list of authors will be used in the page
+%% headers. Often, this list is too long, and will overlap
+%% other information printed in the page headers. This command allows
+%% the author to define a more concise list
+%% of authors' names for this purpose.
+% \renewcommand{\shortauthors}{Trovato et al.}
+
+%%
+%% The abstract is a short summary of the work to be presented in the
+%% article.
+\begin{abstract}
+\input{abstract}
+\end{abstract}
+
+%%
+%% The code below is generated by the tool at http://dl.acm.org/ccs.cfm.
+%% Please copy and paste the code instead of the example below.
+%%
+% \begin{CCSXML}
+% <ccs2012>
+%  <concept>
+%   <concept_id>00000000.0000000.0000000</concept_id>
+%   <concept_desc>Do Not Use This Code, Generate the Correct Terms for Your Paper</concept_desc>
+%   <concept_significance>500</concept_significance>
+%  </concept>
+%  <concept>
+%   <concept_id>00000000.00000000.00000000</concept_id>
+%   <concept_desc>Do Not Use This Code, Generate the Correct Terms for Your Paper</concept_desc>
+%   <concept_significance>300</concept_significance>
+%  </concept>
+%  <concept>
+%   <concept_id>00000000.00000000.00000000</concept_id>
+%   <concept_desc>Do Not Use This Code, Generate the Correct Terms for Your Paper</concept_desc>
+%   <concept_significance>100</concept_significance>
+%  </concept>
+%  <concept>
+%   <concept_id>00000000.00000000.00000000</concept_id>
+%   <concept_desc>Do Not Use This Code, Generate the Correct Terms for Your Paper</concept_desc>
+%   <concept_significance>100</concept_significance>
+%  </concept>
+% </ccs2012>
+% \end{CCSXML}
+
+% \ccsdesc[500]{Do Not Use This Code~Generate the Correct Terms for Your Paper}
+% \ccsdesc[300]{Do Not Use This Code~Generate the Correct Terms for Your Paper}
+% \ccsdesc{Do Not Use This Code~Generate the Correct Terms for Your Paper}
+% \ccsdesc[100]{Do Not Use This Code~Generate the Correct Terms for Your Paper}
+
+% %%
+% %% Keywords. The author(s) should pick words that accurately describe
+% %% the work being presented. Separate the keywords with commas.
+% \keywords{Do, Not, Us, This, Code, Put, the, Correct, Terms, for,
+%   Your, Paper}
+
+% \received{20 February 2007}
+% \received[revised]{12 March 2009}
+% \received[accepted]{5 June 2009}
+
+%%
+%% This command processes the author and affiliation and title
+%% information and builds the first part of the formatted document.
+\maketitle
+
+\input{introduction}
+
+\section{Preliminaries}
+\subsection{Notation}
+\label{notation123}
+We use \(\mathbb{N}\) and \(\mathbb{R}\) to represent the set of natural numbers and the set of real numbers, respectively. We define:
+\begin{align*}
+  \mathbb{N}_{\sim i} &= \{n \in \mathbb{N} \mid n \sim i\}, \quad \text{where } i \in \mathbb{N}, \sim \in \{\geq, \leq, >, <\}, \\
+  \mathbb{R}_{\sim i} &= \{r \in \mathbb{R} \mid r \sim i\}, \quad \text{where } i \in \mathbb{R}, \sim \in \{\geq, \leq, >, <\}.
+\end{align*}
+Given a set \( S \) and a set $S_1 \subseteq S$, we define an indicator function:
+$$I_S(x) = 
+  \begin{cases} 
+  1, & \text{if } x \in S \\
+  0, & \text{if } x \not\in S 
+  \end{cases}$$ 
+$|S|$ denotes the cardinality of $S$ and $S\backslash S_1$ denotes $\{x \in S \mid x \not\in S_1\}$.\\
+Given a sequence \( s = \langle s_0, s_1, \dots \rangle \), where $s_i \in S$ for $i \in \mathbb{N}$.
+\begin{itemize}
+  \item \( s[i] \) denotes \( s_i \);
+  \item \( s[i:j] \) denotes \( \langle s_i, \dots, s_j \rangle \) for \( j \geq i \);
+  \item \( s[i:\infty] \) denotes \( \langle s_i, s_{i+1}, \dots \rangle \).
+\end{itemize}
+We say $s$ visits $S$ if there exists $i \in \mathbb{N}$ such that $s_i \in S$. $Inf(s)$ denotes the set of the elements that appear in $s$ infinitely often. $S^{\omega}$ denotes $\{s \mid s=\langle s_0, s_1, \dots \rangle\text{ is an infinite sequence and }s_i \in S\text{ for }i \in \mathbb{N}\}$. A function $f: S \rightarrow \mathbb{R}$ is bounded if and only if there exists $a, b \in \mathbb{R}$ such that $a \leq f(x) \leq b$ for all $x \in S$.
+% Let $AP$ be the set of atomic propositions, and $\Sigma = 2^{AP}$ denote the alphabet. The labelling function is denoted as $\mathcal{L}: \mathcal{X} \rightarrow \Sigma$. Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$ and an LTL formula $\phi$ based on $AP$, construct NBA $\mathcal{A} = (\Sigma, Q, Q_0, \delta, $Acc$)$ for $\lnot \phi$. If the acceptance conditions are state-based, $Acc$ will be subscripted as $Acc_{state}$. The set of all system trajectories is denoted as $\mathfrak{T}(\mathfrak{S})$. Given a trajectory $\tau \in \mathfrak{T}(\mathfrak{S})$ on the system, $\mathcal{L}(\tau)$ represents the letter corresponding to the trajectory that is input to $\mathcal{A}$. The \emph{language} consisting of all system trajectories' letters is denoted as $\mathcal{L}(\mathfrak{S})$. Assume a given trajectory $\tau = \langle x_0, x_1, \dots \rangle$, where $x_0 \in \mathcal{X}_0$, and $x_{i+1}^{pre}$ denotes the predecessor of $x_{i+1}$ for any $i \in \mathbb{N}$. The set of accepting transition state pairs is defined as $Acc_{transition} = \{(q_i, q_j) \mid (q_i, \mathcal{L}(x), q_j) \in \delta \land q_j \in Acc_{state}\}$. For $K \in \mathcal{N}, \bar{K} = \{0, 1, \dots, K+1\}$.
+\subsection{Discrete-time Dynamical System}
+\label{dtds}
+A discrete-time dynamical system $\mathfrak{S}$ is a tuple $(\mathcal{X}, \mathcal{X}_0, f)$, where $\mathcal{X} \subseteq \mathbb{R}^n$ represents system states, $\mathcal{X}_{0} \subseteq \mathcal{X}$ represents initial states, and $f \subseteq \mathcal{X} \times \mathcal{X}$ represents the transition relation. The evolution of the system state is described as follows:
+\[
+\mathfrak{S}: x_{t+1} = f(x_t)
+\]
+% A system is \emph{deterministic} if $ |f(x)|  = 1$ for $x \in \mathcal{X}$. If $\mathfrak{S}$ is deterministic, then $f$ can be regarded as a \emph{state transition function}. 
+The state space is compact. A infinite sequence of states $\langle x_0, x_1, x_2, \dots \rangle$ is called a \emph{trajectory} of the system if $x_0 \in \mathcal{X}_0$ and $x_{i+1} \in f(x_{i})$ for $i \in \mathbb{N}$. We use $\mathfrak{T}(\mathfrak{S})$ to represent all \emph{trajectories} on $\mathfrak{S}$. The \emph{predecessor} of \(x_{i+1}\) is \(x_i\) for \(i \in \mathbb{N}\). In a given \emph{trajectory}, \(x_{i+1}\) has only one \emph{predecessor}. We use the notation \(x_{i+1}^{pre}\) to denote the \emph{predecessor} of \(x_{i+1}\) in a \emph{trajectory}.
+\subsection{Specification}
+\label{specification123}
+Safety, persistence, LTL, and $\omega$-regular properties are interested in this paper. For these specifications, we propose certificates to demonstrate that the discrete-time dynamical system satisfies the specifications.
+
+% % The specifications of interest in this paper are persistence, LTL, and $\omega$-regular specifications.  
+\textbf{Safety:} A system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ is \emph{safe} with respect to a set of unsafe states $\mathcal{X}_u \subseteq \mathcal{X}$ if and only if for any \emph{trajectory} $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, we have $x_i \not\in \mathcal{X}_u$ for $i \in \mathbb{N}$.
+
+\textbf{Persistence:} A system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ is \emph{persistent} with respect to a set of states $\mathcal{X}_{VF} \subseteq \mathcal{X}$ if and only if for any \emph{trajectory} $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, elements in $x_{VF}$ appear finitely often in $\tau$.
+
+% there exists $j \in \mathbb{N}$ such that $x_i \not\in \mathcal{X}_{VF}$ for $i \in \mathbb{N}_{>j}$.
+
+% \emph{Persistence} means that for any \emph{trajectory} $\tau$ in $\mathfrak{T}(\mathfrak{S})$, it visits $\mathcal{X}_{VF}$ finitely often. 
+% Note that we can consider $\mathcal{X}_{VF}$ as an unsafe set. 
+% We verify \emph{persistence} by leveraging \emph{safety} verification 
+% because if we can verify \emph{safety} of the system with respect to $\mathcal{X}_{VF}$, 
+% then we can conclude \emph{trajectories} in $\mathfrak{T}(\mathfrak{S})$ never visit $\mathcal{X}_{VF}$. That means \emph{safety} implies \emph{persistence}, but the converse is not true.
+
+% If we can verify the \emph{safety} of $\mathfrak{S}$ with respect to $\mathcal{X}_{VF}$, then we can conclude $\mathfrak{S}$ is \emph{persistent} because $\mathcal{X}_{VF}$ will not be visited. That means safety implies persistence, but the reverse is not true.
+
+\textbf{Linear Temporal Logic:} Formulae in LTL \cite{pnueli1977temporal} are defined with respect to a set of atomic propositions $AP$. $AP$ is used to describe properties of system states. A subset of $AP$ is a \emph{letter}, and the set of all subsets of $AP$ is called the \emph{alphabet}, denoted as $\Sigma$. Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$ maps system states to corresponding \emph{letters}. Given a \emph{trajectory} $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, we can use $\mathfrak{L}$ to mark the propositions from $AP$ for each $x_i$. We refer to $w_i = \mathfrak{L}(x_i)$ as the \emph{letter} corresponding to the system state $x_i$. Then, we use the notation $\mathfrak{L}(\tau)$ to represent $\langle \mathfrak{L}(x_0), \mathfrak{L}(x_1), \dots \rangle$, which denotes the infinite sequence of \emph{letters} corresponding to all states in $\tau$.
+% We call $\mathfrak{L}(\tau)$ the \emph{word} of $\tau$. 
+
+The syntax of LTL is defined inductively as follows:
+\[
+\phi := \top \mid a \mid \lnot \phi \mid \phi \land \phi \mid X \phi \mid \phi U \phi
+\]
+where $\top$ indicates true, $a \in AP$ denotes an atomic proposition. \(\land\) and \(\lnot\) can be used to derive boolean operators such as or (\(\lor\)), implication (\(\Rightarrow\)). $X$ and $U$ can be used to derive temporal operators such as finally (\(F\)), always (\(G\)).
+
+Given a \emph{word} $w = \mathfrak{L}(\tau)$ and a LTL formula $\phi$, the semantics of $\phi$ is defined inductively as follows:
+\begin{itemize}
+    \item \(w \models \top \) always holds
+    \item \(w \models a\)  iff  \(a \in w[0]\)
+    \item \(w \models \phi_1 \land \phi_2\)  iff  \(w \models \phi_1\) and \(w \models \phi_2\)
+    \item \(w \models \lnot \phi_1\)  iff  \(w \not\models \phi_1\)
+    \item \(w \models X \phi_1\)  iff  \(w[1:\infty] \models \phi_1\)
+    \item \(w \models \phi_1 U \phi_2\)  iff  there exists \(j \in \mathbb{N}\) such that \(w[j:\infty] \models \phi_2\) and for all \(i \in \mathbb{N}_{<j}\), \(w[i:\infty] \models \phi_1\)
+\end{itemize}
+
+We use $\mathfrak{S} \models_{\mathfrak{L}} \phi$ to indicate that for any $\tau \in \mathfrak{T}(\mathfrak{S})$, $\mathfrak{L}(\tau) \models \phi$.
+
+\textbf{Nondeterministic Büchi Automaton:} A Nondeterministic Büchi Automaton (NBA) is a tuple $(\Sigma, Q, q_0, \delta, Acc)$, where:
+\begin{itemize}
+  \item $\Sigma$ is the \emph{alphabet},
+  \item $Q$ is a finite set of states,
+  \item $q_0 \in Q$ is an initial state,
+  \item $\delta \subseteq Q \times \Sigma \times Q$ is the transition relation, and
+  \item $Acc \subseteq \delta$ is the set of \emph{accepting transitions}.
+\end{itemize}
+Given a word $w = \langle w_0, w_1, \ldots \rangle \in \Sigma^{\omega}$, a \textbf{run} on $w$ is a sequence of transitions $r = \langle (r_0, w_0, r_1), (r_1, w_1, r_2), \ldots \rangle$, where $r_0 = q_0$ and $(r_i, w_i, r_{i+1}) \in \delta$ for all $i \in \mathbb{N}$. An NBA $\mathcal{A}$ accepts a word $w$ if and only if there exists a run $r$ on $w$ such that accepting transitions occur infinitely often, i.e., $\mathit{Inf}(r) \cap Acc \neq \emptyset$.
+
+For an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$ representing LTL specifications, we define the following sets:
+\begin{align}
+  & Acc^{pair} = \{(p, q) \mid \exists \sigma \in \Sigma. (p, \sigma, q) \in Acc \}, \label{atpair}\\
+  & Acc^{start} = \{p \mid (p, \sigma, q) \in Acc \}, \label{atstart}\\
+  & Acc^{k, l} = \{(q_k, \sigma, q_l) \mid (q_k, \sigma, q_l) \in Acc \}, \label{atkl}
+\end{align}
+\begin{itemize}
+    \item $Acc^{k,l}$: The set of accepting transitions from $q_k$ to $q_l$.
+    \item $Acc^{start}$: The set of starting states of accepting transitions.
+\end{itemize}
+
+% % Two acceptance conditions are 
+% There are two types of acceptance conditions, which we denote as $Acc_{state}$ and $Acc_{transition}$ respectively. Given a transition $t = (q, \sigma, p) \in \delta$, $q$ is the \emph{start state} of $t$ and $p$ is the \emph{end state} of $t$.
+
+% Given an NBA $\mathcal{A}=(\Sigma, Q, q_0, \delta, Acc_{state})$, $Acc_{state} \subseteq Q$ is an acceptance condition based on the states of the automaton. Given an input \emph{word} $w = \langle w_0, w_1, \dots \rangle$ where $w_i \in \Sigma$ to the automaton, the corresponding sequence of states is called the \emph{state-based run} on \emph{word} $w$, denoted as $r_{state} = \langle r_0, r_1, \dots \rangle$, where $r_0 = q_0, (q_i, w_i, q_{i+1}) \in \delta$ for $i \in \mathbb{N}$. $\mathcal{A}$ accepts $w$ if and only if $Inf(r_{state}) \cap Acc_{state} \neq \emptyset$. We refer to this type of NBA as a \emph{state-based} NBA and refer to a state in $Acc_{state}$ as a accepting state. We define: 
+% \begin{align}
+%   & Acc_{state}^{pair} = \{(p, q) \mid p \in Q \land q \in Acc_{state} \land \exists \sigma \in \Sigma. (p, \sigma, q) \in \delta \}, \label{aspair} \\
+%   & Acc_{state}^{start} = Acc_{state}, \label{asstart} \\
+%   & Acc_{state}^{k, l} = \{(q_k, \sigma, q_l) \mid (q_k, \sigma, q_l) \in \delta \land (q_k, q_l) \in Acc_{state}^{pair} \}, \label{askl}
+% \end{align}
+% % \begin{equation}
+% % \end{equation}
+% % to represent all state pairs that may move to accepting states. We define 
+% % \begin{equation}
+% % \end{equation}
+% %  to represent all transitions from $q_k$ to the accepting state $q_l$. 
+% % Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ and a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$, we define 
+% % \begin{equation}
+% % \end{equation}
+
+% Given an NBA $\mathcal{A}=(\Sigma, Q, q_0, \delta, Acc_{transition})$, $Acc_{transition} \subseteq \delta$ is an acceptance condition based on the transitions of the automaton. Given an input \emph{word} $w = \langle w_0, w_1, \dots \rangle$ where $w_i \in \Sigma$ to the automaton, the corresponding sequence of transitions is called the \emph{transition-based run}  on \emph{word} $w$, denoted as $r_{transition} = \langle (r_0, w_0, r_1), (r_1, w_1, r_2), \dots \rangle$, where $r_0 = q_0, (q_i, w_i, q_{i+1}) \in \delta$ for $i \in \mathbb{N}$. $\mathcal{A}$ accepts $w$ if and only if $Inf(r_{transition}) \cap Acc_{transition} \neq \emptyset$. We refer to this type of NBA as a \emph{transition-based} NBA and refer to a transition in $Acc_{transition}$ as a accepting transition. We define:
+% \begin{align}
+%   & Acc_{transition}^{pair} = \{(p, q) \mid \exists \sigma \in \Sigma. (p, \sigma, q) \in Acc_{transition} \}, \label{atpair}\\
+%   & Acc_{transition}^{start} = \{p \mid (p, \sigma, q) \in Acc_{transition} \}, \label{atstart}\\
+%   & Acc_{transition}^{k, l} = \{(q_k, \sigma, q_l) \mid (q_k, \sigma, q_l) \in Acc_{transition} \}, \label{atkl}
+% \end{align}
+% \begin{equation}
+% \end{equation}
+% to represent all state pairs that may be accepting transitions. We define $$$$ to represent all \emph{start states} of accepting transitions. We define 
+% \begin{equation}
+% \end{equation} 
+% to represent all accepting transitions from $q_k$ to $q_l$. Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ and a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$, we define 
+% \begin{equation}
+% .
+% \end{equation}
+We denote $\mathfrak{L}(\mathfrak{S})$ as all labelled \emph{trajectories}, i.e., $\mathfrak{L}(\mathfrak{S})=\{\mathfrak{L}(\tau) \mid \tau \in \mathfrak{T}(\mathfrak{S})\}$. This set is referred to as the \emph{language} of \(\mathfrak{S}\). The set of \emph{words} accepted by an NBA \(\mathcal{A}\) is denoted as \(\mathfrak{L}(\mathcal{A})\), which is called the \emph{language} of $\mathcal{A}$. The set of \emph{words} satisfying an LTL formula \(\phi\) is called the \emph{language} of \(\phi\) and is denoted as \(\mathfrak{L}(\phi)\). NBAs can express $\omega$-regular and LTL specifications \cite{vardi2005automata}. In this paper, we use NBAs with transition-based acceptance conditions to represent LTL specifications.
+Since specifications are expressed via automata, we can reduce the verification problem of $\mathfrak{S}$ to a \emph{language} inclusion problem. Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$ and an NBA $\mathcal{A} = (2^{AP}, Q, q_0, \delta, Acc)$ to express the specification, we say $\mathfrak{S}$ satisfies $\mathcal{A}$ under the labelling function $\mathfrak{L}(x): \mathcal{X} \rightarrow 2^{AP}$  if and only if  for any \emph{trajectory} $\tau$ in $\mathfrak{T}(\mathfrak{S})$, $\mathcal{A}$ accepts the \emph{word} $\mathfrak{L}(\tau)$, i.e. $\mathfrak{L}(\mathfrak{S}) \subseteq \mathfrak{L}(\mathcal{A})$. We denote $\mathfrak{S}$ satisfies $\mathcal{A}$ under $\mathfrak{L}$ as $\mathfrak{S} \models_{\mathfrak{L}} \mathcal{A}$. 
+
+% Given a system \(\mathfrak{S} = (X, X_0, f)\), a set of atomic propositions \(AP\), a \emph{transition-based} NBA \(\mathcal{A}_1 = (\Sigma, Q_1, q_1, \delta_1, Acc_{transition})\) representing the negation \(\lnot \phi_1\) of an LTL specification, and a \emph{state-based} NBA \(\mathcal{A}_2 = (\Sigma, Q_2, q_2, \delta_2, Acc_{state})\) representing an \(\omega\)-regular specification \(\phi_2\), where \(\Sigma = 2^{AP}\):
+ 
+% We denote by \(\mathfrak{L}(\mathfrak{S}) = \{\mathfrak{L}(\tau) \mid \tau \in \mathfrak{T}(\mathfrak{S})\}\) the set of all labelled trajectories of \(\mathfrak{S}\), referred to as the \emph{language} of \(\mathfrak{S}\). The \emph{language} accepted by an NBA \(\mathcal{A}\) is denoted as \(\mathfrak{L}(\mathcal{A})\). The set of letters satisfying an LTL formula \(\phi\) under the labelling function \(\mathfrak{L}\) is called the \emph{language} of \(\phi\) and is denoted as \(\mathfrak{L}(\phi)\).
+ 
+% \paragraph{Verification of LTL Specification \(\phi_1\):}
+% \label{vltl}
+% Given a system \(\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)\), a set of atomic propositions \(AP\), a \emph{transition-based} NBA \(\mathcal{A}_1 = (\Sigma, Q_1, q_1, \delta_1, Acc_{transition})\) representing the negation \(\lnot \phi_1\) of an LTL specification where \(\Sigma = 2^{AP}\) and a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$, we need to show that \(\mathfrak{L}(\mathfrak{S}) \subseteq \mathfrak{L}(\phi_1)\). This can be achieved by demonstrating that no \emph{trajectory} in \(\mathfrak{L}(\mathfrak{S})\) is accepted by \(\mathcal{A}_1\), implying \(\mathfrak{L}(\mathfrak{S}) \subseteq \Sigma^{\omega} \setminus \mathfrak{L}(\mathcal{A}_1)\). Since \(\mathfrak{L}(\lnot \phi_1) = \mathfrak{L}(\mathcal{A}_1)\), it follows that \(\Sigma^{\omega} \setminus \mathfrak{L}(\mathcal{A}_1) = \Sigma^{\omega} \setminus \mathfrak{L}(\lnot \phi_1) = \mathfrak{L}(\phi_1)\). Therefore, \(\mathfrak{L}(\mathfrak{S}) \subseteq \mathfrak{L}(\phi_1)\). 
+% Thus, verifying that all system trajectories are rejected by the automaton corresponding to the negation of the LTL specification suffices to validate the specification.
+ 
+% \paragraph{Verification of \(\omega\)-Regular Specification \(\phi_2\):}
+% \label{vomega}
+% Given a system \(\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)\), a set of atomic propositions \(AP\), \emph{state-based} NBA \(\mathcal{A}_2 = (\Sigma, Q_2, q_2, \delta_2, Acc_{state})\) representing an \(\omega\)-regular specification \(\phi_2\) where \(\Sigma = 2^{AP}\) and a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$, 
+% % . To prove that \(\mathfrak{S}\) satisfies the \(\omega\)-regular property \(\phi_2\), i.e., \(\mathfrak{S} \models_{\mathfrak{L}} \mathcal{A}_2\), 
+% we need to show that \(\mathfrak{L}(\mathfrak{S}) \subseteq \mathfrak{L}(\mathcal{A}_2)\). This can be accomplished by constructing the complement automaton \(\lnot \mathcal{A}_2\), which accepts all \emph{words} not accepted by \(\mathcal{A}_2\). If we can demonstrate that all \emph{trajectories} in \(\mathfrak{L}(\mathfrak{S})\) are not accepted by \(\lnot \mathcal{A}_2\), then \(\mathfrak{L}(\mathfrak{S}) \subseteq \Sigma^{\omega} \setminus \mathfrak{L}(\lnot \mathcal{A}_2) = \mathfrak{L}(\mathcal{A}_2)\).
+
+\subsection{Certificates}
+Barrier certificates and closure certificates are used to verify safety\cite{prajna2004safety}, persistence\cite{murali2024closure}, and LTL properties\cite{murali2024closure}, respectively. We will provide their definitions and related conclusions.
+
+\begin{definition}[barrier certificate]
+  \label{SCDEF}
+  Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$ and $\mathcal{X}_{u} \subseteq \mathcal{X}$, a bounded function $B(x): \mathcal{X} \rightarrow \mathbb{R}$ is a \emph{barrier certificate} with respect to $\mathcal{X}_{u}$ such that $x_0 \in \mathcal{X}_0, x_u \in \mathcal{X}_u, x \in \mathcal{X}$ and $x^{\prime} = f(x)$. We have:
+  \begin{align}
+    &B(x_0) \geq 0, \label{bsinn0} \\ % initial state is non-negative
+    &B(x_u) < 0 \label{bsun0} \\ % accepting state is negative
+    &B(x) \geq 0 \Rightarrow B(x^{\prime}) \geq 0. \label{bstnn0} % transition will remain non-negative
+  \end{align}
+\end{definition}
+\begin{theorem}[Non-Negativity]
+  If a barrier certificate \( B(x) \) can be found, then it can be guaranteed that $B(x_i) \geq 0$ for any trajectory $\tau=\langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$.
+\end{theorem}
+\begin{corollary}[safety]
+  \label{corollary_tbsc}
+  If a barrier certificate \( B(x) \) can be found such that it ensures all \emph{trajectories} in $\mathfrak{T}(\mathfrak{S})$ can not visit $\mathcal{X}_{u}$
+\end{corollary}
+
+\begin{definition}[closure certificate for persistence]
+\label{pcc-def}
+Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ and $\mathcal{X}_{VF} \subseteq \mathcal{X}$, a bounded function $T:\mathcal{X} \times \mathcal{X} \rightarrow \mathbb{R}$ is a closure certificate if there exists a value $\epsilon \in \mathbb{R}_{>0}$ such that for all states $x, y \in \mathcal{X}, x^{\prime} = f(x), x_0 \in \mathcal{X}_0, y^{\prime}, y^{\prime\prime} \in \mathcal{X}_{VF}$. We have:
+\begin{align}
+  &T(x, x^{\prime}) \geq 0, \label{cc1}\\
+  &T(x^{\prime}, y) \geq 0 \Rightarrow T(x, y) \geq 0, \label{cc2} \\
+  &T(x_0, y^{\prime}) \geq 0 \land T(y^{\prime}, y^{\prime\prime}) \Rightarrow T(x_0, y^{\prime\prime}) \leq T(x_0, y^{\prime}) - \epsilon. \label{cc3}
+\end{align}
+\end{definition}
+
+\begin{lemma}[Non-Negativity]
+\label{cc-lemma}
+Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ and $\mathcal{X}_{VF} \subseteq \mathcal{X}$, if a persistence closure certificate $T$ can be found, then it can be guaranteed that $T(x_i, x_j) \geq 0$, where $i < j$ and $\langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$.
+\end{lemma}
+
+\begin{theorem}[persistence]
+  Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ and $\mathcal{X}_{VF} \subseteq \mathcal{X}$, if a persistence closure certificate $T$ can be found, then it can be guaranteed that all \emph{trajectories} of $\mathfrak{S}$ visit \(\mathcal{X}_{VF}\) finitely often. 
+\end{theorem}
+
+\begin{definition}[closure certificate for LTL]
+\label{LTLCC}
+Consider a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a labelling function $\mathfrak{L} : \mathcal{X} \rightarrow \Sigma$ and an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$ representing the negation of an LTL formula $\phi$. A bounded function $T : \mathcal{X} \times Q \times \mathcal{X} \times Q \rightarrow \mathbb{R}$ is an closure certificate for $\phi$ if there exists a value $\epsilon \in \mathbb{R}_{> 0}$ such that for all states $x, y, y' \in \mathcal{X}$, $x' = f(x)$, states $q_i, q_j \in Q$, and $q_i' \in \delta(q_i, \mathfrak{L}(x))$, we have:
+\begin{align}
+    &T((x, q_i), (x', q_i')) \geq 0 \label{eq:closure1} \\
+    &T((x', q_i'), (y, q_j)) \geq 0 \Rightarrow T((x, q_i), (y, q_j)) \geq 0 \label{eq:closure2}
+\end{align}
+and for all states $x_0 \in \mathcal{X}_0$, and $\ell, \ell' \in Acc$, we have:
+
+\begin{align}
+  & T((x_0, q_0), (y, \ell)) \geq 0 \land T((y, \ell), (y', \ell')) \geq 0 \notag \\
+  &\Rightarrow T((x_0, q_0), (y', \ell')) \leq T((x_0, q_0), (y, \ell)) - \epsilon. \label{eq:closure3}
+\end{align}
+\end{definition}
+
+\begin{theorem}[LTL]
+Consider a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, a set of atomic propositions $AP$, a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow 2^{AP}$ and an LTL formula $\phi$. Let an NBA $\mathcal{A} = (2^{AP}, Q, q_0, \delta, Acc)$ represent $\neg \phi$. The existence of a closure certificate satisfying conditions \eqref{eq:closure1}-\eqref{eq:closure3} implies that $\mathfrak{S} \models_\mathfrak{L} \phi$.
+\end{theorem}
+
+% 假设给定系统\mathfrak{S} = (X, X_0, f), 原子命题集合AP, \emph{transition-based} NBA \mathcal{A}_1 = (\Sigma, Q_1, q_1, \delta_1, Acc_{transition})表示LTL规约的否定\lnot \phi， 使用transition-based NBA \mathcal{A}_2 = (\Sigma, Q_2, q_2, \delta_2, Acc_{state})表示$\omega-$regular规约$\phi_2$. 其中\Sigma = 2^{AP}. 
+
+% 我们用符号\mathfrak{L}(\mathfrak{S}) = \{\mathfrak{L}(\tau) | \tau \in \mathfrak{T}(\mathfrak(S))\}表示系统上所有轨迹构成的句子集合，称为S的\emph{language}。我们将NBA \mathcal{A}接受的句子记为\mathfrak{L}(\mathcal{A})。我们将基于标签函数\mathfrak{L}下能够满足LTL \phi的句子集合叫做LTL的\language记为\mathfrak{L}(\phi)
+
+% 假设希望证明\mathfrak{S}满足\phi_1, 即\mathfrak{S} \models_{\mathfrak{L}} \phi_1. 如果能够说明L(S) \subseteq L(\phi_1), 那么就可以说明系统行为满足LTL规约\phi_1, 如果能够证明L(S)中没有一个句子被A_1所接受，那么L(S) \subseteq \Sigma^{\omega} \backslash L(A_1). 因为L(\lnot \phi) \subseteq L(A_1), 所以\Sigma^{\omega} \backslash L(A_1) \subseteq \Sigma^{\omega} \backslash L(\lnot \phi_1) = L(\phi_1). 那么 L(S) \subseteq L(\phi_1). 所以通过检查是否所有系统轨迹都被LTL规约的反对应自动机所拒绝,从而达到验证LTL规约。
+
+% % 构造公式的反和公式长度呈线性复杂度，根据LTL构建NBA和公式长度呈指数复杂度
+
+% 假设我们想证明系统\mathfrak{S}能够满足omega正则性质\phi_2,  即证明\mathfrak{S} \models_{\mathfrak{L}} \mathcal{A}_2. 如果能够证明L(S) \subseteq L(A_2), 那就可以说明系统行为都是能够被接受的，即系统满足\phi_2。 通过构建A的补自动机\lnot A, \lnot A能够接受所有A不能接受的句子，如果能够证明L(S)中所有句子都是不被L(\lnot A)所接受的即L(S) \subseteq \Sigma^{\omega} \backslash L(\lnot A) = L(A). 
+
+% 构造补自动机复杂性呈2^{O(|Q_1|log|Q_1|)}[safra]。
+% Let $\mathfrak{L}(\mathfrak{S})$ represent the \emph{language} consisting of all trajectories of the system. Here is a conclusion: if $\mathcal{A}$ rejects the \emph{language} $\mathfrak{L}(\mathfrak{S})$ (i.e., the \emph{language} accepted by $\mathcal{A}$ is a subset of $\Sigma^{\omega} \backslash \mathfrak{L}(\mathfrak{S})$), then since $\omega$-regular languages are closed under complementation, we can construct a corresponding NBA $\lnot\mathcal{A}$ that accepts $\mathfrak{L}(\mathfrak{S})$, and thus $\mathfrak{S} \models_{\mathfrak{L}} \lnot\mathcal{A}$.
+
+\subsection{Problem Statement}
+%  Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$ and a finite set $AP= \{p_0,p_1,\dots, p_N \}$. Define a labeling
+%  function $\mathfrak{L}(x): \mathcal{X} \rightarrow 2^{AP}$ such that for any trajectory $\tau=\langle x_1, x_2, \dots\rangle$ of $\mathfrak{S}$, there is a corresponding word $\mathfrak{L}(\tau) = \langle \mathfrak{L}(x_1), \mathfrak{L}(x_2),\dots \rangle$ where each $\mathfrak{L}(x_i) \in 2^{AP}$. Let $\mathfrak{L}(\mathfrak{S})$ be the set of all words induced by $\mathfrak{S}$. Any LTL or $\omega$-regular property $\phi$ over $2^{AP}$ can be translated in to an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$ that accepts the same language of $\phi$, i.e., $\mathfrak{L}(\phi)=\mathfrak{L}(\mathcal{A})$\cite{duret2004spot}. 
+%  Note that $\mathfrak{S} \models_{\mathfrak{L}} \phi$ iff $\mathfrak{L}(\mathfrak{S}) \subseteq \mathfrak{L}(\phi)$.\\
+%  \textbf{Problem Statement}. 
+%  How to prove that $\mathfrak{S}$ satisfy $\phi$, i.e., $\mathfrak{S} \models_{\mathfrak{L}} \phi$? 
+ How do we efficiently prove LTL properties $\phi$ for discrete-time dynamical systems, i.e., $\mathfrak{S} \models_{\mathfrak{L}} \phi$, and what advantages does this method offer compared to the state-triplet method and closure certificates?
+ 
+ %2) Does the triplet-based method reduce conservatism compared to the state-triplete method and the search space compared to closure certificates?
+
+% \section{Certificates On trajectory}
+\section{Proof Certificates for LTL Verification}
+\label{abm}
+In this section, we present proof certificates and automata-based methods for the verification of LTL properties. 
+% We first introduce two types of subsets that are used through out the work, which match sets in the Büchi acceptance condition (Section 2.3).
+
+% \begin{definition}
+% ($\mathcal{X}_u$ and $\mathcal{X}_{VF}$).  A subset $\mathcal{X}_{u} \subseteq \mathcal{X}$ is an unsafet set just if elements of $\mathcal{X}_{u}$ can not occur in any trajectory of $\mathfrak{S}$. A subset $\mathcal{X}_{VF} \subseteq \mathcal{X}$ is a finitely visited set if elements of $\mathcal{X}_{VF}$ must occur only finitely often in any trajectory of $\mathfrak{S}$.
+% \end{definition}
+
+ 
+
+% \subsection{State Persistence Certificate}
+% \begin{definition}
+%   Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a trajectory $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$ and a set of states $\mathcal{X}_{VF} \subseteq \mathcal{X}$, a bounded function $B_{\tau}(x): \mathcal{X} \rightarrow \mathbb{R}$ is a \emph{$\tau$-based state persistence certificate} with respect to $\mathcal{X}_{VF}$. If there exists $\epsilon > \mathbb{R}_{>0}$ such that for all $i \in \mathbb{N}, x_{i+1} \in f(x_i), x_0 \in \mathcal{X}_0$, we have:\\
+% % \emph{$\mathrm{type~1}$ trajectory-based state persistence certificate}:
+% % \begin{align}
+% %   &B_{\tau}(x_0) \geq 0, \label{btpnn}\\
+% %   &B_{\tau}(x_i) \geq 0 \Rightarrow B_{\tau}(x_{i+1}) \geq 0, \label{btptnn}\\
+% %   &B_{\tau}(x_i) \geq B_{\tau}(x_{i+1}) + I_{\mathcal{X}_{VF}}(x_{i+1})\epsilon. \label{btpni1}
+% % \end{align}
+% % \emph{$\mathrm{type~2}$ trajectory-based state persistence certificate}:
+% % \begin{align}
+% %   &B_{\tau}(x_0) \geq 0, \label{btpnn}\\
+% %   &B_{\tau}(x_i) \geq 0 \Rightarrow B_{\tau}(x_{i+1}) \geq 0, \label{btptnn}\\
+% %   &B_{\tau}(x_i) \geq B_{\tau}(x_{i+1}) + I_{\mathcal{X}_{VF}}(x_{i})\epsilon. \label{btpni2}
+% % \end{align}
+% \begin{align}
+%   &B_{\tau}(x_0) \geq 0, \label{btpnn}\\
+%   &B_{\tau}(x_i) \geq 0 \Rightarrow B_{\tau}(x_{i+1}) \geq 0, \label{btptnn} \\
+%   &B_{\tau}(x_i) \geq B_{\tau}(x_{i+1}) + I_{\mathcal{X}_{VF}}(x_{i+1})\epsilon, \label{btpni1} \\
+%   &B_{\tau}(x_i) \geq B_{\tau}(x_{i+1}) + I_{\mathcal{X}_{VF}}(x_{i})\epsilon. \label{btpni2}
+% \end{align}
+% If $B_{\tau}$ satisfies (\ref{btpnn}, \ref{btptnn}, \ref{btpni1}), then $B_{\tau}$ is a \emph{$\mathrm{type~1}$ $\tau$-based state persistence certificate}. If $B_{\tau}$ satisfies (\ref{btpnn}, \ref{btptnn}, \ref{btpni2}), then $B_{\tau}$ is a \emph{$\mathrm{type~2}$ $\tau$-based state persistence certificate}.
+% \end{definition}
+
+% \( B_{tp}(x) \) is a piecewise function, where the partitioning is based on execution trajectories. The execution \emph{trajectories} of the system depend on the initial state. For all possible trajectories, we design a persistence function \( B_{\tau} \) to ensure that the system behavior on each \emph{trajectory} satisfies the persistence constraints. 
+
+\subsection{State Persistence Certificate}
+
+\begin{definition}[state persistence certificate]
+  \label{systempc}
+  Consider a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$.A bounded function $B_{sp}(x): \mathcal{X} \rightarrow \mathbb{R}_{\geq 0}$ is a \emph{state persistence certificate} for $\mathfrak{S}$ with respect to $\mathcal{X}_{VF} \subseteq \mathcal{X}$ if there exists a value $\epsilon > 0$ such that for $x \in \mathcal{X}, x_0 \in \mathcal{X}_0, x^{\prime} = f(x)$, we have:\\
+  \begin{align}
+    &B_{sp}(x_0) \geq 0, \label{bspnn} \\
+    &B_{sp}(x) \geq 0 \Rightarrow B_{sp}(x^{\prime}) \geq 0, \label{bsptnn} \\
+    &B_{sp}(x) \geq B_{sp}(x^{\prime}) + I_{\mathcal{X}_{VF}}(x^{\prime})\epsilon, \label{bspni1}\\
+    &B_{sp}(x) \geq B_{sp}(x^{\prime}) + I_{\mathcal{X}_{VF}}(x)\epsilon. \label{bspni2}
+  \end{align}
+  We have two types of \emph{the state persistence certificate} based on the different conditions, but both types can be used to prove persistence.
+  If $B_{sp}$ satisfies (\ref{bspnn}, \ref{bsptnn}, \ref{bspni1}), then $B_{sp}$ is a \emph{$\mathrm{type~1}$ state persistence certificate}. If $B_{sp}$ satisfies (\ref{bspnn}, \ref{bsptnn}, \ref{bspni2}), then $B_{sp}$ is a \emph{$\mathrm{type~2}$ state persistence certificate}.
+  % \emph{$\mathrm{type~1}$ state persistence certificate}
+  % \begin{align}
+  %   &B_{sp}(x_0) \geq 0, \label{bspnn1} \\
+  %   &B_{sp}(x) \geq 0 \Rightarrow B_{sp}(x^{\prime}) \geq 0, \label{bsptnn1} \\
+  %   &B_{sp}(x) \geq B_{sp}(x^{\prime}) + I_{\mathcal{X}_{VF}}(x^{\prime})\epsilon. \label{bspni1}
+  % \end{align}
+  % \emph{$\mathrm{type~2}$ state persistence certificate}
+  % \begin{align}
+  %   &B_{sp}(x_0) \geq 0, \label{bspnn2} \\
+  %   &B_{sp}(x) \geq 0 \Rightarrow B_{sp}(x^{\prime}) \geq 0, \label{bsptnn2} \\
+  %   &B_{sp}(x) \geq B_{sp}(x^{\prime}) + I_{\mathcal{X}_{VF}}(x)\epsilon. \label{bspni2}
+  % \end{align}
+\end{definition}
+
+% \begin{lemma}
+%   \label{btpnnlemma0}
+%   Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, $\mathcal{X}_{VF} \subseteq \mathcal{X}$ and a \emph{trajectory} $\tau \in \mathfrak{T}(\mathfrak{S})$, 
+%   if a $\mathrm{type~1}$ $\tau$-based state persistence certificate $B_{\tau}$ with respect to $\mathcal{X}_{VF}$ can be found, 
+%   then it can be guaranteed that $B_{\tau}(x_i) \geq 0$, where $i \in \mathbb{N}$ and $\tau = \langle x_0, x_1, \dots \rangle$.
+% \end{lemma}
+% \begin{proof}
+%   We proceed by induction on $i$. 
+%   For the base case, when $i = 0$, we have $B_{\tau}(x_0) \geq 0$ according to the property (\ref{btpnn}).
+%   For the inductive step, we assume that the statement holds for $i = k$, i.e., $B_{\tau}(x_k) \geq 0$. 
+%   When $i = k + 1$, we have $B_{\tau}(x_{k+1}) \geq 0$ according to the property (\ref{btptnn}).
+% \end{proof}
+
+% \begin{lemma}
+%   \label{trajectory-based-state-persistence-lemma-b0-top}
+%   Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, $\mathcal{X}_{VF} \subseteq \mathcal{X}$ and a \emph{trajectory} $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, 
+%   if a $\mathrm{type~1}$ $\tau$-based state persistence certificate $B_{\tau}$ with respect to $\mathcal{X}_{VF}$ can be found, 
+%   then it can be guaranteed that $B_{\tau}(x_i) \leq B_\tau(x_0)$ for $i \in \mathbb{N}$.
+%   % For $\tau = \langle x_0, x_1, \dots \rangle$, if a $\mathrm{type~1}$ trajectory-based persistence certificate $B_{\tau}$ can be found, then it can be guaranteed that $B_{\tau}(x_i) \leq B_{\tau}(x_0)$ for $i \in \mathbb{N}$.
+% \end{lemma}
+% \begin{proof}
+%   We proceed by induction on $i$.
+%   For the base case, when $i = 0$, we have $B_{\tau}(x_0) \leq B_{\tau}(x_0)$.
+%   For the inductive step, we assume that the statement holds for $i = k$, i.e., $B_{\tau}(x_k) \leq B_{\tau}(x_0)$.
+%   When $i = k+1$, we have $B_{\tau}(x_{k+1}) \leq B_{\tau}(x_k)$ according to the property (\ref{btpni1}). Combining this with the inductive hypothesis, we have $B_{\tau}(x_{k+1}) \leq B_{\tau}(x_0)$.
+% \end{proof}
+
+
+\begin{theorem}[persistence]
+  Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ and $\mathcal{X}_{VF} \subseteq \mathcal{X}$, if a $\mathrm{type~1}$ state persistence certificate $B_{sp}$ with respect to $\mathcal{X}_{VF}$ can be found, then it can be guaranteed that $\tau$ visits(\ref{notation123}) \(\mathcal{X}_{VF}\) finitely often for any \emph{trajectory} $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$.
+\end{theorem}
+
+\begin{proof}
+We assume there exists a trajectory $\tau$ that visits $\mathcal{X}_{VF}$ infinitely often. We extract the states in $\tau$ that visit $\mathcal{X}_{VF}$ in order to construct $\tau^{\prime} = \langle y_0, y_1, \dots, y_n, \dots \rangle$, where $y_i \in \mathcal{X}_{VF}$. We now prove that $B_{sp}(y_i) \leq B_{sp}(x_0) - i\epsilon$ for all $i \in \mathbb{N}$. 
+We proceed by induction on $i$.
+\begin{itemize}
+    \item \textbf{Base case:} When $i = 0$, we have $B_{sp}(y_0) \leq B_{sp}(x_0)$ according to the Lemma (\ref{state-persistence-lemma-b0-top}).
+    \item \textbf{Inductive step:} We assume the statement holds for $i = k$, i.e., $B_{sp}(y_k) \leq B_{sp}(x_0) - k\epsilon$. When $i = k + 1$:
+    \begin{itemize}
+        \item If $y_{k+1} = f(y_k)$, we have $B_{sp}(y_{k+1}) \leq B_{sp}(y_k) - \epsilon$ according to the property (\ref{bspni1}). Combining this with the inductive hypothesis, we obtain $B_{sp}(y_{k+1}) \leq B_{sp}(x_0) - (k + 1)\epsilon$.
+        \item If $y_{k+1} \neq  f(y_k)$, i.e., $y_k$ is not the \emph{predecessor}(\ref{dtds}) of $y_{k+1}$, so $y_{k+1}^{pre}$ must appear after $y_k$ in $\tau$. 
+        So we have $B_{sp}(y_{k+1}^{pre}) \leq B_{sp}(y_k)$ according to the Lemma (\ref{state-peristence-lemma-non-increase}). 
+        We also have $B_{sp}(y_{k+1}^{pre}) \geq  B_{sp}(y_{k+1}) + \epsilon$ according to the property (\ref{bspni1}). 
+        Combining these, we obtain $B_{sp}(y_{k+1}) + \epsilon \leq B_{sp}(y_k)$. 
+        Using the inductive hypothesis, we have $B_{sp}(y_{k+1}) \leq B_{sp}(x_0) - (k + 1)\epsilon$.
+    \end{itemize}
+\end{itemize}
+Consequently, there exists $n \in \mathbb{N}$ such that $B_{sp}(y_n) \leq B_{sp}(x_0) - n\epsilon < 0$. This contradicts the Lemma (\ref{bspnnlemma0}).
+\end{proof}
+
+We have shown that \emph{$\mathrm{type~1}$ state persistence certificate} is sufficient to guarantee \emph{persistence}(\ref{specification123}). By using a similar proof method, we can easily prove that the \emph{$\mathrm{type~2}$ state persistence certificate} is able to achieve the same conclusion. That is, both types of state persistence certificates can ensure \emph{persistence}. Next, we will demonstrate that the \emph{state persistence certificate} possesses stronger expressive power compared with the closure certificate for persistence.
+
+% \begin{corollary}
+%   \label{coraollary-persistence}
+%   Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ and a set of states $\mathcal{X}_{VF} \subseteq \mathcal{X}$, if we can find \emph{state persistence certificates} $B_{sp}$ with respect to $\mathcal{X}_{VF}$ for any \emph{trajectories} in $\mathfrak{T}(\mathfrak{S})$, then it can be guaranteed that the system $\mathfrak{S}$ satisfies \emph{persistence} with respect to $\mathcal{X}_{VF}$.
+% \end{corollary}
+
+% \begin{theorem}[EXPRESSIVENESS]
+% \label{expresss123}
+%   Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, a set of states $\mathcal{X}_{VF}$ and a persistence closure certificate $T:\mathcal{X} \times \mathcal{X} \rightarrow \mathbb{R}$, one can compute a \emph{state persistence certificate} $B_{sp}$.
+% \end{theorem}
+
+% \begin{proof}
+%   Since \( T \) (\ref{pcc-def}) is a bounded function, let its upper bound be denoted as \( T(x^*, y^*) \).
+%   We choose \( \epsilon \) to be the same as the \( \epsilon \) in \( T \).
+%   Assume \( \tau \) is an arbitrary \emph{trajectory}, where $\tau =\langle x_0, x_1, \dots, x_n, \dots \rangle \in \mathfrak{T}(\mathfrak{S}), x_0 \in \mathcal{X}_0$,
+%   we define:
+% \begin{align}
+%   & B_{sp}(x_0) = T(x^*, y^*) + \epsilon, \\
+%   & B_{sp}(x_{i+1}) = \begin{cases}
+%   B_{sp}(x_i) & \text{if } x_{i+1} \notin \mathcal{X}_{VF} \\
+%   T(x_0, x_{i+1}) & \text{if } x_{i+1} \in \mathcal{X}_{VF}
+%   \end{cases}.
+% \end{align}
+%
+% We now prove that \( B_{sp}(x) \) is a \emph{$\mathrm{type~1}$ state persistence certificate} with respect to $\mathcal{X}_{VF}$.
+%
+% \begin{itemize}
+%     % 前文中添加闭包证书定义以及相关结论
+%     \item \textbf{Verification of (\ref{bspnn}):} We have \( B_{sp}(x_0) = T(x^*, y^*) + \epsilon \geq T(x_0, x_0) + \epsilon > 0 \) according to the Lemma (\ref{cc-lemma}).
+%     \item \textbf{Verification of (\ref{bsptnn}):} We proceed by induction on $i$.
+%     \begin{itemize}
+%       \item \textbf{Base case:} When $i=1$, we have $B_{sp}(x_0) \geq 0$.
+%       \begin{itemize}
+%         \item If $x_1 \not \in \mathcal{X}_{VF}$, $B_{sp}(x_{1}) = B_{sp}(x_0) \geq 0$.
+%         \item If $x_1 \in \mathcal{X}_{VF}$, we have $B_{sp}(x_1) = T(x_0, x_1) \geq 0$ according to the Lemma (\ref{cc-lemma}).
+%       \end{itemize}
+%       \item \textbf{Inductive Step:} We assume the statement holds for $i=k$ holds, i.e., $B_{sp}(x_{k-1}) \geq 0 \Rightarrow B_{sp}(x_k) \geq 0$. When $i = k+1$ and $B_{sp}(x_k) \geq 0$:
+%       \begin{itemize}
+%         \item If $x_{k+1} \not \in \mathcal{X}_{VF}$, $B_{sp}(x_{k+1}) = B_{sp}(x_k) \geq 0$.
+%         \item If $x_{k+1} \in \mathcal{X}_{VF}$, $B_{sp}(x_{k+1}) = T(x_0, x_{k+1}) \geq 0$ according to the Lemma (\ref{cc-lemma}).
+%       \end{itemize}
+%     \end{itemize}
+%     \item \textbf{Verification of (\ref{bspni1}):} We proceed by induction on \( i \):
+%     \begin{itemize}
+%         \item \textbf{Base case:} When $i=0$, we have \( B_{sp}(x_0) = T(x^*, y^*) + \epsilon \).
+%         \begin{itemize}
+%             \item If \( x_1 \in \mathcal{X}_{VF} \), then \( B_{sp}(x_1) = T(x_0, x_1) \leq T(x^*, y^*) \). Thus, \( B_{sp}(x_1) + \epsilon \leq B_{sp}(x_0) \).
+%             \item If \( x_1 \notin \mathcal{X}_{VF} \), then \( B_{sp}(x_1) = B_{sp}(x_0) \).
+%         \end{itemize}
+%         \item \textbf{Inductive step:} Assume the statement holds for \( i = k \), i.e., \( B_{sp}(x_k) \geq B_{sp}(x_{k+1}) + I_{\mathcal{X}_{VF}}(x_{k+1})\epsilon \). When $i=k+1$:
+%         \begin{itemize}
+%             \item If \( x_{k+2} \notin \mathcal{X}_{VF} \), then \( B_{sp}(x_{k+2}) = B_{sp}(x_{k+1}) \).
+%             \item If \( x_{k+2} \in \mathcal{X}_{VF} \), to prove \( B_{sp}(x_{k+2}) + \epsilon \leq B_{sp}(x_{k+1}) \), we first prove that for \( n > m \geq 0 \) and \( x_n \in \mathcal{X}_{VF} \), \( B_{sp}(x_m) - B_{sp}(x_n) \geq \epsilon \). We proceed by induction on $m$:
+%             \begin{itemize}
+%                 \item \textbf{Base case:} When $m=0$, we have \( B_{sp}(x_0) - B_{sp}(x_n) = T(x^*, y^*) + \epsilon - T(x_0, x_n) \geq \epsilon \).
+%                 \item \textbf{Inductive step:} we assume the statement holds for \( m = l < n-1\), i.e., \( B_{sp}(x_l) - B_{sp}(x_n) \geq \epsilon \). When $m = l+1 < n$,
+%                      if \( x_{l+1} \notin \mathcal{X}_{VF} \), we have \( B_{sp}(x_{l+1}) = B_{sp}(x_l) \geq B_{sp}(x_n) + \epsilon \) according to the inductive hypothesis.
+%                      If \( x_{l+1} \in \mathcal{X}_{VF} \), we have \( B_{sp}(x_{l+1}) = T(x_0, x_{l+1}) \) and \( B_{sp}(x_n) = T(x_0, x_n) \). We also have \( T(x_{l+1}, x_n) \geq 0 \) and \( T(x_0, x_{l+1}) \geq 0 \) according to the Lemma (\ref{cc-lemma}). Thus, we obtain \( T(x_0, x_n) \leq T(x_0, x_{l+1}) - \epsilon \) according to the property (\ref{cc3}), which implies \( B_{sp}(x_{l+1}) - B_{sp}(x_n) \geq \epsilon \).
+%             \end{itemize}
+%             Using this result, we conclude \( B_{sp}(x_{k+2}) + \epsilon \leq B_{sp}(x_{k+1}) \).
+%         \end{itemize}
+%     \end{itemize}
+% \end{itemize}
+% \end{proof}
+
+% Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$ and a $\Theta$-based NBA $\mathcal{A}=(\Sigma, Q, q_0, \delta, Acc_{\Theta})$. To address the verification problem(see Section 2.6), we construct proof certificates on a product system as follows.
+% \textbf{Product System}.
+
+% The theorem(\ref{expresss123}) asserts that if one can obtain the closure certificate for persistence, then one can construct a corresponding state persistence certificate to guarantee persistence.
+
+
+\subsection{State Safety Certificate}
+% \begin{definition}
+% \label{trajectory-based-state-safety-certificate-definition}
+% Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a trajectory $\tau=\langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, a labelling function $\mathfrak{L}:\mathcal{X} \rightarrow \Sigma$, and a $\Theta$-based NBA $\mathcal{A}=(\Sigma, Q, q_0, \delta, Acc_{\Theta})$ where $\Theta \in \{transition, state\}$ and $\Sigma=2^{AP}$. 
+% Construct the system $\mathfrak{S} \times \mathcal{A} = (\mathcal{Y}, \mathcal{Y}_0, F)$, where the state set $\mathcal{Y} = \{(x, q) \,|\, x \in \mathcal{X}, q \in Q \}$, the initial state set $\mathcal{Y}_0 = \{ (x_0, q_0) \,|\, x_0 \in \mathcal{X}_0 \}$, and $F(x,q) = \{(x^{\prime}, q') \,|\, x^{\prime} = f(x) \land (q, \mathfrak{L}(x), q') \in \delta\}$. 
+% A bounded function $B^{\Theta}_{\tau, k}(x, q): \mathcal{X} \times Q \rightarrow \mathbb{R}$ is a $\tau$\emph{-based state safety certificate} with respect to $q_k$, where $(x,q) \in \mathcal{Y}$, $(x_0, q_0) \in \mathcal{Y}_0$, $q_k \in Q$, $\mathcal{Y}_u = \{(x, q_k) \,|\, x \in \mathcal{X}\}$, $(x_u, q_u) \in \mathcal{Y}_u$, $(x_{i+1}, q^{\prime}) \in F(x_{i}, q)$:
+% \begin{align}
+%   &B^{\Theta}_{\tau, k}(x_0, q_0) \geq 0, \label{bsinntb1} \\
+%   &B^{\Theta}_{\tau, k}(x_i, q_u) < 0, \label{bsuntb1} \\
+%   &B^{\Theta}_{\tau, k}(x_i, q) \geq 0 \Rightarrow B^{\Theta}_{\tau, k}(x^{i+1}, q^{\prime}) \geq 0. \label{bstnntb1}
+% \end{align}
+% \end{definition}
+\begin{definition}[state safety certificate]
+  \label{state-safety-certificate-definition}
+  Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a labelling function $\mathfrak{L}:\mathcal{X} \rightarrow \Sigma$ and an NBA $\mathcal{A}=(\Sigma, Q, q_0, \delta, Acc)$. Construct the product system $\mathfrak{S} \times \mathcal{A} = (\mathcal{Y}, \mathcal{Y}_0, F)$, where $\mathcal{Y} = \{(x, q) \,|\, x \in \mathcal{X}, q \in Q \}$, $\mathcal{Y}_0 = \{ (x_0, q_0) \,|\, x_0 \in \mathcal{X}_0 \}$, and $F(x,q) = \{(x^{\prime}, q') \,|\, x^{\prime} = f(x) \land (q, \mathfrak{L}(x), q') \in \delta\}$. A bounded function $B_{k}(x, q): \mathcal{X} \times Q \rightarrow \mathbb{R}$ is a \emph{state safety certificate} with respect to $q_k$, where $(x,q) \in \mathcal{Y}, (x_0, q_0) \in \mathcal{Y}_0, q_k \in Q, \mathcal{Y}_u = \{(x, q_k) \,|\, x \in \mathcal{X}\}, (x_0, q_0) \in \mathcal{Y}_0, (x_u, q_u) \in \mathcal{Y}_u, (x^{\prime}, q^{\prime}) \in F(x, q)$, we have:
+  \begin{align}
+    &B_{k}(x_0, q_0) \geq 0, \label{bsinn1} \\ % initial state is non-negative
+    &B_{k}(x_u, q_u) < 0, \label{bsun1} \\ % accepting state is negative
+    &B_{k}(x, q) \geq 0 \Rightarrow B_{k}(x^{\prime}, q^{\prime}) \geq 0. \label{bstnn1} % transition will remain non-negative
+  \end{align}
+\end{definition}
+
+% \begin{theorem}
+%   Given a state safety certificate $B^{\Theta}_{k}(x, q)$ with respect to $q_k$, one can compute a $\tau$-based state safety certificate $B^{\Theta}_{\tau, k}(x, q)$ with respect to $q_k$ for any trajectory $\tau$ in $\mathfrak{T}(\mathfrak{S})$.
+% \end{theorem}
+% \begin{proof}
+%   We define $B^{\Theta}_{\tau, k}(x, q) = B^{\Theta}_{k}(x, q)$ for any trajectory $\tau$ and prove that $B^{\Theta}_{\tau, k}$ is a $\tau$-based state safety certificate with respect to $q_k$. (\ref{bsinntb1}, \ref{bsuntb1}, \ref{bstnntb1}) can be satisfied according to the properties(\ref{bsinn1}, \ref{bsun1}, \ref{bstnn1}).
+% \end{proof}
+
+
+
+
+% \begin{corollary}
+%   Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a trajectory $\tau=\langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, a labeling function $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$, and a $\Theta$-based NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc_{\Theta})$, if we can find all $\tau$-based state safety certificates $B^{\Theta}_{\tau, k}(x, q)$ for $k \in Acc_{\Theta}^{start}$, then it can be guaranteed that all $\Theta$-based runs of the \emph{word} $\mathfrak{L}(\tau)$ cannot visit $Acc_{\Theta}^{start}$.
+% \end{corollary}
+
+% according to the LTL specification verification (\ref{vltl}),
+% \begin{corollary}
+%   Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, a set of atomic propositions $AP$, a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$, an LTL formula $\phi$ and a $\Theta$-based NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc_{\Theta})$ representing $\lnot \phi$ where $\Sigma = 2^{AP}$, if we can find state safety certificates $B^{\Theta}_{k}$ for all $q_k \in Acc_{\Theta}^{start}$, then we have $\mathfrak{S} \models_{\mathfrak{L}} \phi$.
+% \end{corollary}
+  
+% %according to the $\omega$-regular specification verification (\ref{vomega}), 
+% \begin{corollary}
+%   Given an $\omega$-regular specification $\phi$ represented by a \emph{state-based} NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta_1, Acc_{state,1})$, and constructing the corresponding complementation $\lnot \mathcal{A} = (\Sigma, P, p_0, \delta_2, Acc_{state,2})$, if we can find state safety certificates $B^{state}_{k}$ for all $q_k \in Acc_{state, 2}$, then we have $\mathfrak{S} \models_{\mathfrak{L}} \phi$.
+% \end{corollary}
+
+
+
+\subsection{Transition Persistence Certificate}
+\begin{definition}[transition persistence certificate]
+  \label{bsbstct}
+  Consider a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a labelling function $\mathfrak{L}:\mathcal{X} \rightarrow \Sigma$ and an NBA $\mathcal{A}=(\Sigma, Q, q_0, \delta, Acc)$, we define $\Delta_{k, l} = \{(q_k, \sigma, q_l) \mid \mathcal{P}(q_k, \sigma, q_l) \land (q_k, \sigma, q_l) \in \delta\}$
+  as the set of transitions that satisfy the predicate $\mathcal{P}$ and move from $q_k$ to $q_l$.
+  A bounded function $B_{\Delta_{k, l}}(x): \mathcal{X} \rightarrow \mathbb{R}$ is a \emph{transition persistence certificate} with
+  respect to $\Delta_{k,l}$ where $x_0 \in \mathcal{X}_0, x \in \mathcal{X}, x^{\prime} = f(x)$, we have:
+  \begin{align}
+    &B_{\Delta_{k, l}}(x_0) \geq 0, \label{bstnn} \\
+    &B_{\Delta_{k, l}}(x) \geq 0 \Rightarrow B_{\Delta_{k, l}}(x^{\prime}) \geq 0, \label{bsttnn} \\
+    &B_{\Delta_{k, l}}(x) \geq B_{\Delta_{k, l}}(x^{\prime}) + I_{\Delta_{k,l}}(q_k, \mathfrak{L}(x), q_l)\epsilon. \label{bstni}
+  \end{align}
+\end{definition}
+
+% The predicate $(q_i, q_j) \in Acc_{transition}$ indicates that \((q_i, q_j)\) represents a accepting state transition. We construct \emph{trajectory-based state transition certificates} for such state pairs to ensure that these accepting transitions are only visited finitely often during system execution.
+
+
+% 这里很多名词没有解释，可能接受状态对
+% Assume that a \emph{trajectory-based state transition certificate} is found for all possible accepting state transitions of a trajectory \(\tau\). Thus, all transitions leading to accepting states are certified to be visited a finite number of times. Then, it can be guaranteed that the set \(Acc_{state}\) is visited finitely often on \( \mathfrak{L}(\tau)\). Furthermore, if \emph{trajectory-based state transition certificates} are found for all possible accepting state transitions across all trajectories of the system, then the system \emph{trajectories} visit \(Acc_{state}\) finitely often. That is, all \emph{words} corresponding to system \emph{trajectories} are rejected by $A$ and accepted by the complement automaton $\lnot A$.
+
+% The \emph{trajectory-based transition persistence certificate} $B^t_{\tau, k, l}$ can prove that the \emph{transition-base runs} corresponding to the \emph{word} $\mathfrak{L}(\tau)$ must visit the accepting transitions in $Acc_{transition}^{k,l}$ finitely often. Assuming that all \emph{trajectory-based transition persistence certificates} can be found for all state pairs in $Acc_{transition}^{pair}$, it can be guaranteed that the \emph{transition-base runs} corresponding to the \emph{word} $\mathfrak{L}(\tau)$ must visit the accepting transitions $Acc_{transition}$ finitely often.
+
+% \begin{corollary}
+% Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ and a $\Theta$-based NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc_{\Theta})$, 
+% if \emph{trajectory-based transition persistence certificates} B^{\Theta}_{\tau, k,l} with respect to $Acc_{\Theta}^{k, l}$ for any $(q_k, q_l) \in Acc_{\Theta}^{pair}$ can be found for any \emph{trajectory} $\tau$ in $\mathfrak{T}(\mathfrak{S})$, 
+% then it can be guaranteed that the $\Theta$-based runs of \emph{words} in $\mathfrak{L}(\mathfrak{S})$ will make transitions in $Acc_{\Theta}^{k, l}$ happen finitely often.
+% \end{corollary}
+
+% Similarly we can define transition persistence certificate for \emph{state-based} NBAs.
+% \begin{definition}
+%   Consider a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a labelling function $\mathfrak{L}:\mathcal{X} \rightarrow \Sigma$ and a \emph{state-based} NBA $\mathcal{A}=(\Sigma, Q, q_0, \delta, Acc_{state})$, a bounded function $B^{s}_{\tau, k, l}(x): \mathcal{X} \rightarrow \mathbb{R}$ is a \emph{trajectory-based transition persistence certificate} where $\tau=\langle x_0, x_1, \dots \rangle \in \mathfrak{T}( \mathfrak{S} ), (q_k, q_l) \in Acc_{state}^{pair}, i \in \mathbb{N}, x_0 \in \mathcal{X}_0, x_{i+1} \in f(x_i)$, we have:
+%   \begin{align}
+%     &B^s_{\tau, k, l}(x_0) \geq 0, \label{bstsbnn} \\
+%     &B^s_{\tau, k, l}(x_i) \geq 0 \Rightarrow B_{\tau, k, l}(x_{i+1}) \geq 0, \label{bstsbtnn} \\
+%     &B^s_{\tau, k, l}(x_i) \geq B^s_{\tau, k, l}(x_{i+1}) + I_{Acc_{state}^{k,l}}(q_k, \mathfrak{L}(x_i), q_l)\epsilon. \label{bstsbni}
+%   \end{align}
+% \end{definition}
+
+% \begin{theorem}
+%   Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ and a \emph{state-based} NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc_{state})$, 
+%   if all corresponding \emph{state-based transition persistence certificates} in $Acc_{state}^{pair}$ can be found for all \emph{trajectories} in $\mathfrak{T}(\mathfrak{S})$, 
+%   then it can be guaranteed that the \emph{state-based runs} of \emph{words} in $\mathfrak{L}(\mathfrak{S})$ will visit $Acc_{state}$ finitely often.
+% \end{theorem}
+
+% \begin{proof}
+%   Since $B^{s}_{k, l}$ proves that transitions in $Acc_{state}^{k,l}$ are finitely visited according to the Lemma \ref{transition-persistence-lemma1}, if it can be proven that all \emph{trajectory-based transition persistence certificates} exist of all state pairs in $Acc_{state}^{pair}$ for \emph{trajectories} in $\mathfrak{T}(\mathfrak{S})$, then transitions to accepting states are finitely visited. Consequently, this ensures that the states in $Acc_{state}$ are visited finitely.
+% \end{proof}
+% according to the LTL specification verification (\ref{vltl}),
+
+% \begin{corollary}
+% \label{corollary-ltl-tran}
+% Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, a set of atomic propositions $AP$, a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$, an LTL formula $\phi$ and a $\Theta$-based NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc_{\Theta})$ representing $\lnot \phi$ where $\Sigma = 2^{AP}$ where $\Theta = \{state, transition\}$, if we can find transition persistence certificates $B^{\Theta}_{\Delta_{k, l}}$ with respect to $Acc_{\Theta}^{k,l}$ for any $(k, l) \in Acc_{\Theta}^{pair}$, then we have $\mathfrak{S} \models_{\mathfrak{L}} \phi$.
+% \end{corollary}
+  
+% \begin{corollary}
+% \label{corollary-omega-tran}
+% Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$, an $\omega$-regular specification $\phi$ represented by a \emph{state-based} NBA $A = (\Sigma, Q, q_0, \delta_1, Acc_{state,1})$ and the corresponding complementation automaton $\lnot A = (\Sigma, P, p_0, \delta_2, Acc_{state,2})$,  
+% if we can find transition persistence certificates $B^{state}_{k, l}$ with respect to $Acc_{state, 2}^{k, l}$ for any $(k, l) \in Acc_{state,2}^{pair}$, then we have $\mathfrak{S} \models_{\mathfrak{L}} \phi$.
+% \end{corollary}
+
+% Since for the \emph{word} $L(\tau)$, all accepting transitions in $A$ have been proven to be visited finitely many times, it implies that the \emph{word} is rejected, which in turn means that the \emph{word} satisfies the specification, i.e., the trajectory satisfies the LTL specification.
+
+% Furthermore, this certificate can also be used to verify the $\omega$-regular property $\phi$. The NBA $A = (\Sigma, Q, q_0, \delta_1, Acc_{state,1})$ describes $\phi$. Construct the complement automaton $\lnot A = (\Sigma, P, p_0, \delta_2, Acc_{state,2})$. Define
+% \[ Acc_{transition}^{\prime} = \{(q_i, \sigma, q_j) \mid q_j \in Acc_{state,2} \land \sigma \in \Sigma \land q_i \in P \land (q_i, \sigma, q_j) \in \delta_2 \}. \]
+% Consider these as the accepting transitions in $\lnot A$. If relevant trajectory-based transition persistence certificates can be found, it can be proven that the trajectory satisfies the $\omega$-regular specification $\phi$.
+
+% \begin{align*}
+%   &\mathfrak{L}(\phi) = \mathfrak{L}(\mathcal{A}) \subseteq \Sigma^{\omega} \backslash \mathfrak{L}(\mathfrak{S}) \\
+%   &\mathfrak{L}(\lnot\phi) = \mathfrak{L}(\lnot \mathcal{A}) = \Sigma^{\omega} \backslash \mathfrak{L}(\mathcal{A})\supseteq \Sigma^{\omega} \backslash (\Sigma^{\omega} \backslash \mathfrak{L}(\mathfrak{S})) = \mathfrak{L}(\mathfrak{S})
+% \end{align*}
+% Hence, \(\mathfrak{L}(\mathfrak{S})\) is accepted by \(\lnot\mathcal{A}\), and thus \(\mathfrak{S} \models_{\mathfrak{L}} \phi\).
+% 定义证书值
+% 特定轨迹t和特定接受状态转移i,j采用特定的B_{t,i,j}(x)
+% 其他情况 证书值置为0
+% 这个证书能够保证所有系统行为符合omega-regular 规约
+% 该证书除了能够用于证明\mathfrak{L}(\mathfrak{S})都自动机拒绝之外被拒绝，我们可以将非接受迁移作为有限访问集合，证明存在系统轨迹被自动机所接受，这里有个假设系统是确定系统,i.e., |f(x)|=1. 所以该证书能够用于证明存在轨迹不符合规约，将LTL规约或者omega-regular规约中接受条件的补集设定为有限访问集合，那么可以证明系统不符合规约。
+
+% \begin{definition}
+%   \label{tpc-for-refute}
+%   Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, a trajectory $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, and an $\Theta$-based $NBA=(\Sigma, Q, q_0, \delta, Acc_{\Theta})$, where $\Theta=\{transition, state\}$. Assume $|f(x)| = 1$. A bounded function $\bar{B}_{\tau, k, l}^{\Theta}$ is a transition persistence certificate if there exists $\epsilon \in \mathbb{R}_{>0}$ such that for all $i \in \mathbb{N}$, $x_0 \in \mathcal{X}_0$, $x_i \in \mathcal{X}$, and $(q_k, q_l) \in \delta \backslash Acc_{\Theta}^{k, l}$, we have:
+%   \begin{align}
+%     & \bar{B}_{\tau, k, l}^{\Theta}(x_0) \geq 0, \label{refute1}\\
+%     & \bar{B}_{\tau, k, l}^{\Theta}(x_i) \geq 0 \Rightarrow \bar{B}_{\tau, k, l}^{\Theta}(x_{i+1}) \geq 0, \label{refute2}\\
+%     & \bar{B}_{\tau, k, l}^{\Theta}(x_i) \geq \bar{B}_{\tau, k, l}^{\Theta}(x_{i+1}) + I_{\delta \backslash Acc_{\Theta}^{k, l}}(q_k, \mathfrak{L}, q_l) \epsilon. \label{refute3}
+%   \end{align}
+% \end{definition}
+
+% \begin{theorem}
+% Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, a trajectory $\tau=\langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$ where $x_0 \in \mathcal{X}_0$, an LTL or $\omega$-regular specification $\phi$, we use a $\Theta$-based $NBA=(\Sigma, Q, q_0, \delta, Acc_{\Theta})$ to describe the negation of $\phi$, where $\Theta=\{transition, state\}$. If we can find all transition persistence certificates $\bar{B}^{\Theta}_{\tau, k, l}$ for $(q_k, q_l) \in \delta \backslash Acc_{\Theta}^{k, l}$ in (\ref{tpc-for-refute}), then we have $\mathfrak{S} \not\models_{\mathfrak{L}} \phi$.
+% \end{theorem}
+
+% \begin{proof}
+% According to Lemma \ref{sdfs}, if we find a transition persistence certificate $\bar{B}^{\Theta}_{\tau, k, l}$, it means that $\Theta$-based runs visit transitions from $q_k$ to $q_l$ where $q_l$ is not an accepting state or the transition is not an accepting transition only finitely often. If we can find all such $\bar{B}^{\Theta}_{\tau, k, l}$, then we can conclude that runs will visit transitions in $\delta \backslash \bigcup_{(q_k, q_l) \in Acc_{\Theta}^{pair}} Acc_{\Theta}^{k, l}$ only finitely often. Therefore, we can conclude that the trajectory will infinitely often visit acceptance conditions in $Acc_{\Theta}$.
+% \end{proof}
+
+% x_0 确定后轨迹就确定了，利用系统上证书做合成就行了，把x_0定死，其他条件不变这样就可以了。
+% We can combine $B^{\Theta}_{\Delta_{k, l}}$ and $B^{\Theta}_{k}$ to prove that the acceptance condition will happen finitely. We can utilize this method to find counterexamples by sampling initial states before the system starts running. We can use $x_0$ to fix the properities about initial states in the state safety certificates and the transition persistence certificates, then it can be guaranteed that the synthesized certificates are based on $\tau$.
+
+% Similarly, state safety certificates and transition persistence certificates can identify counterexample trajectories that violate the specification. 
+% % Assume the system is deterministic, i.e., $|f(x)| = 1$. 
+% The $\Theta$-based NBA $\mathcal{A}$ represents the specification $\phi$ where $\Theta \in \{transition, state\}$. By sampling $x_0$ from $\mathcal{X}_0$, we obtain a trajectory $\tau = \langle x_0, x_1, \dots \rangle$, where $x_{i+1} = f(x_i)$ for $i \in \mathbb{N}$. 
+% For any $q_k \in Acc_{\Theta}^{start}$, if we can find a corresponding state safety certificate $B^{\Theta}_{k}(x, q)$, then we can conclude that $q_k$ cannot be visited by any $\Theta$-based run of $\mathfrak{L}(\tau)$. 
+% Let $\Delta_{k,l} = Acc_{\Theta}^{k,l}$. $\Delta_{k,l}$ denotes those transitions that make the acceptance condition happen and move from $q_k$ to $q_l$. If we can find a transition persistence certificate $B^{\Theta}_{\Delta_{k, l}}$ with respect to $\Delta_{k,l}$, we can conclude that transitions in $\Delta_{k,l}$ happen finitely often. 
+% \section{Certificates On System}
+% Since synthesizing certificates for all \emph{trajectories} of the system is not straightforward, this paper proposes \emph{state safety certificate}, \emph{state persistence certificate} and \emph{transition persistence certificate} which are easier to synthesize.
+% \subsection{State Safety Certificate}
+% \begin{definition}
+%   \label{state-safety-certificate-definition}
+%   Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a labelling function $\mathfrak{L}:\mathcal{X} \rightarrow \Sigma$ and a $\Theta$-based NBA $\mathcal{A}=(\Sigma, Q, q_0, \delta, Acc_{\Theta})$ where $\Theta \in \{transition, state\}$. Construct the system $\mathfrak{S} \times \mathcal{A} = (\mathcal{Y}, \mathcal{Y}_0, F)$, where the state set $\mathcal{Y} = \{(x, q) \,|\, x \in \mathcal{X}, q \in Q \}$, the initial state set $\mathcal{Y}_0 = \{ (x_0, q_0) \,|\, x_0 \in \mathcal{X}_0 \}$, and $F(x,q) = \{(x^{\prime}, q') \,|\, x^{\prime} = f(x) \land (q, \mathfrak{L}(x), q') \in \delta\}$. A bounded function $B^{\Theta}_{k}(x, q): \mathcal{X} \times Q \rightarrow \mathbb{R}$ is a \emph{state safety certificate} with respect to $q_k$, where $(x,q) \in \mathcal{Y}, (x_0, q_0) \in \mathcal{Y}_0, q_k \in Q, \mathcal{Y}_u = \{(x, q_k) \,|\, x \in \mathcal{X}\}, (x_0, q_0) \in \mathcal{Y}_0, (x_u, q_u) \in \mathcal{Y}_u, (x^{\prime}, q^{\prime}) \in \mathcal{F}(x, q)$, we have:
+%   \begin{align}
+%     &B^{\Theta}_{k}(x_0, q_0) \geq 0, \label{bsinn1} \\ % initial state is non-negative
+%     &B^{\Theta}_{k}(x_u, q_u) < 0, \label{bsun1} \\ % accepting state is negative
+%     &B^{\Theta}_{k}(x, q) \geq 0 \Rightarrow B^{\Theta}_{k}(x^{\prime}, q^{\prime}) \geq 0. \label{bstnn1} % transition will remain non-negative
+%   \end{align}
+% \end{definition}
+
+% \begin{theorem}
+%   Given a state safety certificate $B^{\Theta}_{k}(x, q)$ with respect to $q_k$, one can compute a $\tau$-based state safety certificate $B^{\Theta}_{\tau, k}(x, q)$ with respect to $q_k$ for any trajectory $\tau$ in $\mathfrak{T}(\mathfrak{S})$.
+% \end{theorem}
+% \begin{proof}
+%   We define $B^{\Theta}_{\tau, k}(x, q) = B^{\Theta}_{k}(x, q)$ for any trajectory $\tau$ and prove that $B^{\Theta}_{\tau, k}$ is a $\tau$-based state safety certificate with respect to $q_k$. (\ref{bsinntb1}, \ref{bsuntb1}, \ref{bstnntb1}) can be satisfied according to the properties(\ref{bsinn1}, \ref{bsun1}, \ref{bstnn1}).
+% \end{proof}
+% \begin{proof}
+%   According to Corollary~\ref{corollary_tbsc}, any \emph{trajectory} of the system $\mathfrak{S} \times \mathcal{A}$ can not reach a state in $\mathcal{Y}_u$. Therefore, for any \emph{trajectory} on $\mathfrak{S}$, \emph{state-based} runs of the corresponding \emph{sentence} $\mathfrak{L}(\tau)$ can not visit the state $q_k$ according the definition of the system $\mathfrak{S} \times \mathcal{A}$.
+% \end{proof}
+
+% \begin{corollary}
+%   Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a labeling function $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$, and a \emph{state-based} NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc_{state})$, if we can find all state safety certificates $B^s_k(x, q)$ for $k \in Acc_{state}$, then it can be guaranteed that all \emph{state-based} runs of the \emph{words} in the \emph{language} $\mathfrak{L}(\mathfrak{S})$ cannot visit any state in $Acc_{state}$.
+% \end{corollary}
+
+
+% \begin{definition}
+%   \label{state-safety-certificate-definition-for-transition-based-NBA}
+%   Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a labelling function $\mathfrak{L}:\mathcal{X} \rightarrow \Sigma$ and a \emph{transition-based} NBA $\mathcal{A}=(\Sigma, Q, q_0, \delta, Acc_{transition})$. Construct the system $\mathfrak{S} \times \mathcal{A} = (\mathcal{Y}, \mathcal{Y}_0, F)$, where the state set $\mathcal{Y} = \{(x, q) \,|\, x \in \mathcal{X}, q \in Q \}$, the initial state set $\mathcal{Y}_0 = \{ (x_0, q_0) \,|\, x_0 \in \mathcal{X}_0 \}$, and $F(x,q) = \{(x^{\prime}, q') \,|\, x^{\prime} = f(x) \land (q, \mathfrak{L}(x), q') \in \delta\}$. A bounded function $B^t_{k}(x, q): \mathcal{X} \times Q \rightarrow \mathbb{R}$ is a \emph{state safety certificate} with respect to $q_k$, where $(x,q) \in \mathcal{Y}, (x_0, q_0) \in \mathcal{Y}_0, q_k \in Acc_{transition}^{start}, \mathcal{Y}_u = \{(x, q_k) \,|\, x \in \mathcal{X}\}, (x_0, q_0) \in \mathcal{Y}_0, (x_u, q_u) \in \mathcal{Y}_u, (x^{\prime}, q^{\prime}) \in \mathcal{F}(x, q)$, we have:
+%   \begin{align}
+%     &B^t_{k}(x_0, q_0) \geq 0, \label{bsinn2} \\ % initial state is non-negative
+%     &B^t_{k}(x_u, q_u) < 0, \label{bsun2} \\ % accepting state is negative
+%     &B^t_{k}(x, q) \geq 0 \Rightarrow B^t_{k}(x^{\prime}, q^{\prime}) \geq 0. \label{bstnn2} % transition will remain non-negative
+%   \end{align}
+% \end{definition}
+
+
+% \begin{theorem}
+%   Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a labelling function $\mathfrak{L}:\mathcal{X} \rightarrow \Sigma$ and a \emph{transition-based} NBA $\mathcal{A}=(\Sigma, Q, q_0, \delta, Acc_{transition})$, if a state safety certificate \(B^t_{k}(x, q)\) can be found such that it ensures all \emph{transition-based} runs of the \emph{words} in the \emph{language} \(\mathfrak{L}(\mathfrak{S})\) on \(\mathcal{A}\) can not visit accepting transitions whose \emph{start state} is $q_k$, i.e., $\{(q_k, \sigma, q_i) \mid (q_k, \sigma, q_i) \in Acc_{transition}\}$.
+% \end{theorem}
+
+% \begin{corollary}
+%   Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a labeling function $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$, and a \emph{transition-based} NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc_{transition})$, if we can find all state safety certificates $B^t_k(x, q)$ for $k \in Acc_{transition}^{start}$, then it can be guaranteed that all \emph{transition-based} runs of the \emph{words} in the \emph{language} $\mathfrak{L}(\mathfrak{S})$ cannot visit any accepting transition in $Acc_{transition}$.
+% \end{corollary}
+
+
+
+% \begin{corollary}
+%   Given an LTL specification $\phi$, represented by either a \emph{transition-based} NBA $A_1 = (\Sigma, Q, q_0, \delta_1, Acc_{transition})$ or a \emph{state-based} NBA $A_2 = (\Sigma, P, p_0, \delta_2, Acc_{state})$ for $\lnot \phi$, if we can find state safety certificates $B^t_{k}$ for all $q_k \in Acc_{transition}^{start}$, or all state safety certificates $B^s_{k}$ for all $q_k \in Acc_{state}^{pair}$, then according to the LTL specification verification (\ref{vltl}), $\mathfrak{S} \models \phi$.
+% \end{corollary}
+  
+% \begin{corollary}
+%   Given an $\omega$-regular specification $\phi$, represented by a \emph{state-based} NBA $A = (\Sigma, Q, q_0, \delta_1, Acc_{state,1})$ for $\phi$, and constructing the corresponding complementation $\lnot A = (\Sigma, P, p_0, \delta_2, Acc_{state,2})$, if we can find all state safety certificates $B^s_{k}$ for all $k \in Acc_{state,2}$, then according to the $\omega$-regular specification verification (\ref{vomega}), $\mathfrak{S} \models_{\mathfrak{L}} \phi$.
+% \end{corollary}
+% \subsection{State Persistence Certificate}
+
+% \begin{definition}
+%   \label{systempc}
+%   Consider a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$. A bounded function $B_{sp}(x): \mathcal{X} \rightarrow \mathbb{R}$ is a \emph{state persistence certificate} for $\mathfrak{S}$ with a set of states $\mathcal{X}_{VF} \subseteq \mathcal{X}$ if there exists a value $\epsilon > 0$ such that for $x \in \mathcal{X}, x_0 \in \mathcal{X}_0, x^{\prime} = f(x)$, we have:\\
+%   \begin{align}
+%     &B_{sp}(x_0) \geq 0, \label{bspnn} \\
+%     &B_{sp}(x) \geq 0 \Rightarrow B_{sp}(x^{\prime}) \geq 0, \label{bsptnn} \\
+%     &B_{sp}(x) \geq B_{sp}(x^{\prime}) + I_{\mathcal{X}_{VF}}(x^{\prime})\epsilon, \label{bspni1}\\
+%     &B_{sp}(x) \geq B_{sp}(x^{\prime}) + I_{\mathcal{X}_{VF}}(x)\epsilon. \label{bspni2}
+%   \end{align}
+%   If $B_{sp}$ satisfies (\ref{bspnn}, \ref{bsptnn}, \ref{bspni1}), then $B_{sp}$ is a \emph{$\mathrm{type~1}$ state persistence certificate}. If $B_{sp}$ satisfies (\ref{bspnn}, \ref{bsptnn}, \ref{bspni2}), then $B_{sp}$ is a \emph{$\mathrm{type~2}$ state persistence certificate}.
+%   % \emph{$\mathrm{type~1}$ state persistence certificate}
+%   % \begin{align}
+%   %   &B_{sp}(x_0) \geq 0, \label{bspnn1} \\
+%   %   &B_{sp}(x) \geq 0 \Rightarrow B_{sp}(x^{\prime}) \geq 0, \label{bsptnn1} \\
+%   %   &B_{sp}(x) \geq B_{sp}(x^{\prime}) + I_{\mathcal{X}_{VF}}(x^{\prime})\epsilon. \label{bspni1}
+%   % \end{align}
+%   % \emph{$\mathrm{type~2}$ state persistence certificate}
+%   % \begin{align}
+%   %   &B_{sp}(x_0) \geq 0, \label{bspnn2} \\
+%   %   &B_{sp}(x) \geq 0 \Rightarrow B_{sp}(x^{\prime}) \geq 0, \label{bsptnn2} \\
+%   %   &B_{sp}(x) \geq B_{sp}(x^{\prime}) + I_{\mathcal{X}_{VF}}(x)\epsilon. \label{bspni2}
+%   % \end{align}
+% \end{definition}
+
+% % \begin{lemma}
+% %   \label{bspnnlemma1}
+% %   If a $\mathrm{type~1}$ state persistence certificate $B_{sp}$ with respect to $\mathcal{X}_{VF} \subseteq \mathcal{X}$ is found on state $\mathfrak{S}$, then for any given trajectory $\tau = \langle x_0, x_1, \dots, x_n, \dots \rangle$ with $x_0 \in X_0$, it satisfies $B_{sp}(x_i) \geq 0$ for all $i \geq 0$.
+% % \end{lemma}
+% % \begin{proof}
+% %   By induction on $i$, when $i=0$, according to Property~(\ref{bspnn1}), we have $B_{sp}(x_0) \geq 0$.
+% %   Assume it holds for $i=k$. When $i=k+1$, according to Property~(\ref{bsptnn1}), we have $B_{sp}(x_{k+1}) \geq 0$.  
+% % \end{proof}
+
+% % \begin{lemma}
+% %   \label{bsptop}
+% %   If a state persistence certificate $B_{sp}$ with respect to $\mathcal{X}_{VF} \subseteq \mathcal{X}$ is found on state $\mathfrak{S}$, then for any given trajectory $\tau = \langle x_0, x_1, \dots, x_n, \dots \rangle$ with $x_0 \in X_0$, it satisfies $B_{sp}(x_i) \leq B_{sp}(x_0)$ for all $i \geq 0$.
+% % \end{lemma}
+% % \begin{proof}
+% %   Induction on the trajectory index $i$. When $i=0$, $B_{sp}(x_0) \leq B_{sp}(x_0)$ clearly holds. Assume that it holds for $i=k$, i.e., $B_{sp}(x_k) \leq B_{sp}(x_0)$. According to (\ref{bspni1}) and (\ref{bspni2}), we have $B_{sp}(x_{k+1}) \leq B_{sp}(x_k)$. Combining this with the induction hypothesis, we can conclude that $B_{sp}(x_{k+1}) \leq B_{sp}(x_0)$.
+% % \end{proof}
+% % \begin{lemma}
+% %   \label{bspni}
+% %   If a state persistence certificate $B_{sp}$ with respect to $\mathcal{X}_{VF} \subseteq \mathcal{X}$ is found on state $\mathfrak{S}$, then for any given trajectory $\tau = \langle x_0, x_1, \dots, x_n, \dots \rangle$ with $x_0 \in X_0$, $B_{sp}$ is non-increasing along $\tau$, i.e., for $i \geq 0, j > i$, it holds that $B_{sp}(x_j) \leq B_{sp}(x_i)$.
+% % \end{lemma}
+% % \begin{proof}
+% %   Induction on $i$. When $i=0$, according to Lemma \ref{bsptop}, we have $B_{sp}(x_j) \leq B_{sp}(x_0)$ for $j > 0$. Assume that it holds for $i = k$, i.e., $B_{sp}(x_j) \leq B_{sp}(x_k)$ for $j > k$. Now, we perform a nested induction on $j$ for $i = k+1$.
+% % When $j = k+2$, according to (\ref{bspni1}) and (\ref{bspni2}), we have $B_{sp}(x_{k+2}) \leq B_{sp}(x_{k+1})$. Assume that it holds for $j = k+1+m$, i.e., $B_{sp}(x_{k+1+m}) \leq B_{sp}(x_{k+1})$ for some $m \geq 0$. When $j = k+2+m$, again according to (\ref{bspni1}) and (\ref{bspni2}), we have $B_{sp}(x_{k+2+m}) \leq B_{sp}(x_{k+1+m})$. Combining this with the induction hypothesis for $j$, we can conclude that $B_{sp}(x_{k+2+m}) \leq B_{sp}(x_{k+1})$. Therefore, $B_{sp}(x_j) \leq B_{sp}(x_{k+1})$ for all $j > k+1$.
+% % Hence, by the induction on $i$, we have $B_{sp}(x_j) \leq B_{sp}(x_i)$ for all $j > i \geq 0$.
+% % \end{proof}
+% % \begin{theorem}
+% %   If a $\mathrm{type~1}$ system persistence certificate \(B_{sp}\) can be found such that it ensures the \emph{trajectories} of \( \mathfrak{S} \) with respect to $ \mathcal{X}_{VF} $ implies $ \mathfrak{S} $ only finitely visit $\mathcal{X}_{VF}$.
+% % \end{theorem}
+% % \begin{proof}
+% %   Assume there exists a trajectory \(\tau\) that infinitely visits \(\mathcal{X}_{VF}\). Extract the states visiting \(\mathcal{X}_{VF}\) from \(\tau\) in order to construct a new sequence \(\tau^{\prime} = \langle y_0, y_1, \dots, y_n, \dots \rangle\) where \(y_i \in \mathcal{X}_{VF}\) for all \(i \geq 0\). 
+  
+% %   We prove by induction that \(B_{sp}(y_i) \leq B_{sp}(x_0) - i\epsilon\) for all \(i \geq 0\):
+  
+% %   \begin{itemize}
+% %       \item \textbf{Base Case (\(i=0\))}: By (\ref{bsptop}), \(B_{sp}(y_0) \leq B_{sp}(x_0)\).
+      
+% %       \item \textbf{Inductive Step}: Assume \(B_{sp}(y_k) \leq B_{sp}(x_0) - k\epsilon\) holds for \(i=k\). For \(i=k+1\):
+% %       \begin{itemize}
+% %           \item If \(y_{k+1} \in f(y_k)\): By (\ref{bspni1}), \(B_{sp}(y_k) \geq B_{sp}(y_{k+1}) + \epsilon\).
+          
+% %           \item If \(y_{k+1} \not\in f(y_k)\): Let \(y_{k+1}^{pre}\) denote the predecessor of \(y_{k+1}\). Since \(y_k\) precedes \(y_{k+1}^{pre}\), by (\ref{bspni}) we have:
+% %           \[
+% %           B_{sp}(y_{k+1}^{pre}) \leq B_{sp}(y_k)
+% %           \]
+% %           Combined with (\ref{bspni1}):
+% %           \[
+% %           B_{sp}(y_{k+1}^{pre}) \geq B_{sp}(y_{k+1}) + \epsilon \implies B_{sp}(y_k) \geq B_{sp}(y_{k+1}) + \epsilon
+% %           \]
+% %       \end{itemize}
+% %       Thus, \(B_{sp}(y_{k+1}) \leq B_{sp}(y_k) - \epsilon \leq B_{sp}(x_0) - (k+1)\epsilon\).
+% %   \end{itemize}
+  
+% %   This implies \(B_{sp}(y_i) \leq B_{sp}(x_0) - i\epsilon\) for all \(i \geq 0\). Consequently, there exists \(N > 0\) such that:
+% %   \[
+% %   B_{sp}(y_N) \leq B_{sp}(x_0) - N\epsilon < 0
+% %   \]
+% %   which contradicts Lemma~\ref{bspnnlemma1}. Therefore, no trajectory \(\tau\) can infinitely visit \(\mathcal{X}_{VF}\).
+% %   \end{proof}
+% \begin{theorem}
+%   Given a state persistence certificate $B_{sp}$ with respect to $\mathcal{X}_{VF}$, $\tau$-based state persistence certificates with respect to $\mathcal{X}_{VF}$ for any trajectory $\tau \in \mathfrak{T}(\mathfrak{S})$ can be computed.
+% \end{theorem}
+% \begin{proof}
+%   For any given \emph{trajectory} $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, define $B_{sp}(x) = B_{sp}(x)$. If $B_{sp}$ is a \emph{$\mathrm{type~1}$ state persistence certificate}, (\ref{btpnn}, \ref{btptnn}, \ref{btpni1}) can be satisfied according to (\ref{bspnn}, \ref{bsptnn}, \ref{bspni1}). If $B_{sp}$ is a \emph{$\mathrm{type~2}$ state persistence certificate}, (\ref{btpnn}, \ref{btptnn}, \ref{btpni2}) can be satisfied according to (\ref{bspnn}, \ref{bsptnn}, \ref{bspni2}).
+% \end{proof}
+
+% % Therefore, if we can find a state persistence certificate, it is sufficient to find all trajectory-based state persistence certificates for all \emph{trajectories} in $\mathfrak{T}(\mathfrak{S})$. According to Corollary (\ref{coraollary-persistence}), it can be known that a state persistence certificate can prove persistence of the system $\mathfrak{S}$.
+
+% \subsection{Transition Persistence Certificate}
+% \begin{definition}
+% \label{bsbstct}
+% Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a labelling function $\mathfrak{L}:\mathcal{X} \rightarrow \Sigma$, 
+% and a $\Theta$-based NBA $\mathcal{A}=(\Sigma, Q, Q_0, \delta, Acc_{\Theta})$, we define $\Delta_{k, l} = \{(q_k, \delta, q_l) \mid \mathcal{P}(q_k, \delta, q_l) \land (q_k, \delta, q_l) \in \delta\}$ as the set of transitions that satisfy the predicate $\mathcal{P}$ and move from $q_k$ to $q_l$. 
+% A bounded function $B^{\Theta}_{\Delta_{k, l}}(x): \mathcal{X} \rightarrow \mathbb{R}$ is a \emph{transition persistence certificate} with respect to $\Delta_{k, l}$ such that $i \geq 0, x_0 \in \mathcal{X}_0, x \in \mathcal{X}, x^{\prime} = f(x)$  \\
+% we have:
+% \begin{align}
+% & B^{\Theta}_{\Delta_{k, l}}(x_0) \geq 0, \label{bsstnn} \\
+% & B^{\Theta}_{\Delta_{k, l}}(x) \geq 0 \Rightarrow B^{\Theta}_{\Delta_{k, l}}(x^{\prime}) \geq 0, \label{bssttnn} \\
+% & B^{\Theta}_{\Delta_{k, l}}(x) \geq B^{\Theta}_{\Delta_{k, l}}(x^{\prime}) + I_{\Delta_{k, l}}(q_k, \mathfrak{L}(x), q_l)\epsilon. \label{bsstni}
+% \end{align}
+% \end{definition}
+
+% % \begin{definition}
+% %   \label{bsbstcs}
+% %   Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a labelling function $\mathfrak{L}:\mathcal{X} \rightarrow \Sigma$, and a \emph{state-based} NBA $\mathcal{A}=(\Sigma, Q, Q_0, \delta, Acc_{state})$, a bounded function $B^s_{k, l}(x): \mathcal{X} \rightarrow \mathbb{R}$ is a \emph{transition persistence certificate} such that $i \geq 0, x_0 \in \mathcal{X}_0, (q_k, q_l) \in Acc_{state}^{pair}, x \in \mathcal{X}, x^{\prime} = f(x)$  \\
+% %   we have:
+% %   \begin{align}
+% %     & B^s_{k, l}(x_0) \geq 0, \label{bsstnn2} \\
+% %     & B^s_{k, l}(x) \geq 0 \Rightarrow B^s_{k, l}(x^{\prime}) \geq 0, \label{bssttnn2} \\
+% %     & B^s_{k, l}(x) \geq B^s_{k, l}(x^{\prime}) + I_{Acc_{state}^{k, l}}(q_k, \mathfrak{L}(x), q_l)\epsilon. \label{bsstni2}
+% %   \end{align}
+% % \end{definition}
+
+% \begin{theorem}
+%   \label{thm-tpc1-exp}
+%   If a transition persistence certificate $B^{\Theta}_{\Delta_{k, l}}$ with respect to $\Delta_{k,l}$ exists, then transition persistence certificates $B^{\Theta}_{\tau, k, l}$ with respect to $\Delta_{k, l}$ for any $\tau \in \mathfrak{T}(\mathfrak{S})$ can be computed.
+% \end{theorem}
+
+% \begin{proof}
+% For any \emph{trajectory} $\tau \in \mathfrak{T}(\mathfrak{S})$, we define $B^{\Theta}_{\tau, k, l}(x) = B^{\Theta}_{\Delta_{k, l}}(x)$. The properties of $\tau$-based transition persistence certificte (\ref{bstnn}, \ref{bsttnn}, \ref{bstni}) can be satisfied according the properties (\ref{bsstnn}, \ref{bssttnn}, \ref{bsstni}).
+% \end{proof}
+
+% % \begin{theorem}
+% %   \label{thm-tpc2-exp}
+% %   If a transition persistence certificate $B^s_{k, l}$ can be found on $\mathfrak{S}$, then all trajectory-based transition persistence certificates $B^s_{\tau, k, l}$ for $\tau \in \mathfrak{T}(\mathfrak{S})$ can be computed.
+% % \end{theorem}
+
+% % \begin{proof}
+% %   Given any \emph{trajectory} $\tau \in \mathfrak{T}(\mathfrak{S})$, define $B^t_{\tau, k, l}(x) = B^t_{k, l}(x)$. The properties of trajectory-based transition persistence certificte (\ref{bstsbnn}, \ref{bstsbtnn}, \ref{bstsbni}) can be satisfied according the properties (\ref{bsstnn2}, \ref{bssttnn2}, \ref{bsstni2}).
+% % \end{proof}
+
+% % \begin{theorem}
+% %   Given an LTL specification $\phi$, represented by either a \emph{transition-based} NBA $A_1 = (\Sigma, Q, q_0, \delta_1, Acc_{transition})$ or a \emph{state-based} NBA $A_2 = (\Sigma, P, p_0, \delta_2, Acc_{state})$ for $\lnot \phi$, if we can find all transition persistence certificates $B^t_{k, l}$ for $(k, l) \in Acc_{transition}^{pair}$, or all transition persistence certificates $B^s_{k, l}$ for $(k, l) \in Acc_{state}^{pair}$, then $\mathfrak{S} \models \phi$.
+% % \end{theorem}
+
+% % \begin{proof}
+% % According to the theorem (\ref{thm-tpc1-exp}) and the corollary (\ref{corollary-ltl-tran}), we have $\mathfrak{S} \models \phi$.
+% % \end{proof}
+
+% % \begin{theorem}
+% % Given an $\omega$-regular specification $\phi$, represented by a \emph{state-based} NBA $A = (\Sigma, Q, q_0, \delta_1, Acc_{state,1})$ for $\phi$, and constructing the corresponding complementation $\lnot A = (\Sigma, P, p_0, \delta_2, Acc_{state,2})$, if we can find all transition persistence certificates $B^s_{k, l}$ for all $(k, l) \in Acc_{state,2}^{pair}$, then $\mathfrak{S} \models_{\mathfrak{L}} \phi$.
+% % \end{theorem}
+
+% % \begin{proof}
+% %   According to the theorem (\ref{thm-tpc2-exp}) and the corollary (\ref{corollary-omega-tran}), we have $\mathfrak{S} \models_{\mathfrak{L}} \phi$.
+% % \end{proof}
+% % \begin{theorem}
+% %   If in system $\mathfrak{S}$ we find $B_{k, l}$ with respect to the LTL formula $\phi$ under the labelling function $\mathcal{L}: \mathcal{X} \rightarrow \Sigma$, where $\mathcal{A} = (\Sigma=2^{AP}, Q, Q_0, \delta, Acc)$ is the NBA for $\lnot \phi$, and $\exists \sigma \in Sigma$ such that $(q_k, \sigma q_l) \in Acc_{transition}$, then for any given \emph{trajectory} $\tau = \langle x_0, x_1, \dots, x_n, \dots \rangle$ with $x_0 \in X_0$, $\tau$ can only finitely visit the set 
+% %   \[
+% %   Acc_{k, l} = \{(q_k, \sigma, q_l) \mid (q_k, \sigma q_l) \in Acc_{transition}, \sigma \in \Sigma\}.
+% %   \]
+% % \end{theorem}
+% % \begin{proof}
+% %   Let $\mathcal{X}_{VF} = \{x \mid (q_k, \mathcal{L}(x), q_l) \in Acc_{k, l}, x \in \mathcal{X}\}$. 
+% % Obviously, $I_{Acc_{k, l}}(q_k, \mathcal{L}(x), q_l) = I_{\mathcal{X}_{VF}}(x)$ according to the definitions of $Acc_{k,l}$ and $\mathcal{X}_{VF}$.
+% % We prove that $B_{k, l}$ is a \emph{$\mathrm{type~2}$ system persistence certificate} for $\mathfrak{S}$ with respect to $\mathcal{X}_{VF}$.
+% % (\ref{bsstnn}) ensures that $B_{k, l}(x_0) \geq 0$.
+% % $x \in VF$  iff  $(q_k, \mathcal{L}(x), q_l) \in Acc_{transition}$. 
+% % Therefore, $I_{\mathcal{X}_{VF}}(x) = I_{Acc_{transition}}(q_k, \mathcal{L}(x), q_l)$.
+% % By (\ref{bsstni}), we have $B_{k, l}(x) \geq B_{k, l}(x^{\prime}) + I_{\mathcal{X}_{VF}}(x)\epsilon$.
+% % Therefore, it is guaranteed that $\mathfrak{S}$ visits $\mathcal{X}_{VF}$ finitely often, which ensures that \emph{transition-based runs} of $\mathcal{L}(\tau)$ visits $Acc_{k, l}$ finitely often.
+% % \end{proof}
+% % Then, based on the possible accepting state transitions obtained from $Acc$, we construct corresponding \emph{transition persistence certificates}. These certificates ensures that all system behaviors do not satisfy $\lnot\phi$, thereby proving that $\mathfrak{S} \models_{\mathfrak{L}} \phi$.
+
+% % 系统状态安全证书和系统迁移持久证书，这两个证书都可以用与证明LTL性质， 但是系统迁移持久证书合成存在无法合成的情况，假设系统的确满足LTL规约，但是无法合成迁移持久证书，可以看以下这个例子。 假设要证明性质G \lnot a, 构建F a的自动机 A，左右两个图分别是接受条件是基于状态和基于迁移的，都是表示F a的NBA。可以看到状态0是接受状态，并且是无条件迁移，接受迁移是(0, True, 0) ， 所以任意字符输入0只会迁移到0，假设B_{0, 0}(x_0) \geq 0, B_{0, 0}(x) \geq 0 \Rightarrow B_{0, 0}(x') \geq 0, B_{0, 0}(x) \geq B_{0, 0}(x') + \epsilon. 这几个条件是合成迁移持久证书必须要满足的。尤其是第三个条件，这个条件会导致证书无穷下降，最终导致和前两个条件矛盾，所以无法合成证书。 但是通过状态安全证书就可以解决这个问题，通过判断该接受状态0， 是否能够从1出发到达，如果能够合成状态安全证书，则能够保证该接受状态永远无法到达，则必定是有限访问。 但是如果无法合成状态安全证书，说明要么是存在系统轨迹能够使得A访问到接受状态，那么进一步可以利用迁移持久证书作为相关接受迁移是有限访问的见证， 所以两者结合起来使用能够相互弥补缺陷， 当迁移持久证书无法合成时候可以尝试状态安全证书，当状态安全证书无法合成时，可以尝试合成迁移持久证书。
+% \subsection{Discussion}
+\begin{theorem}[LTL VERIFICATION]
+  \label{ltl-thm}
+   Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$ and an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$ representing the negation of an LTL formula $\phi$. For each accepting transition start state $q_k \in Acc^{start}$ (\ref{atstart}), if we can find either:
+  \begin{enumerate}
+      \item A corresponding state safety certificate $B_k$, or
+      \item Transition persistence certificates $B_{\Delta_{k,l}}$ for all $(k, l) \in Acc^{pair}$ (\ref{atpair}).
+  \end{enumerate}
+  then it can be guaranteed that $\mathfrak{S} \models_{\mathfrak{L}} \phi$.
+\end{theorem}
+\begin{proof}
+  Given an accepting transition start state $q_k \in Acc^{start}$:
+  \begin{enumerate}
+      \item If a state safety certificate $B_k$ is found, by Lemma~(\ref{state-safety-lemma}), all runs of words in $\mathfrak{L}(\mathfrak{S})$ will never visit state $q_k$, preventing all accepting transitions from $q_k$.
+
+      \item For each $(k, l) \in Acc^{pair}$, if transition persistence certificate $B_{\Delta_{k,l}}$ is found where $\Delta_{k,l} = Acc^{k,l}$ (\ref{atkl}), by Lemma~(\ref{transition-persistence-lemma1}), all runs will make accepting transitions from $q_k$ to $q_l$ happen finitely often.
+  \end{enumerate}
+
+  This ensures that all accepting transitions in $Acc$ occur only finitely often. Therefore, the system language is rejected by automaton $\mathcal{A}$, implying $\mathfrak{L}(\mathfrak{S}) \cap \mathfrak{L}(\mathcal{A}) = \emptyset$. Since $\mathfrak{L}(\mathcal{A}) = \mathfrak{L}(\neg \phi)$, we have $\mathfrak{L}(\mathfrak{S}) \subseteq \mathfrak{L}(\phi)$, and consequently $\mathfrak{S} \models_{\mathfrak{L}} \phi$.
+\end{proof}
+
+Theorem~(\ref{ltl-thm}) illustrates the verification of LTL properties using state safety certificates and transition persistence certificates. By constructing the product system $\mathfrak{S} \times \mathcal{A}$ to synchronize the states of system $\mathfrak{S}$ and automaton $\mathcal{A}$, the state safety certificate $B_k$ establishes a barrier over this product system to block the automaton from reaching state $q_k$. The transition persistence certificate $B_{\Delta_{k,l}}$ demonstrates that accepting transitions are visited only finitely many times for any trajectory.
+ 
+%  For LTL property verification, the efficiency can be further improved using transition-based NBA.
+Both state safety certificates and transition persistence certificates can be utilized to prove LTL properties. To illustrate the necessity of the two types of certificates, consider the following scenario where the synthesis of a transition persistence certificate is not feasible. Assume the system indeed satisfies the LTL specification $G \lnot a$, but the transition persistence certificate cannot be synthesized. To prove the property, we firstly construct an NBA $\mathcal{A}$ for $F a$. Note that in Figure \ref{pic-tbnba1}, the alphabet is $\{ \{\},\{a\}\}$, the accepting transitions are $(q_0, \{\}, q_0)$ and $(q_0, \{a\}, q_0)$, so any letter in alphabet as input at $q_0$ only transitions to $q_0$. According to the properties (\ref{bstnn}, \ref{bsttnn}, \ref{bstni}) of transition persistence certificate, $B_{0,0}(x_0) \geq 0$, $B_{0,0}(x) \geq 0 \Rightarrow B_{0,0}(x') \geq 0$, and $B_{0,0}(x) \geq B_{0,0}(x') + \epsilon$ should be satisfied. In particular, the third condition can lead to an infinite descent of the certificate, ultimately resulting in a contradiction with Lemmas (\ref{bspnnlemma0}, \ref{state-persistence-lemma-b0-top}) and making it impossible to synthesize the certificate. This problem is caused by reachability: if the \emph{start state} $q_0$ of the accepting transitions cannot be reached by all runs. However, this problem can be solved using the state safety certificate. By determining whether state $q_0$ can be reached from state $q_1$, if a state safety certificate can be synthesized, it guarantees that $q_0$ is never reached, implying that it is finitely visited. If there exists a \emph{trajectory} that allows $\mathcal{A}$ to visit $q_0$, then the state safety certificate cannot be synthesized. In such cases, the transition persistence certificate can serve as a witness that the relevant accepting transitions are finitely visited. Therefore, the combination of these two can complement each other's limitations.
+
+% \begin{figure}
+%   \centering
+%   \includegraphics[width=0.4\textwidth]{pic/sbnba2.eps}
+%   \caption{This is a state-based NBA that represents the LTL formula $a \land G~F~b$}
+%   \label{pic-sbnba2}
+% \end{figure}
+
+% 此外我们注意到提到state safety 和 transition persistence certificate 在无论基于迁移还是基于状态作为接受条件的NBA上都可以使用，为什么要专门提出基于迁移条件上的NBA用来作为描述载体。注意Figure \ref{pic-sbnba2}这个基于状态的NBA， 是用于描述LTL公式$a \land GFb$，但是对比Figure \ref{pic-tbnba2}, 基于迁移的NBA，两者描述的是相同的NBA，我们这里暂且将两者分别记为\mathcal{A}_1, \mathcal{A}_2, 但是我们发现\mathcal{A}_1会有更多状态。利用state safety certificate时，两者都是为了阻断从状态0到达状态1， \mathcal{A}_1期望利用state safety certificate阻止从状态0转换到接受状态1， \mathcal{A}_2是期望利用state safety certificate阻止从状态0迁移到接受迁移(1, {b}, 1)的起点即状态1. 在transition persistence certificate时， \emph{transition-based} NBA只需要阻止$(1, \{b\}, 1)$， 而state-based NBA需要阻断(0, \{a, b\}, 1), (1, \{b\}, 1), (2, \{b\}, 1)这三条指向接受状态的入边，需要合成更多的证书。所以在验证LTL性质时，采用transition-based NBA会有更高的效率。在验证$\omega$-regular性质时， 目前只采用state-based NBA, 因为存在相关的求补自动机算法。
+
+% In addition, we note that state safety certificates and transition persistence certificates can be applied to NBA whether they are \emph{transition-based} or \emph{state-based}. However, the question arises as to why \emph{transition-based} NBAs are specifically proposed in this paper. For LTL property verification, the efficiency can be further improved using transition-based NBA. Both state safety certificates and transition persistence certificates can be utilized to prove LTL properties. Consider Figure \ref{pic-sbnba2}, which depicts a \emph{state-based} NBA $\mathcal{A}_1$ used to describe the LTL formula $a \land GFb$. In contrast, Figure \ref{pic-tbnba2} illustrates a \emph{transition-based} NBA $\mathcal{A}_2$ to represent $a \land GFb$. We use $p$ and $q$ to represent the states of $\mathcal{A}_1$ and $\mathcal{A}_2$, respectively. Both figures represent the same formula. We observe that $\mathcal{A}_1$ has more states. When utilizing the state safety certificate, $\mathcal{A}_1$ seeks to cut off the simple paths from state $p_0$ to the accepting state $p_1$, while $\mathcal{A}_2$ aims to block the simple paths to the \emph{start state} $q_1$ of the accepting transition $(q_1, \{b\}, q_1)$ from $q_0$. Regarding the transition persistence certificate, \emph{transition-based} NBA $\mathcal{A}_2$ only needs to block the transition $(q_1, \{b\}, q_1)$, whereas a \emph{state-based} NBA must block three transitions to accepting states: $(p_0, \{a, b\}, p_1)$, $(p_1, \{b\}, p_1)$, and $(p_2, \{b\}, p_1)$. That means we need to synthesize more certificates. Therefore, when verifying LTL properties, we would like to employ \emph{transition-based} NBAs because they yield higher efficiency.
+% Currently, for verifying $\omega$-regular properties, only \emph{state-based} NBAs are used because relevant algorithms for complementing automata exist.
+
+\section{Compared with Other Methods}
+In the context of this discussion, we assume that the NBA for an LTL specification $\phi$ has already been constructed. The translation from an LTL formula to an NBA involves an exponential complexity with respect to the size of the formula \cite{vardi2005automata}. The complexity of constructing the complement of an NBA is known to be EXPTIME \cite{complementnba}.
+% On the other hand, constructing the complement of an LTL formula is linear time. 
+% 下面对比的三种方法中使用的都是state-based NBA, 
+\subsection{The state-triplet Approach}
+Barrier certificate (\ref{SCDEF}) separates the safe region $\mathcal{X}_{safe}$ from the unsafe region $\mathcal{X}_{u}$, ensuring that the system state remains within $\mathcal{X}_{safe}$ at all times and thus preventing the system behavior from visiting $\mathcal{X}_{u}$. If consider $\mathcal{X}_{VF}$ as the unsafe set, finding the corresponding barrier certificate $B$ can guarantee the persistence of the system with respect to $\mathcal{X}_{VF}$. The state-triplet approach leverages barrier certificates to cut off all simple paths from the initial state \(q_0\) to any accepting state in the NBA automaton representing the complement of the LTL specification $\phi$. If one can find all certificates for all simple paths, this method ensures that runs of \emph{words} in $\mathfrak{L}(\mathfrak{S})$ never visit any accepting state, consequently, \(\mathfrak{S} \models_{\mathfrak{L}} \phi\).
+
+The concept of reachability is consistent between the \emph{state safety certificate} and the state-triplet approach, but the \emph{state safety certificate} achieves this by leveraging barrier certificates on the product system $\mathfrak{S} \times \mathcal{A}$. While the state-triplet needs to block all simple paths leading to accepting states from $q_0$, the number of certificates in the state-triplet method is related to the number of triplets. In addition, by finding a state safety certificate, it can avoid the need to unroll the automaton and expand all simple paths and then block them individually. The \emph{transition persistence certificate} proposed in this paper allows runs of \emph{words} in $\mathfrak{L}(\mathfrak{S})$ to visit accepting states but ensures that they visit accepting transitions finitely often by enforcing a decrease in the certificate value.
+
+% So combination of state safety certificates and transition persistence certificate, 在保证原有能力的同时，也能验证简单路径可达的并且有限访问的性质验证，减缓了三元组方法的保守性。
+
+The combination of state safety certificates and transition persistence certificates can alleviate the conservatism of the state-triplet method. While maintaining its original capability of proving that a system satisfies specifications by cutting off reachability, this combination can also verify systems where there exist runs that can reach accepting states from $q_0$ and meet the specifications.
+
+\subsection{Closure Certificate}
+According to the definition of the LTL closure certificate (\ref{LTLCC}), the certificate is defined on $\mathcal{X} \times Q \times \mathcal{X} \times Q$. The increase in state dimensionality leads to longer synthesis times in practice. Therefore, searching for an LTL closure certificate imposes a heavy computational burden. For our certificates, whether it is the transition persistence certificate defined on $\mathcal{X}$ or the state safety certificate defined on $\mathcal{X} \times Q$, the state space is smaller compared to that of the closure certificate. Additionally, the number of transition persistence certificates is related to $|Acc^{pair}|$, and the number of state safety certificates is related to $|Acc^{start}|$. Thus, the search space for all certificates is at most $\mathcal{X} \times Q \times Q$. Subsequent case studies will demonstrate that for cases previously involving closure certificates \cite{murali2024closure}, the time required to synthesize the state safety certificates and transition persistence certificates can be completed in seconds, resulting in a significant improvement in synthesis efficiency.
+
+\section{Synthesis}
+\subsection{SMT-based Approach}
+Counterexample-guided Inductive Synthesis (CEGIS) \cite{solar2008program} has widespread applications in the synthesis of barrier certificates. We consider adopting the CEGIS method to synthesize \emph{state safety certificates} and \emph{transition persistence certificates}. To find the state safety certificates defined in (\ref{state-safety-certificate-definition}), given a user-defined set of monomial functions $F_{basis, k} = \{p_{k,1}(x, q), \dots, p_{k,z_k}(x,q)\}$ and an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$, where $p_{k, i}$ is a monomial defined on $\mathcal{X} \times Q$ with a degree not exceeding $D$, we define the template function $B_{k, temp}(x, q) = \sum_{i=1}^{z_k} c_{k, i} p_{k, i}(x, q)$ with respect to $q_k \in Acc^{start}$, where $c_{k,i} \in \mathbb{R}$ are the coefficients to be determined. The function value of $B_{k, temp}$ can only be determined when $x$, $q$ and the coefficients $c_{k, i}$ are given. Our goal is to find the coefficients $c_{k, i}$ and $\epsilon$ that satisfy the definition in (\ref{systempc}).
+
+The main idea of this method is to find candidate certificates $B_{k, c}$ by sampling states and encoding the conditions (\ref{bsinn1}, \ref{bsun1}, \ref{bstnn1}) into SMT queries related to these states.
+We denote these SMT queries as a set $SQ$.
+There are two main steps: first, find a candidate certificate based on $SQ$; second, check its validity and saturate $SQ$. The SMT solver uses $SQ$ to find a candidate certificate $B_{k, c}$.
+Then, $B_{k, c}$ is checked for its validity.
+If counterexamples are collected during the verification process, new SMT queries for these counterexamples are added into $SQ$,
+and we return to the first step to find a new candidate certificate $B_{k, c}$.
+If no counterexample is found, that means $B_{k,c}$ is a \emph{valid state safety certificate}, as it satisfies all conditions (\ref{bsinn1}, \ref{bsun1}, \ref{bstnn1}).
+The search for candidate certificates $B_{k, c}$ continues until a valid certificate is found or the maximum number of iterations is exceeded.
+%Assume $|f(x)|=1$, i.e. $f$ is a state transition function.
+$x^{\prime} = f(x)$ represents the state following $x$.
+In the first step, the goal is to determine the values of $c_{k,i}$ and get a candidate certificate $B_{k,c}$. We sample $N_1, N_2, N_3$ states from $\mathcal{X}_0 \times \{q_0\}, \mathcal{X} \times Q, \mathcal{X} \times Acc^{start}$ to form $S_1, S_2, S_3$, which are encoded as SMT queries as follows:
+\begin{align}
+  &\bigwedge_{x \in S_1} B_{k, temp}(x) \geq 0, \label{smtbsst0}\\
+  &\bigwedge_{x \in S_2} B_{k, temp}(x) \geq 0 \Rightarrow B_{k, temp}(x^{\prime}) \geq 0, \label{smtbsst1}\\
+  &\bigwedge_{x \in S_3} B_{k, temp}(x) < 0. \label{smtbsst2}
+\end{align}
+Assuming that there exists $c_{k, i}$ that can satisfy all constraints (\ref{smtbsst0}, \ref{smtbsst1}, \ref{smtbsst2}),
+we use $c_{k,i,m}$ to represent the corresponding model of $c_{k,i}$.
+$c_{k, i, m}$ are substituted into $B_{k, temp}(x)$ to obtain a candidate state safety certificate $B_{k, c}(x)$. The goal of the second step is to discover counterexamples in $\mathcal{X} \times Q$ that violate (\ref{bsinn1}, \ref{bsun1}, \ref{bstnn1}). We encode negations of (\ref{bsinn1}, \ref{bsun1}, \ref{bstnn1}) as SMT queries. If any of these conditions are violated, the corresponding counterexamples are added into $S_i$ and add corresponding conditions (\ref{smtbsst0}, \ref{smtbsst1}, \ref{smtbsst2}) as SMT queries into $SQ$ to further constrain $c_{k, i}$. The encoding is as follows:
+\begin{align}
+&x \in \mathcal{X}_0 \land B_{k, c}(x, q_0) < 0, \label{smtbssc0} \\
+&x \in \mathcal{X} \land q \in Q \land (q, \mathfrak{L}(x), q') \in \delta \land B_{k, c}(x, q) \geq 0 \land B_{k, c}(x, q') < 0, \label{smtbssc1} \\
+&x \in \mathcal{X}_u \land q \in Acc^{start} \land  B_{k, c}(x, q) \geq 0. \label{smtbssc2}
+\end{align}
+
+Next, we will synthesize transition persistence certificates in (\ref{bsbstct}). Given an NBA $\mathcal{A}=(\Sigma, Q, q_0, \delta, Acc)$, and a set of monomial functions $F_{basis, k, l} = \{p_{k, l, 1}(x), \dots, p_{k, l, z_{k,l}}(x)\}$ where $(k, l) \in Acc^{pair}$, and then provide the corresponding certificate template $B_{k, l, temp}(x) = \sum_{i=1}^{z_{k,l}} c_{k,l,i}p_{k,l,i}(x)$. Then encode the conditions (\ref{bstnn}, \ref{bsttnn}, \ref{bstni}) for $c_{k, l, i}$ and $\epsilon_t$. $x^{\prime} = f(x)$ represents the state following $x$. In the first step, the goal is to determine the values of $c_{k, l, i}$ and $\epsilon_t$, and then get candidate certificate $B_{k, l, c}$. We sample $N_1, N_2$ state from $\mathcal{X}_0, \mathcal{X}$ to form $S_1$ and $S_2$, which are encoded as SMT queries as follows:
+\begin{align}
+&\bigwedge_{x \in \mathcal{S}_1} B_{k, l, temp}(x) \geq 0, \label{smtbstpt0}\\
+&\bigwedge_{x \in \mathcal{S}_2} B_{k, l, temp}(x) \geq 0 \Rightarrow B_{k, l, temp}(x^{\prime}) \geq 0, \label{smtbstpt1}\\
+&\bigwedge_{x \in \mathcal{S}_2} (q_k, \mathfrak{L}(x), q_l) \not\in Acc^{k, l} \land B_{k, l, temp}(x) \geq B_{k, l, temp}(x^{\prime}), \label{smtbstpt2}\\
+&\bigwedge_{x \in \mathcal{S}_2} (q_k, \mathfrak{L}(x), q_l) \in Acc^{k, l} \land B_{k, l, temp}(x) \geq B_{k, l, temp}(x^{\prime}) + \epsilon_t. \label{smtbstpt3}
+\end{align}
+
+If solver can find $c_{k, l, i}$ and $\epsilon_{t}$ that satisfy constraints (\ref{smtbstpt0}, \ref{smtbstpt1}, \ref{smtbstpt2}, \ref{smtbstpt3}), then substitute the corresponding models $c_{k, l, i, m}$ into $B_{k, l, temp}$ to obtain the candidate certificate $B_{k, l, c}$. We encode negations of (\ref{bstnn}, \ref{bsttnn}, \ref{bstni}) as SMT queries and substitute $\epsilon_{m}$ into these queries. We have:
+\begin{align}
+  &x \in \mathcal{X}_0 \land B_{k, l, c}(x) < 0, \label{smtbstpc0}\\
+  &x \in \mathcal{X} \land B_{k, l, c}(x) \geq 0 \land B_{k, l, c}(x^{\prime}) < 0, \label{smtbstpc1}\\
+  &x \in \mathcal{X} \land (q_k, \mathfrak{L}(x), q_l) \in Acc^{k, l} \land B_{k, l, c}(x) < B_{k, l, c}(x^{\prime}) + \epsilon_{m}, \label{smtbstpc2}\\
+  &x \in \mathcal{X} \land (q_k, \mathfrak{L}(x), q_l) \not\in Acc^{k, l} \land B_{k, l, c}(x) < B_{k, l, c}(x^{\prime}). \label{smtbstpc3}
+\end{align}
+Typically, CEGIS does not guarantee termination on uncountable state spaces; however, algorithms leveraging $\delta$-completeness, such as branch-and-prune \cite{gao2012delta, kong2018delta}, can ensure termination of the decision process. These algorithms return that either $\phi$ is unsatisfiable or a model of $\phi_{\delta}$, where $\phi_{\delta}$ is a weaker consequence of $\phi$ such that $\phi \Rightarrow \phi_{\delta}$. It can ensure that the model has one-sided $\delta$-bounded errors. 
+% While the returned model cannot guarantee satisfaction of $\phi$, it can ensure that the model has one-sided, $\delta$-bounded errors. 
+
+% 在实现过程中发现z3通过SolverFor调用NLSat求解非线性多项式理论\cite{jovanovic2013solving}上的公式效率很高，对于任意输入的非线性多项式约束系统，算法总能给出可满足或者不可满足的结论，通过Tarski定理和圆柱代数分解(CAD)，这些数学工具本身具有完备性。 CAD本身是双指数复杂度，
+\subsection{SOS}
+% A subset $ \mathcal{A} \subseteq \mathbb{R}^n $ is \textit{semi-algebraic} if there exists a vector of polynomial functions $ h $ such that $ \mathcal{A} = \{x \mid h(x) \geq 0 \} $,
+% where $ \geq 0 $ applies component-wise. Given an NBA A = $(\Sigma, Q, q_0, \delta, Acc)$, Following we want to synthesize the transition persistence certificate $B_{k, l}$ where $(k, l) \in Acc^{pair}$, Using SOS (Sum-of-Squares) synthesis for certificates, consider the sets $ \mathcal{X}, \mathcal{X}_{0}, \mathcal{X}_{transition}^{k, l}, \mathcal{X} \backslash \mathcal{X}_{transition}^{k, l}$ as semi-algebraic sets, i.e.,
+% there exist $ g_{\mathcal{X}} $, $ g_{\mathcal{X}_0} $, $g_{\mathcal{X}_{transition}^{k, l}}$, $g_{\mathcal{X} \backslash \mathcal{X}_{transition}^{k, l}}$ such that $ \mathcal{X} = \{x \mid g_{\mathcal{X}}(x) \geq 0 \} $ and $ \mathcal{X}_{0} = \{x \mid g_{\mathcal{X}_0}(x) \geq 0 \} $, $ \mathcal{X}_{transition}^{k,l} = \{x \mid g_{\mathcal{X}_{transition}^{k,l}}(x) \geq 0 \} $,$ \mathcal{X} \backslash \mathcal{X}_{transition}^{k,l} = \{x \mid g_{\mathcal{X} \backslash \mathcal{X}_{transition}^{k,l}}(x) \geq 0 \} $. We define the following polynomials:
+A subset $\mathcal{A} \subseteq \mathbb{R}^n$ is \textit{semi-algebraic} if there exists a polynomial functions $h:\mathbb{R}^n \rightarrow \mathbb{R}_{\geq 0}$ such that $\mathcal{A} = \{x \mid h(x) \geq 0\}$. Given an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$, we want to synthesize the transition persistence certificate $B_{k, l}$ where $(k, l) \in Acc^{pair}$ by SOS programming \cite{parrilo2003semidefinite}. Consider the sets $\mathcal{X}, \mathcal{X}_{0}, \mathcal{X}_{\text{transition}}^{k, l}, \mathcal{X} \backslash \mathcal{X}_{\text{transition}}^{k, l}$ as semi-algebraic sets where $\mathcal{X}_{\text{transition}}^{k, l} = \{x \mid (q_k, \mathfrak{L}(x), q_l) \in Acc^{k, l}\}$, i.e.,
+there exist $g_{\mathcal{X}}$, $g_{\mathcal{X}_0}$, $g_{\mathcal{X}_{\text{transition}}^{k, l}}$, $g_{\mathcal{X} \backslash \mathcal{X}_{\text{transition}}^{k, l}}$ such that $\mathcal{X} = \{x \mid g_{\mathcal{X}}(x) \geq 0\}$, $\mathcal{X}_{0} = \{x \mid g_{\mathcal{X}_0}(x) \geq 0\}$, $\mathcal{X}_{\text{transition}}^{k,l} = \{x \mid g_{\mathcal{X}_{\text{transition}}^{k,l}}(x) \geq 0\}$, $\mathcal{X} \backslash \mathcal{X}_{\text{transition}}^{k,l} = \{x \mid g_{\mathcal{X} \backslash \mathcal{X}_{\text{transition}}^{k,l}}(x) \geq 0\}$. We define the following polynomials:
+% \begin{align}
+% &B_{ss}(x_0) - \lambda_{\mathcal{X}_0} g_{\mathcal{X}_0}(x_0), \label{sos1} \\
+% &B_{ss}(x^{\prime}) - \beta B_{sp}(x) - \lambda_{\mathcal{X}} g_{\mathcal{X}}(x), \label{sos2} \\
+% &\alpha - B_{sp}(x) - \lambda_{\mathcal{X}_u} g_{\mathcal{X}_u}(x). \label{sos3}
+% \end{align}
+% The certificate synthesis reduces to proving that (\ref{sos1}), (\ref{sos2}), and (\ref{sos3}) are sum-of-squares (SOS) polynomials.
+% where $ x^{\prime} = f(x) $, and the multipliers for relatexation $ \lambda_{\mathcal{X}_0} $, $\lambda_{\mathcal{X}}$, $ \lambda_{\mathcal{X}, \mathcal{X}} $, and $ \lambda_{\mathcal{X}, VF} $ are sum-of-squares over variables defined over $ \mathcal{X} $, $ \mathcal{X} \times \mathcal{X} $, and $ \mathcal{X} \times \mathcal{X}_{VF} $, respectively. The parameters $ \epsilon $ and $\beta$ are positive real numbers.
+% \begin{lemma}
+%   Assuming that $\mathcal{X}_0$, $\mathcal{X}$ and $\mathcal{X}_{VF}$ are semi-algebraic sets, and there exists a sum-of-squares (SOS) polynomial $B_{sp}$ satisfying conditions (\ref{sos1}), (\ref{sos2}), and (\ref{sos3}), then $B_{sp}$ is a \textit{first-type system persistence certificate}.
+% \end{lemma}
+% Following the \emph{transition persistence certificate}, we define the following polynomials:
+\begin{align}
+  &B_{k, l}(x) - \lambda_{\mathcal{X}_0} g_{\mathcal{X}_0}(x), \label{sos11} \\
+  &B_{k, l}(x^{\prime}) - \beta B_{k, l}(x) - \lambda_{\mathcal{X}} g_{\mathcal{X}}(x), \label{sos22} \\
+  &B_{k, l}(x) - B_{k, l}(x^{\prime}) - \epsilon - \lambda_{\mathcal{X}_{transition}^{k, l}} g_{\mathcal{X}_{transition}^{k, l}}(x), \label{sos33} \\
+  &B_{k, l}(x) -  B_{k, l}(x^{\prime}) - \lambda_{\mathcal{X} \backslash \mathcal{X}_{transition}^{k, l}} g_{\mathcal{X} \backslash \mathcal{X}_{transition}^{k, l}}(x). \label{sos44}
+\end{align}
+We encode (\ref{bsttnn}) into (\ref{sos22}) and (\ref{sos22}) is a stronger condition compared to (\ref{bsttnn}). The multipliers $\lambda_{\mathcal{X}_0}, \lambda_{\mathcal{X}}, \lambda_{\mathcal{X}_{transition}^{k, l}} and \lambda_{\mathcal{X} \backslash \mathcal{X}_{transition}^{k, l}}$ are sum-of squares over the state variable $x$.  We assign a positive real number to $\beta$. The certificate synthesis problem reduces to verifying that polynomials (\ref{sos11}), (\ref{sos22}), (\ref{sos33}) and (\ref{sos44}) are SOS.
+\begin{lemma}
+  Given an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$, assuming that: $ \mathcal{X}$, $ \mathcal{X}_{0}$, $\mathcal{X}_{transition}^{k,l}$, and $\mathcal{X} \backslash \mathcal{X}_{transition}^{k,l}$ are semi-algebraic sets, and there exists an SOS polynomial $B_{k, l}(x)$ satisfying conditions (\ref{sos11}), (\ref{sos22}), (\ref{sos33}) and (\ref{sos44}), then $B_{k, l}$ is a \textit{transition persistence certificate} with respect to $Acc^{k, l}$ (\ref{atkl}).
+\end{lemma}
+
+To determine whether the above expressions are SOS, there are tools like \texttt{SOSTOOLS} \cite{prajna2002introducing} and \texttt{SumOfSquares} \cite{Yuan_SumOfSquares_py}. The complexity of verifying the SOS property of the certificate is $\mathcal{O}\left( \binom{n+d}{d}^2 \right) $\cite{parrilo2003semidefinite}, where $ n $ represents the dimensionality of state space  and $ 2d $ is the degree of the polynomial. The complexity of verifying LTL polynomial specifications using \emph{transition persistence certificates} is $\mathcal{O}\left( 2^{2 \mid \phi \mid } \times \binom{n+d}{d}^2 \right)$, where $|\phi|$ denotes the size of the LTL formula (number of literals). The SOS method is a sufficient condition method, which may exclude valid certificates that satisfy the certificate conditions but are not in the form of sums of squares. Therefore, it leads to conservatism due to the stronger satisfaction conditions.
+
+% \subsection{Co-Büchi Certificate}
+% The check boundary K has not been theoretically proven, and additionally, it introduces extra counting states. $\mathcal{X} \times Q \times \bar{K}$.
+
+\section{Case Study}
+% 通过实验演示system persistence certificate关于Kuramoto oscillator和two-room temperature模型。 在第二个实验作用考虑用LTL描述从初始状态出发，有限次访问VF。
+We use Kuramoto oscillators \cite{guo2021overviews} and a two-room temperature model \cite{anand2024compositional} to demonstrate the process and efficiency of the proposed synthesis methods.
+% We experimentally demonstrate the utility of closure certificates on Kuramoto oscillators and a two-room temperature model. 
+In the first example, we consider the problem of safety verification. Here, we use LTL formula to represent safety and show that the safety of a one-dimensional and a two-dimensional Kuramoto oscillator can be verified by state safety certificates. In the second example, we consider the problem of persistence verification of a two-room temperature model and search for a transition persistence certificate. The reference machine is running Ubuntu 22.04.3 LTS (Intel i7-9750H with 8 GB of RAM).
+\subsection{Kuramoto Oscillator}
+The Kuramoto model has been used widely to describe chemical and biological osillators, with applications in neuroscience and modern power system analysis. As a first case study, we consider
+a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0,  f)$ to model a Kuramoto oscillator whose
+dynamics are taken from \cite{murali2024closure}, where $\mathcal{X} = [ 0, 2\pi ]$ indicates the state
+set, $\mathcal{X}_0 = [\frac{4\pi}{9}, \frac{5\pi}{9}]$ the initial set of states, and $\mathcal{X}_u = [\frac{7\pi}{9}, \frac{8\pi}{9}]$ denotes the unsafe set of states. The state transition function $f$ is defined as:
+$$f(x)=x + t_s\Omega+t_sKsin(-x)-0.532x^2+1.69,$$
+where $x \in \mathcal{X}$ indicates the phase of the oscillator, $t_s$=0.1 is the sampling time, $\Omega$=0.01 is the natural frequency, and $K = 0.0006$ is the coupling strength.
+
+Firstly, we define $AP=\{a\}$, and use an LTL formula $G \lnot a$ to describe the safety of $\mathfrak{S}$ with respect to $\mathcal{X}_u$, and we define labelling function:
+\[
+\mathfrak{L}(x) =
+\begin{cases} 
+  \{a\} & \text{if }x \in \mathcal{X}_u \\
+  \{\} & \text{otherwise}\\
+\end{cases}
+\]
+We use an NBA $\mathcal{A}=(2^{AP}, Q, q_1, \delta, Acc)$ in Figure \ref{pic-tbnba1} to represent the LTL formula $F a$, the negation of the specification $G \lnot a$. We want to find the state certificate $B_{0}(x, q)$ to block all accepting transitions $(0, \{\}, 0)$, $(0, \{a\}, 0)$ whose \emph{start states} are all $q_0$. To do so, we use the CEGIS approach and define a template function as:
+\begin{align*}
+  B_{0, temp}(x, q) = c_{0, 0} + c_{0, 1}x + c_{0, 2}x^2 + c_{0, 3}x^3 + \\
+  c_{0, 4}x^4 + c_{0, 5}q + c_{0, 6}q^2 + c_{0, 7}q^3 + c_{0, 8}xq
+\end{align*}
+where $x \in \mathcal{X}$ and $q \in Q$. We sample 629 and 35 states from $\mathcal{X}$ and $\mathcal{X}_0$, we have $Q=\{0, 1\}$, $Acc^{start} = \{0\}$. According to (\ref{smtbsst0}, \ref{smtbsst1}, \ref{smtbsst2}), we encode corresponding z3 \cite{de2008z3} queries to find candidate certificates. As z3 cannot handle the function $sin(-x)$, we instead use dReal \cite{gao2013dreal} to find counterexamples according to (\ref{smtbssc0}, \ref{smtbssc1}, \ref{smtbssc2}) and set the precision of dReal to 0.0001. Finally, we find the \emph{state safety certificate} $B_0(x, q) = -1 + 2q^2-\frac{7}{16}xq$ that demonstrates the safety with respect to $\mathcal{X}_u$. The time taken for the CEGIS loop to terminate is around 4.25 seconds on the reference machine.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.3\textwidth]{pic/tbnba1.eps}
+  \caption{This is an NBA that represents the LTL formula $F a$ and the red labelled transition is an accepting transition.}
+  \label{pic-tbnba1}
+\end{figure}
+
+% We now cast the problem of safety verification as a problem of
+% verifying a system against the LTL formula $G \lnot a$, over the set of
+% atomic propositions $AP = \{a\}$, where a state is marked with label
+% $\{a\}$ if it is unsafe. The complement of this specification is $F a$, and
+% the NBA $\mathcal{A}$ representing this is described in Figure \ref{pic-tbnba1}. 
+We consider the system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$ to be a two-dimensional Kuramoto
+oscillator, where $\mathcal{X}= [0, \frac{8\pi}{9}] \times [0, \frac{8\pi}{9}]$ denotes the state set, $\mathcal{X}_0 = [0, \frac{\pi}{9}] \times [0, \frac{\pi}{9}]$ denotes the initial set of states, $\mathcal{X}_{u} = (\mathcal{X} \times [ \frac{5\pi}{6}, \frac{8\pi}{9}]) \cup ([ \frac{5\pi}{6}, \frac{8\pi}{9}] \times \mathcal{X})$ denotes the set of unsafe states and the transition function $f$ is defined as: 
+$$
+  f(x_1, x_2) = 
+  \begin{bmatrix} 
+  x_1 \\ 
+  x_2 
+  \end{bmatrix} 
+  + 
+  \begin{bmatrix} 
+    t_s \Omega + 1.69 \\ 
+    t_s \Omega + 1.69 
+  \end{bmatrix} 
+  + K t_s 
+  \begin{bmatrix} 
+  \sin(x_2 - x_1) \\ 
+  \sin(x_1 - x_2) 
+  \end{bmatrix} 
+  - 0.532 t_s 
+  \begin{bmatrix} 
+  x_1^2 \\ 
+  x_2^2 
+  \end{bmatrix}
+$$
+where $(x_1, x_2) \in \mathcal{X}$ indicates the phase of the oscillators, and the
+remaining constants have the same values as the one-dimensional
+case. we define labelling function:
+\[
+\mathfrak{L}(x_1, x_2) =
+\begin{cases} 
+  \{a\} & \text{if }x_1 \in [ \frac{5\pi}{6}, \frac{8\pi}{9}]\text{ or }x_2 \in [
+    \frac{5\pi}{6}, \frac{8\pi}{9}] \\
+  \{\} & \text{otherwise}\\
+\end{cases}
+\]
+We still use $\mathcal{A}$ to represent safety specification in Figure \ref{pic-tbnba1}.
+We consider the template function of the \emph{state safety certificate} to be:
+$$B_{0,temp}(x_1, x_2, q) = c_0 + c_1x_1 + c_2x_2^2 + c_3x_1x_2 + $$
+$$c_4x_1^3 + c_5q + c_6q^2 + c_7qx_1^2 + c_8x_2q$$
+% for all states $(x_1, x_2) \in \mathcal{X}$ and NBA states $q \in Q$.
+We then search for the \emph{state safety certificate} via the CEGIS method. 
+% To do so, we encode the conditions as a linear program, and set the
+% s-procedure coefficients of \tau_1 = 1 for the conditions (24) and the
+% values of 휏2 = 1, and 휏3 = 0 for conditions (25) to find a candidate
+% closure certificate. To speed up the search for counterexamples,
+% we randomly sample states and check if the conditions fail to hold. If
+% so we have found a counterexample. If no such counterexample
+% is found, we then formulate a query in dReal to search for a valid
+% counterexample. We repeat this process until no counterexamples
+% are found. 
+% where $(x_1, x_2) \in \mathcal{X}$ and $q \in Q$.
+We find the \emph{state safety certificate}: $$B_0(x_1, x_2, q) = -1 +  \frac{1}{8}x_1x_2 + \frac{3}{2}q^2 - \frac{3}{32}qx_1^2 - \frac{153}{512}x_2q$$ that demonstrates safety. 
+The time taken for this CEGIS loop to terminate is around 7.27 seconds on the reference machine. 
+
+The time taken for the CEGIS loop to synthesize a persistence closure certificate is around 10 minutes for 1-dimension problem and synthesize a LTL closure certificate is around an hour and 50 minutes for 2-dimension problem on a machine running MacOS 11.2 (Intel i9-9980HK with 64 GB of RAM) \cite{murali2024closure}.
+
+\subsection{Two Room Temperature Model}
+As a second case study, we consider our system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$ to be
+an interconnected two-room temperature model, where $\mathcal{X} = [20, 34] \times [20, 34]$ indicates the temperature of these two rooms, $\mathcal{X}_0 = [21, 24] \times [21, 24]$ denotes the initial set of states, and the transition function is defined as:
+$$
+f(x_1, x_2) = A 
+\begin{bmatrix}
+  x_1 \\
+  x_2
+\end{bmatrix}
++\mu T_h 
+\begin{bmatrix}
+  u(x_1) \\
+  u(x_2)
+\end{bmatrix}
++
+\theta
+\begin{bmatrix}
+  T_e \\ 
+  T_e
+\end{bmatrix}
+$$
+where $x_i$ represents the temperature of room $i$, for all $i \in \{1, 2\}$, the
+matrix $A$ is:
+$$
+A = 
+\begin{bmatrix}
+  1 - 2\alpha - \theta - \mu u(x_1) & \alpha \\
+  \alpha & 1 - 2\alpha - \theta - \mu u(x_2)
+\end{bmatrix}
+$$ 
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.3\textwidth]{pic/tbnba2.eps}
+  \caption{This is an NBA that represents the LTL formula $a \land G F b$.}
+  \label{pic-tbnba2}
+\end{figure}
+
+where constants $\alpha = 0.004$, $\theta = 0.01$, and $\mu = 0.15$ represent the
+conduction factors. The function $u(x)$ denotes the temperature controller,
+which is defined as $u(x_i) = 0.59 - 0.011x_i$. The value $T_h = 40$ denotes the heater temperature in 40 degrees Celsius, and $T_e = 0$ represents the ambient temperature. In this setting, we hope that any \emph{trajectory} of the system starting from $\mathcal{X}_0$ must visit the region $[20, 26] \times [20, 26]$ finitely often.
+
+ 
+% This property requires that a system that starts from a state with atomic proposition $a$ does not visit the states with atomic proposition $b$ infinitely often. 
+We consider the atomic propositions $AP = \{a, b\}$, and the alphabet $\Sigma = \{\{\}, \{a\}, \{b\}, \{a, b\}\}$. Here, we mark the states $(x_1, x_2) \in \mathcal{X}_0$ with the atomic proposition $a$. We mark a state $(x_1, x_2) \in \mathcal{X}$ with atomic proposition $b$ if $(x_1, x_2) \in [20, 26] \times [20, 26]$. All other states are not marked with any atomic proposition. Observe that a state $(x_1, x_2)$ may be
+marked with both atomic propositions $a$, and $b$, or neither. We
+define the labelling function as:
+\[
+\mathfrak{L}(x_1, x_2) =
+\begin{cases} 
+  \{a, b\} & \text{if }(x_1, x_2)\text{ is marked with both }a, b \\
+  \{a\} & \text{if }(x_1, x_2)\text{ is marked with only }a \\
+  \{b\} & \text{if }(x_1, x_2)\text{ is marked with only }b \\
+  \{\} & \text{otherwise}\\
+\end{cases}
+\]
+
+We use an LTL formula $a \Longrightarrow F\text{ }G\text{ }\lnot b$ to describe the specification. The negation of the specification is $a \land G F b$ and an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$ in Figure \ref{pic-tbnba2} describes this formula. Firstly, we use the CEGIS method to synthesize the \emph{state safety certificate} $B_1(x, q)$ to check the reachability from $q_0$ to $q_1$. The synthesis fails, taking 16.24 seconds on the reference machine. This proves that there may exist a system \emph{trajectory} that makes the automaton $\mathcal{A}$ transition from $q_0$ to $q_1$. Therefore, we attempt to synthesize the \emph{transition persistence certificate}.\\
+We consider a template function of the \emph{transition persistence certificate} specified as:
+\begin{align*}
+  & B_{1, 1, temp}(x_1, x_2) = c_0 + c_1 I_{\mathcal{X}_0}(x_1, x_2) + c_2 I_{\mathcal{X}_{VF}}(x_1, x_2) + c_3 x_1 I_{\mathcal{X}_0}(x_1, x_2) + \\
+  & c_4 x_2 I_{\mathcal{X}_0}(x_1, x_2) + c_5 x_1 I_{\mathcal{X}_{VF}}(x_1, x_2) + c_6 x_2 I_{\mathcal{X}_{VF}}(x_1, x_2) + c_7 max(x_1, x_2) + \\
+  & c_8 x_1^2 + c_9 x_2^2
+\end{align*}
+where $(x_1, x_2) \in \mathcal{X}$. Firstly, we uniformly sample states from $\mathcal{X}$ and $\mathcal{X}_0$. Then we code corresponding (\ref{smtbstpt0}, \ref{smtbstpt1}, \ref{smtbstpt2}, \ref{smtbstpt3}) z3 queries to find a candidate certificate and use z3 to find counterexamples according to these queries (\ref{smtbstpc0}, \ref{smtbstpc1}, \ref{smtbstpc2}, \ref{smtbstpc3}). The resulting certificate: $$B_{1, 1}(x_1, x_2) = 27 I_{\mathcal{X}_{VF}}(x_1, x_2)- x_1 I_{\mathcal{X}_{VF}}(x_1, x_2)$$ and $\epsilon=0.25$. The time taken to find the certificate is around 8.77 seconds on the reference machine.
+
+In addition, we use the SOS method (\ref{sos11}, \ref{sos22}, \ref{sos33}, \ref{sos44}) to synthesize the certificate where $\beta=0.01$, the resulting SOS \emph{transition persistence certificate}:
+\begin{align*}
+  B_{1, 1}(x_1, x_2) = 3.158 (-0.004 x_1 - 0.016 x_2 + 1)^2 + \\
+  1.11 (-0.999 x_1 + x_2)^2 + 0.001 x_1^2  
+\end{align*}
+and $\epsilon = 0.0006844$. The time taken to find the certificate is around 1.27 seconds on the reference machine.
+
+The time taken for the CEGIS loop to synthesize LTL closure certificate is around an hour and 30 minutes for this problem on a machine running MacOS 11.2 (Intel i9-9980HK with 64 GB of RAM) \cite{murali2024closure}.
+
+% \section{Conclusion}
+% This paper proposes a series of certificates for ensuring that the system satisfies specifications and ensuring that there exists a trajectory that violates specifications.  
+% Combining the (trajectory-based) state safety certificate and the (trajectory-based) transition safety certificate can play a complementary role in verification and falsification.
+% It has been proved that the state persistence certificate possesses stronger expressive power compared to the persistence closure certificate.
+% It has been proved that the proposed certificates can subsume the state-triplet method and have a smaller search space compared to the LTL closure certificate.
+% Finally, the efficiency of the synthesis has been demonstrated through experimental presentations. 
+
+\section{Conclusion}
+This paper proposes proof certificates for verifying LTL properties of discrete-time dynamical systems.
+Combining state safety certificates and transition persistence certificates can play a complementary role in verification. We demonstrate that the proposed certificates can subsume the state-triplet method and have a smaller search space compared to closure certificates. The efficiency of the synthesis has been demonstrated through case studies, achieving 100× speedup over existing methods.
+As future work, we plan to investigate data-driven approaches to find these certificates, as well as investigate their use in synthesizing controllers.
+%\emph{triplet state appraoch} < \emph{system persistence certificate} < \emph{trajectory persistence certificate} \\
+%\emph{closure certificate} < \emph{trajectory certificate}\\
+%synthesize \emph{system certificate} is easier than \emph{trajectory certificate}, and more efficient than \emph{closure certificate}.
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{reference}
+
+\appendix
+\section{Proof}
+\begin{lemma}
+  \label{bspnnlemma0}
+  Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, $\mathcal{X}_{VF} \subseteq \mathcal{X}$ and any \emph{trajectory} $\tau \in \mathfrak{T}(\mathfrak{S})$, 
+  if a $\mathrm{type~1}$ state persistence certificate $B_{sp}$ with respect to $\mathcal{X}_{VF}$ can be found, 
+  then it can be guaranteed that $B_{sp}(x_i) \geq 0$, where $i \in \mathbb{N}$ and $\tau = \langle x_0, x_1, \dots \rangle$.
+\end{lemma}
+\begin{proof}
+  We proceed by induction on $i$. 
+  For the base case, when $i = 0$, we have $B_{sp}(x_0) \geq 0$ according to the property (\ref{bspnn}).
+  For the inductive step, we assume that the statement holds for $i = k$, i.e., $B_{sp}(x_k) \geq 0$. 
+  When $i = k + 1$, we have $B_{sp}(x_{k+1}) \geq 0$ according to the property (\ref{bsptnn}).
+\end{proof}
+\begin{lemma}
+  \label{state-persistence-lemma-b0-top}
+  Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, $\mathcal{X}_{VF} \subseteq \mathcal{X}$ and any \emph{trajectory} $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, 
+  if a $\mathrm{type~1}$ state persistence certificate $B_{sp}$ with respect to $\mathcal{X}_{VF}$ can be found, 
+  then it can be guaranteed that $B_{sp}(x_i) \leq B_{sp}(x_0)$ for $i \in \mathbb{N}$.
+  % For $\tau = \langle x_0, x_1, \dots \rangle$, if a $\mathrm{type~1}$ trajectory-based persistence certificate $B_{\tau}$ can be found, then it can be guaranteed that $B_{\tau}(x_i) \leq B_{\tau}(x_0)$ for $i \in \mathbb{N}$.
+\end{lemma}
+\begin{proof}
+  We proceed by induction on $i$.
+  For the base case, when $i = 0$, we have $B_{sp}(x_0) \leq B_{sp}(x_0)$.
+  For the inductive step, we assume that the statement holds for $i = k$, i.e., $B_{sp}(x_k) \leq B_{sp}(x_0)$.
+  When $i = k+1$, we have $B_{sp}(x_{k+1}) \leq B_{sp}(x_k)$ according to the property (\ref{bspni1}). Combining this with the inductive hypothesis, we have $B_{sp}(x_{k+1}) \leq B_{sp}(x_0)$.
+\end{proof}
+
+\begin{lemma}
+  \label{state-peristence-lemma-non-increase}
+  Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, $\mathcal{X}_{VF} \subseteq \mathcal{X}$ and any \emph{trajectory} $\tau  = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, 
+  if a $\mathrm{type~1}$ state persistence certificate $B_{sp}$ can be found, 
+  then it can be guaranteed that $B_{sp}(x_i) \geq B_{sp}(x_j)$ for $i \in \mathbb{N}, j \in \mathbb{N}_{>i}$.
+\end{lemma}
+\begin{proof}
+  We use double induction. 
+  We perform induction on $i$. 
+  For the base case, when $i = 0$, we have $B_{sp}(x_0) \geq B_{sp}(x_j)$ according to the Lemma (\ref{state-persistence-lemma-b0-top}).
+  For the inductive step, we assume the statement holds for $i = k$, i.e., $B_{sp}(x_k) \geq B_{sp}(x_j)$ for $k < j-1$. 
+  When $i = k+1$,  we proceed by induction on $j$.
+  For the base case, When $j = k + 2$, we have $B_{sp}(x_{k+1}) \geq B_{sp}(x_{k+2})$ according to the property (\ref{bspni1}).
+  For the inductive step, we assume the statement holds for $j=k+1+l$,
+  \begin{equation}
+  B_{sp}(x_{k+1}) \geq B_{sp}(x_{k+1+l}).
+  \label{state-persistence-lemma-b0-top-hp}
+  \end{equation} 
+  When $j = k + l + 2$, we have $B_{sp}(x_{k+l+1}) \geq B_{sp}(x_{k+l+2})$ according to the property (\ref{bspni1}). 
+  We have $B_{sp}(x_{k+1}) \geq B_{sp}(x_{k+l+2})$ according to the inductive hypothesis (\ref{state-persistence-lemma-b0-top-hp}). 
+\end{proof}
+
+\begin{theorem}
+  \label{state-safety-lemma}
+  Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a trajectory $\tau=\langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, a labelling function $\mathfrak{L}:\mathcal{X} \rightarrow \Sigma$ and an NBA $\mathcal{A}=(\Sigma, Q, q_0, \delta, Acc)$, if a state safety certificate \(B_{k}(x, q)\) with respect to $q_k \in Q$ can be found, then it can be guaranteed that all runs of all \emph{words} in $\mathfrak{L}(\mathfrak{S})$ can not visit the state $q_k$.
+\end{theorem}
+
+\begin{proof}
+  According to Corollary~(\ref{corollary_tbsc}), any \emph{trajectory} of the system $\mathfrak{S} \times \mathcal{A}$ can not visit $\mathcal{Y}_u$. Therefore, runs of all \emph{words} in $\mathfrak{L}(\mathfrak{S})$ can not visit $q_k$.
+\end{proof}
+
+\begin{theorem}
+  \label{transition-persistence-lemma1}
+  % Define the acceptable state transitions of the automaton.
+  Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$ and a set of transitions $\Delta_{k, l} \subseteq \delta$, if a transition persistence certificate \(B_{\Delta_{k, l}}\) can be found, then it can be guaranteed that all runs of the words in $\mathfrak{L}(\mathfrak{S})$ make transitions in $\Delta_{k,l}$ happen finitely often.
+\end{theorem}
+
+\begin{proof}
+We define \(\mathcal{X}_{\Delta}^{k, l}=\{x | (q_k, \mathfrak{L}(x), q_l) \in \Delta_{k,l}\} \). We prove that \(B_{\Delta_{k, l}}\) is a \emph{$\mathrm{type~2}$ state persistence certificate} with respect to \(\mathcal{X}_{\Delta}^{k, l}\). The properties (\ref{bspnn}, \ref{bsptnn}) can be satisfied according to the properties (\ref{bstnn}, \ref{bsttnn}).
+We have \(x \in \mathcal{X}_{\Delta}^{k, l}\)  iff  \((q_k, \mathfrak{L}(x), q_l) \in \Delta_{k, l}\) according to the the definition of $\mathcal{X}_{\Delta}^{k, l}$. Therefore, \(I_{\mathcal{X}_{\Delta}^{k, l}}(x) = I_{\Delta_{k,l}}(q_k, \mathfrak{L}(x), q_l)\). we have \(B_{\Delta_{k, l}}(x) \geq B_{\Delta_{k, l}}(x^{\prime}) + I_{\mathcal{X}_{\Delta}^{k, l}}(x)\epsilon\) according to the property (\ref{bstni}).
+Therefore, it is guaranteed that any trajectory \(\tau\) visits \(\mathcal{X}_{\Delta}^{k, l}\) finitely often, which ensures that the runs of the \emph{word} \(\mathfrak{L}(\tau)\) make transitions in \(\Delta_{k, l}\) happen finitely often.
+\end{proof}
+
+\end{document}
+\endinput
+%%
+%% End of file `sample-acmlarge.tex'.
+

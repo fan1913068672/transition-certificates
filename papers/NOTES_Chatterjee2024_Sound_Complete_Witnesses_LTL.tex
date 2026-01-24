@@ -1,0 +1,481 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+
+\title{Reading Notes: Sound and Complete Witnesses for\\
+Template-based Verification of LTL Properties on Polynomial Programs}
+\author{Krishnendu Chatterjee, Amir Kafshdar Goharshady,\\
+Ehsan Kafshady Goharshady, Mehrdad Karrabi, Đorđe Žikelić}
+\date{Paper Read: 2025-12-28}
+
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+
+\begin{document}
+
+\maketitle
+
+\section{Paper Metadata}
+
+\begin{itemize}
+    \item \textbf{Title}: Sound and Complete Witnesses for Template-based Verification of LTL Properties on Polynomial Programs
+    \item \textbf{Authors}: Krishnendu Chatterjee, Amir Kafshdar Goharshady, Ehsan Kafshdar Goharshady, Mehrdad Karrabi, Đorđe Žikelić
+    \item \textbf{Affiliations}: Institute of Science and Technology Austria (ISTA), HKUST, Singapore Management University
+    \item \textbf{Publication}: arXiv:2403.05386v3 [cs.PL] 1 Jul 2024
+    \item \textbf{Note}: Related to their earlier work on polynomial reachability
+\end{itemize}
+
+\section{Core Contribution}
+
+This paper introduces \textbf{sound and complete witnesses} for verifying LTL properties on polynomial programs:
+
+\begin{enumerate}
+    \item \textbf{EBRF (Existential Büchi Ranking Function)}: For LTL refutation (finding bugs)
+    \item \textbf{UBRF (Universal Büchi Ranking Function)}: For LTL verification (proving correctness)
+    \item \textbf{Template-based Synthesis}: Sound and semi-complete algorithm via reduction to quadratic programming
+    \item \textbf{Unification}: Generalizes ranking functions, inductive invariants, and reachability witnesses
+\end{itemize}
+
+\section{Problem Setting}
+
+\subsection{Transition Systems}
+
+An infinite-state transition system: $\mathcal{T} = (\mathcal{V}, L, l_{init}, \theta_{init}, \mapsto)$
+
+\begin{itemize}
+    \item $\mathcal{V} = \{x_0, \ldots, x_{n-1}\}$: real-valued program variables
+    \item $L$: finite set of locations, $l_{init} \in L$ initial location
+    \item $\theta_{init} \subseteq \mathbb{R}^n$: initial variable valuations
+    \item $\mapsto$: finite set of transitions $\tau = (l, l', G_\tau, U_\tau)$
+    \begin{itemize}
+        \item $G_\tau$: guard (boolean predicate)
+        \item $U_\tau: \mathbb{R}^n \rightarrow \mathbb{R}^n$: update function
+    \end{itemize}
+\end{itemize}
+
+\textbf{State}: $(l, e)$ with $l \in L$, $e \in \mathbb{R}^n$
+
+\textbf{Successor}: $(l, e) \mapsto (l', e')$ if $\exists \tau = (l, l', G_\tau, U_\tau)$ such that $e \models G_\tau$ and $e' = U_\tau(e)$
+
+\subsection{LTL Verification Problems}
+
+\textbf{LTL-VP (Verification of Programs)}: Prove all possible runs of $\mathcal{T}$ satisfy $\phi$
+
+\textbf{LTL-RP (Refutation of Programs)}: Prove there exists a run that satisfies $\neg\phi$
+
+\subsection{Büchi Specifications}
+
+A Büchi specification is $\mathcal{B} \subseteq \mathcal{S}$ (set of states). A run $\pi$ is $\mathcal{B}$-Büchi if it visits $\mathcal{B}$ infinitely many times.
+
+\textbf{UB-PA (Universal Büchi Program Analysis)}: Prove all runs are $\mathcal{B}$-Büchi
+
+\textbf{EB-PA (Existential Büchi Program Analysis)}: Prove there exists a run that is $\mathcal{B}$-Büchi
+
+\subsection{Connection to LTL}
+
+\begin{lemma}[From LTL to Büchi]
+Let $\mathcal{T}$ be a transition system, $\phi$ an LTL formula, and $\mathcal{N}$ an NBW accepting $\phi$.
+\begin{itemize}
+    \item LTL-RP problem of $\mathcal{T}$ and $\neg\phi$ is equivalent to EB-PA problem of $\mathcal{T} \times \mathcal{N}$ and $\mathcal{B}_{\mathcal{T}}^{\mathcal{N}}$
+    \item If $\mathcal{N}$ is deterministic, LTL-VP problem of $\mathcal{T}$ and $\phi$ is equivalent to UB-PA problem of $\mathcal{T} \times \mathcal{N}$ and $\mathcal{B}_{\mathcal{T}}^{\mathcal{N}}$
+\end{itemize}
+where $\mathcal{B}_{\mathcal{T}}^{\mathcal{N}} = L \times F \times \mathbb{R}^n$ (product states with accepting automaton states).
+\end{lemma}
+
+\section{Existential Büchi Ranking Functions (EBRF)}
+
+\begin{definition}[EBRF]
+Given states $s_1, s_2 \in \mathcal{S}$, a function $f: \mathcal{S} \rightarrow \mathbb{R}$ is said to \textbf{Büchi-rank} $(s_1, s_2)$ where $s_1 \mapsto s_2$, if:
+\begin{itemize}
+    \item $s_1 \in \mathcal{B} \Rightarrow [f(s_1) \geq 0 \Rightarrow f(s_2) \geq 0]$; or
+    \item $s_1 \notin \mathcal{B} \Rightarrow [f(s_1) \geq 0 \Rightarrow 0 \leq f(s_2) \leq f(s_1) - 1]$
+\end{itemize}
+
+$f$ is a $\mathcal{B}$-EBRF if:
+\begin{enumerate}
+    \item $\exists s_{init} \in \mathcal{S}_{init}$ where $f(s_{init}) \geq 0$
+    \item For every $s_1 \in \mathcal{S}$, there exists $s_2 \in \mathcal{S}$ such that $s_1 \mapsto s_2$ and $(s_1, s_2)$ is Büchi-ranked by $f$
+\end{enumerate}
+\end{definition}
+
+\textbf{Intuition}:
+\begin{itemize}
+    \item EBRF assigns real value to each state
+    \item Non-negative in at least one initial state
+    \item Preserves non-negativity in at least one successor
+    \item \textbf{Strict decrease outside $\mathcal{B}$}: When $f(s_1) \geq 0$ and $s_1 \notin \mathcal{B}$, must have successor with $f(s_2) \leq f(s_1) - 1$
+    \item This guarantees $\mathcal{B}$ is eventually reached (otherwise infinite descent)
+\end{itemize}
+
+\begin{theorem}[Soundness and Completeness of EBRFs]
+There exists a $\mathcal{B}$-EBRF $f$ for $\mathcal{T}$ if and only if the answer to the EB-PA problem is positive.
+\end{theorem}
+
+\textbf{Key proof idea for completeness}: Given $\mathcal{B}$-Büchi scheduler $\sigma$, can construct memory-less scheduler. Define EBRF as "distance to next $\mathcal{B}$ visit" along the run.
+
+\begin{corollary}
+The answer to LTL-RP problem of $\mathcal{T}$ and $\phi$ is positive iff there exists a $\mathcal{B}_{\mathcal{T}}^{\mathcal{N}}$-EBRF for $\mathcal{T} \times \mathcal{N}$, where $\mathcal{N}$ is the NBW accepting $\neg\phi$.
+\end{corollary}
+
+\section{Universal Büchi Ranking Functions (UBRF)}
+
+\begin{definition}[UBRF]
+A function $f: \mathcal{S} \rightarrow \mathbb{R}$ is a $\mathcal{B}$-UBRF if:
+\begin{enumerate}
+    \item $f(s) \geq 0$ for every $s \in \mathcal{S}_{init}$
+    \item For every $s_1, s_2 \in \mathcal{S}$ such that $s_1 \mapsto s_2$, $(s_1, s_2)$ is Büchi-ranked by $f$
+\end{enumerate}
+\end{definition}
+
+\textbf{Difference from EBRF}: UBRF requires Büchi-ranking for \textbf{every} successor (not just some successor).
+
+\begin{theorem}[Soundness and Completeness of UBRFs]
+There exists a $\mathcal{B}$-UBRF $f$ for $\mathcal{T}$ if and only if the answer to the UB-PA problem is positive.
+\end{theorem}
+
+\begin{corollary}
+If $\phi$ admits a DBW $\mathcal{D}$, the answer to LTL-VP of $\mathcal{T}$ and $\phi$ is positive iff there exists a $\mathcal{B}_{\mathcal{T}}^{\mathcal{D}}$-UBRF for $\mathcal{T} \times \mathcal{D}$.
+\end{corollary}
+
+\section{Template-Based Synthesis}
+
+For \textbf{polynomial programs} (guards and updates are polynomial expressions), synthesize polynomial EBRFs/UBRFs.
+
+\subsection{Algorithm Overview (EBRF Synthesis)}
+
+\textbf{Step 1: Fixing Symbolic Templates}
+
+For each location $l \in L$, define template:
+\begin{equation}
+f_l(x) = \sum_{i=1}^k c_{l,i} \cdot m_i
+\end{equation}
+where $\{m_1, \ldots, m_k\}$ are all monomials of degree $\leq D$, and $c_{l,i}$ are unknown coefficients.
+
+\textbf{Step 2: Generating Entailment Constraints}
+
+For every location $l \in L$:
+\begin{equation}
+\forall x \in \mathbb{R}^n: (\theta_l \land f_l(x) \geq 0) \Rightarrow \bigvee_{\tau \in Out_l} (G_\tau \land \text{B-Rank}(\tau))
+\end{equation}
+
+where
+\begin{equation}
+\text{B-Rank}(\tau) \equiv \begin{cases}
+f_{l'}(U_\tau(x)) \geq 0 \land f_{l'}(U_\tau(x)) \leq f_l(x) - 1 & l \notin \mathcal{B}\\
+f_{l'}(U_\tau(x)) \geq 0 & l \in \mathcal{B}
+\end{cases}
+\end{equation}
+
+Rewrite as:
+\begin{equation}
+\left(\theta_l \land f_l(x) \geq 0 \land \bigwedge_{i=1}^{k-1} \neg\psi_{l,i}\right) \Rightarrow \psi_{l,k}
+\end{equation}
+
+\textbf{Step 3: Reduce to Quadratic Inequalities}
+
+Use \textbf{Putinar's Positivstellensatz} (same technique as [1 - Asadi et al. PLDI'21]) to eliminate $\forall$ quantifier:
+
+For $\phi \Rightarrow \psi$, write $\phi$ in DNF as $\phi_1 \lor \cdots \lor \phi_t$ and $\psi$ in CNF as $\psi_1 \land \cdots \land \psi_r$.
+
+For each $\phi_i \Rightarrow \psi_j$, use SOS multipliers to create quadratic inequalities.
+
+\textbf{Step 4: Handle Initial Conditions}
+
+Add constraint: $\exists t_x \in \theta_{init}: f_{l_{init}}(t) \geq 0$
+
+\textbf{Step 5: Solve via SMT}
+
+Pass quadratic program to SMT solver (Z3, Barcelogic, MathSAT5).
+
+\subsection{UBRF Synthesis Differences}
+
+\textbf{Step 2 change}: For each location $l$ and each transition $\tau \in Out_l$:
+\begin{equation}
+(\theta_l \land G_\tau \land f_l(x) \geq 0) \Rightarrow \text{B-Rank}(\tau)
+\end{equation}
+
+\textbf{Step 4 change}: $(\theta_{init} \Rightarrow f_{l_{init}}(x) \geq 0)$ (must hold for \textbf{all} initial states)
+
+\subsection{Soundness and Semi-Completeness}
+
+\begin{theorem}[Existential Soundness and Semi-Completeness]
+The EBRF synthesis algorithm is:
+\begin{itemize}
+    \item \textbf{Sound}: Every solution to QP instance is a valid EBRF
+    \item \textbf{Semi-complete}: If polynomial EBRF of degree $\leq D$ exists, QP has solution
+    \item \textbf{Sub-exponential complexity} for fixed degree $D$
+\end{itemize}
+\end{theorem}
+
+\section{Experimental Results}
+
+\subsection{Benchmarks}
+\begin{itemize}
+    \item 297 benchmarks from TermComp'22 (287 linear, 10 polynomial)
+    \item 21 non-linear benchmarks from SV-COMP'22
+\end{itemize}
+
+\subsection{LTL Specifications Used}
+\begin{itemize}
+    \item \textbf{RA (Reach-Avoid)}: $(F\,at(l_{term})) \land (G\,x \geq 0)$ - terminate without making $x$ negative
+    \item \textbf{OV (Overflow)}: $F(at(l_{term}) \lor x < -64 \lor x > 63)$ - either terminate or overflow
+    \item \textbf{RC (Recurrence)}: $G F(x \geq 0)$ - visit $x \geq 0$ infinitely often
+    \item \textbf{PR (Progress)}: $G(x < -5 \Rightarrow F(x > 0))$ - progress from negative to positive
+\end{itemize}
+
+\subsection{Baselines}
+\begin{itemize}
+    \item \textbf{Ultimate LTLAutomizer}: State-of-art for linear programs, cannot handle polynomial
+    \item \textbf{nuXmv}: Symbolic model checker, supports non-linear but no completeness
+    \item \textbf{MuVal}: Fixed-point logic validity checker, supports non-linear
+    \item \textbf{Direct Z3}: Pass quantified formula directly without Putinar (ablation study)
+\end{itemize}
+
+\subsection{Key Results}
+
+\textbf{Linear Programs}:
+\begin{itemize}
+    \item Competitive with Ultimate and MuVal
+    \item \textbf{10 unique instances} solved that no other tool could handle
+    \item Average time: 5.4s (same as Ultimate) for verification
+    \item Slower than others for refutation
+\end{itemize}
+
+\textbf{Non-linear Programs}:
+\begin{itemize}
+    \item \textbf{Significantly outperforms all baselines}
+    \item Ultimate: Cannot handle (not supported)
+    \item Solves more instances than nuXmv in all but one formula
+    \item Solves more instances than MuVal in all four formulas
+    \item \textbf{11 unique instances} no other tool could solve
+    \item Direct Z3 approach: Timeout on every benchmark (confirms Step 3 is crucial)
+\end{itemize}
+
+\subsection{Summary Statistics (Non-linear)}
+
+\begin{center}
+\begin{tabular}{lcccc}
+\hline
+Formula & Ours Total & nuXmv Total & MuVal Total & Unique (Ours) \\
+\hline
+RA & 27 & 1 & 19 & 8 \\
+OV & 26 & 7 & 25 & 2 \\
+RC & 26 & 26 & 24 & 0 \\
+PR & 27 & 25 & 21 & 1 \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Comparison: Chatterjee 2024 vs. Our Work}
+
+\begin{center}
+\begin{tabular}{|p{3.5cm}|p{5.5cm}|p{5.5cm}|}
+\hline
+\textbf{Aspect} & \textbf{Chatterjee et al. 2024} & \textbf{Our Work} \\
+\hline
+\textbf{Certificate Type} &
+\begin{itemize}
+\item EBRF: $f: \mathcal{S} \rightarrow \mathbb{R}$ on full state space
+\item UBRF: $f: \mathcal{S} \rightarrow \mathbb{R}$ on full state space
+\end{itemize} &
+\begin{itemize}
+\item Safety: $B_k(x,q)$ on $\mathcal{X} \times Q$
+\item Persistence: $B_{k,l}(x)$ on $\mathcal{X}$
+\end{itemize} \\
+\hline
+\textbf{Witness Semantics} &
+\begin{itemize}
+\item EBRF: Existential - at least one successor Büchi-ranked
+\item UBRF: Universal - all successors Büchi-ranked
+\end{itemize} &
+\begin{itemize}
+\item Safety: Block reachability (universal)
+\item Persistence: Ranking on continuous space (universal)
+\end{itemize} \\
+\hline
+\textbf{Verification Approach} & Reduce to EB-PA/UB-PA on product system &
+\begin{itemize}
+\item Safety: Block $q_k \in Acc^{start}$
+\item Persistence: Finite occurrence via ranking
+\end{itemize} \\
+\hline
+\textbf{Accepting Conditions} & State-based NBA & Transition-based NBA \\
+\hline
+\textbf{Synthesis Method} &
+\begin{itemize}
+\item Template-based
+\item Putinar's Positivstellensatz
+\item Reduction to QP
+\item SMT solving
+\end{itemize} &
+\begin{itemize}
+\item Template-based (SMT or SOS)
+\item Putinar's Positivstellensatz (SOS)
+\item Direct SMT (linear) or SOS (polynomial)
+\end{itemize} \\
+\hline
+\textbf{Theoretical Guarantee} & Sound and complete witnesses & Sound and complete witnesses \\
+\hline
+\textbf{Algorithmic Guarantee} & Sound and semi-complete synthesis & Sound and semi-complete synthesis \\
+\hline
+\textbf{Complexity} & Sub-exponential for fixed degree & Sub-exponential for fixed degree \\
+\hline
+\textbf{Experimental Performance} &
+\begin{itemize}
+\item Linear: competitive, 10 unique
+\item Non-linear: 11 unique, outperforms baselines
+\end{itemize} &
+\begin{itemize}
+\item 141× to 4248× speedup over closure certificates
+\item Handles same benchmarks in seconds vs. minutes/hours
+\end{itemize} \\
+\hline
+\textbf{Key Limitation} & Polynomial programs only & Polynomial programs only \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Relation to Our Work}
+
+\subsection{Similarities}
+
+\begin{enumerate}
+    \item \textbf{Both provide sound and complete witnesses} for LTL verification
+    \item \textbf{Both use template-based synthesis} with polynomial templates
+    \item \textbf{Both use Putinar's Positivstellensatz} for quantifier elimination
+    \item \textbf{Both work on polynomial programs} with similar system models
+    \item \textbf{Both unify previous work}: termination, safety, reachability
+    \item \textbf{Both reduce LTL to Büchi specifications} via product construction
+\end{enumerate}
+
+\subsection{Key Differences}
+
+\begin{enumerate}
+    \item \textbf{Certificate Structure}:
+    \begin{itemize}
+        \item \textbf{Chatterjee}: Single function on entire state space $\mathcal{S} = L \times \mathbb{R}^n$
+        \item \textbf{Our work}: Separate certificates - safety on $\mathcal{X} \times Q$, persistence on $\mathcal{X}$ only
+    \end{itemize}
+
+    \item \textbf{Büchi Specification Type}:
+    \begin{itemize}
+        \item \textbf{Chatterjee}: Generic set $\mathcal{B} \subseteq \mathcal{S}$ of states
+        \item \textbf{Our work}: Specifically $Acc^{start}$ and $Acc^{pair}$ from transition-based NBA
+    \end{itemize}
+
+    \item \textbf{Existential vs. Complementary}:
+    \begin{itemize}
+        \item \textbf{Chatterjee}: EBRF (existential) vs. UBRF (universal) as two separate witness types
+        \item \textbf{Our work}: Safety (reachability-blocking) vs. Persistence (ranking) as complementary approaches for same goal
+    \end{itemize}
+
+    \item \textbf{Modular Design}:
+    \begin{itemize}
+        \item \textbf{Chatterjee}: One certificate per location: $f_l: \mathbb{R}^n \rightarrow \mathbb{R}$, then product with automaton
+        \item \textbf{Our work}: One certificate per accepting transition start state (safety) or per accepting pair (persistence)
+    \end{itemize}
+
+    \item \textbf{Dimension Reduction for Persistence}:
+    \begin{itemize}
+        \item \textbf{Chatterjee}: EBRF on full product state space $L \times \mathbb{R}^n$ (or $L \times Q \times \mathbb{R}^n$ after product)
+        \item \textbf{Our work}: Persistence certificate $B_{k,l}(x)$ only on continuous state space $\mathbb{R}^n$ - \textbf{no automaton state dependence!}
+    \end{itemize}
+
+    \item \textbf{Experimental Focus}:
+    \begin{itemize}
+        \item \textbf{Chatterjee}: Emphasizes unique instances vs. other LTL tools
+        \item \textbf{Our work}: Emphasizes speedup vs. closure certificates
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Our Advantages}
+
+\begin{enumerate}
+    \item \textbf{Simpler Persistence Certificates}: $B_{k,l}(x)$ on $\mathcal{X}$ vs. $f$ on entire state space
+    \item \textbf{Transition-based NBA}: More efficient for LTL
+    \item \textbf{Explicit Complementarity}: Safety and persistence have clear separate roles
+    \item \textbf{Dramatic Speedup}: 141× to 4248× vs. closure certificates (different baseline)
+\end{enumerate}
+
+\subsection{Chatterjee's Advantages}
+
+\begin{enumerate}
+    \item \textbf{Generic Büchi Specifications}: Not limited to automata-based
+    \item \textbf{Existential Witnesses}: EBRF provides existential guarantees (bug finding)
+    \item \textbf{More Extensive Experiments}: Comparison with more LTL model checking tools
+    \item \textbf{Unique Instances}: Shows 21 unique instances no other LTL tool could handle
+\end{enumerate}
+
+\section{Citation Correctness}
+
+\textbf{Verified}: This paper is \textbf{directly relevant} to our work:
+\begin{itemize}
+    \item Uses certificates for LTL verification ✓
+    \item Works with polynomial programs ✓
+    \item Provides sound and complete witnesses ✓
+    \item Template-based synthesis ✓
+    \item Generalizes termination, safety, reachability ✓
+\end{itemize}
+
+\textbf{Recommendation}: This citation is \textbf{highly relevant and should be cited}. However, note the publication date (2024) - verify if this is the same work as cited in our paper (chatterjee2024sound).
+
+\section{Key Insights for Our Paper}
+
+\subsection{Positioning}
+
+When citing this paper in related work:
+
+\begin{quote}
+``Chatterjee et al.~\cite{chatterjee2024sound} introduce sound and complete witnesses for general LTL verification over polynomial programs. They define Existential and Universal Büchi Ranking Functions (EBRF/UBRF) on the full state space and provide template-based synthesis via reduction to quadratic programming. While their approach is general and handles both verification and refutation, the witnesses are defined over the entire state space. In contrast, our persistence certificates are defined solely on the continuous state space $\mathcal{X}$, independent of automaton states, leading to simpler search spaces and faster synthesis.''
+\end{quote}
+
+\subsection{Technical Comparison}
+
+\textbf{EBRF vs. Our Persistence Certificate}:
+\begin{itemize}
+    \item EBRF: $f: L \times \mathbb{R}^n \rightarrow \mathbb{R}$ (or $L \times Q \times \mathbb{R}^n$ after product)
+    \item Our persistence: $B_{k,l}: \mathbb{R}^n \rightarrow \mathbb{R}$ (no location or automaton state!)
+    \item \textbf{Key advantage}: Lower dimensional search space
+\end{itemize}
+
+\textbf{Both use same synthesis technique}: Putinar's Positivstellensatz from [Asadi et al. PLDI'21]
+
+\section{Future Context Recovery Prompt}
+
+当需要引用这篇论文时，使用以下提示词：
+
+\begin{verbatim}
+读取LaTeX笔记：
+E:\fyh\05persistence-certificate-one-column\papers\
+NOTES_Chatterjee2024_Sound_Complete_Witnesses_LTL.tex
+
+这篇论文介绍了多项式程序LTL验证的sound and complete witnesses：
+
+核心概念：
+- EBRF (Existential Büchi Ranking Function): 定义在状态空间S上
+  用于LTL refutation（找bug）
+- UBRF (Universal Büchi Ranking Function): 定义在状态空间S上
+  用于LTL verification（证明正确性）
+- 都使用template-based synthesis和Putinar's Positivstellensatz
+
+与我们工作的关键区别：
+1. 他们的witness定义在整个状态空间L×ℝⁿ (或产品后L×Q×ℝⁿ)
+2. 我们的persistence certificate只定义在ℝⁿ上，不依赖automaton state
+3. 我们的search space更小，合成更快
+4. 两者都是sound and complete，都用相同的合成技术
+
+实验结果：他们在non-linear benchmarks上表现很好，解决了21个
+unique instances。我们的优势是vs. closure certificates有141×到
+4248×的加速。
+
+引用状态：直接相关，应该引用，是LTL verification witnesses的
+重要工作。
+\end{verbatim}
+
+\section{Summary}
+
+Chatterjee et al. provide sound and complete witnesses (EBRF/UBRF) for LTL verification on polynomial programs. Their witnesses are defined on the full state space and use template-based synthesis via Putinar's Positivstellensatz. While highly related to our work, our persistence certificates have the key advantage of being defined solely on the continuous state space $\mathcal{X}$, independent of automaton states, leading to simpler certificates and potentially faster synthesis. Both approaches are sound, complete, and use similar synthesis techniques.
+
+\end{document}

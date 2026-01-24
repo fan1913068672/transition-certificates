@@ -1,0 +1,104 @@
+\section{Certificate Synthesis}
+\label{sec:synthesis}
+
+To bridge the gap between theoretical definitions and practical verification, this section develops automated synthesis techniques for transition certificates. We leverage the Counterexample-Guided Inductive Synthesis (CEGIS) framework~\cite{solar2008program}, a well-established paradigm in barrier certificate synthesis, to iteratively refine candidate solutions. By alternating between candidate generation and formal verification, this approach ensures that the discovered certificates are valid and proves that the system meets the specified LTL properties. Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$ and an NBA $\mathcal{A} = (2^{AP}, Q, q_0, \delta, Acc)$ representing $\neg \phi$, we adopt a uniform notation where $B_k$ represents the transition safety certificate template for states $q_k \in Acc^{\text{start}}$, and $B_{k,l}$ represents the transition persistence certificate template for $Acc^{k,l}$. To find transition certificates, we present CEGIS frameworks for polynomial and neural network templates, respectively. The synthesis proceeds in two alternating phases: \textit{candidate generation} and \textit{verification}.
+
+\subsection{Polynomial CEGIS}
+\subsubsection{Transition Safety Certificates} 
+We define a parametric polynomial template:
+\begin{align}
+B_k(x, q; \mathbf{c}) = \sum_{i=1}^{m} c_i \, p_i(x, q),
+\end{align}
+where $x \in \mathcal{X}$, $q \in Q$, $\{p_1, \ldots, p_m\}$ is a user-defined basis of monomials over $\mathcal{X} \times Q$ with degree at most $d$, and $\mathbf{c} = (c_1, \ldots, c_m) \in \mathbb{R}^m$ are unknown coefficients. Our goal is to find $\mathbf{c}$ such that $B_k(\cdot, \cdot; \mathbf{c})$ satisfies conditions~(\ref{btsc1}), (\ref{btsc2}), and~(\ref{btsc3}). 
+
+\textbf{Candidate Generation.} Based on certificate conditions, we encode the constraint for all points of the sampled dataset.
+For transition safety certificates, the constraint is:
+\begin{align}
+  &\bigwedge_{(x,q) \in D_0} B_k(x, q; \mathbf{c}) \geq 0 \label{smt:init} \\ 
+  \wedge \; &\bigwedge_{(x,q) \in D_u} B_k(x, q; \mathbf{c}) < 0 \label{smt:unsafe} \\ 
+  \wedge \; &\bigwedge_{\substack{(x,q) \in D_{\mathcal{X}} \\ (q, \mathfrak{L}(x), q') \in \delta}} \big[ B_k(x, q; \mathbf{c}) \geq 0 \Rightarrow B_k(f(x), q'; \mathbf{c}) \geq 0 \big], \label{smt:inv}
+\end{align}
+where $D_0, D_u, D_{\mathcal{X}}$ are the datasets sampled from $\mathcal{X}_0 \times \{q_0\}$, $\mathcal{X} \times \{q_k\}$, and $\mathcal{X} \times Q$, respectively. The coefficient synthesis involves logical implications (disjunctive constraints) between linear inequalities. While these can be reformulated as linear programming using s-procedure for solvers like Gurobi~\cite{gurobi}, we employed Z3~\cite{de2008z3} as an SMT solver to directly handle the logical structure. If the constraint is satisfiable with a solution $\hat{\mathbf{c}}$, define the candidate certificate as $\hat{B}_k = B_k(\cdot, \cdot; \hat{\mathbf{c}})$.
+
+\textbf{Verification.} To verify $\hat{B}_k$ is valid, we formulate the negation of conditions and
+verify they are unsatisfiable. For transition safety certificates, we check:
+\begin{align}
+  & x \in \mathcal{X}_0 \land \hat{B}_k(x, q_0) < 0, \label{smt:cex-init} \\ 
+  & x \in \mathcal{X} \land \hat{B}_k(x, q_k) \geq 0, \label{smt:cex-unsafe}  \\ 
+  & x \in \mathcal{X} \land (q, \mathfrak{L}(x), q') \in \delta \land \hat{B}_k(x, q) \geq 0 \land \hat{B}_k(f(x), q') < 0. \label{smt:cex-inv}
+\end{align}
+We choose dReal~\cite{gao2013dreal} as our SMT verifier to check these constraints. If the constraints are satisfiable (i.e., counterexamples exist), we add them to $D_0$, $D_u$, or $D_{\mathcal{X}}$ accordingly. The synthesis process then iterates until no counterexamples are found, yielding a valid transition safety certificate.
+
+\subsubsection{Transition Persistence Certificates} 
+We define a parametric polynomial template:
+\begin{align}
+B_{k,l}(x; \mathbf{c}) = \sum_{i=1}^{m} c_i \, p_i(x),
+\end{align}
+where $x \in \mathcal{X}$, $\{p_1, \ldots, p_{m}\}$ are monomials over $\mathcal{X}$ and $\mathbf{c} \in \mathbb{R}^{m}$ are unknown coefficients. We seek $\mathbf{c}$ and $\epsilon > 0$ satisfying conditions~(\ref{btpc1}), (\ref{btpc2}), and~(\ref{btpc3}). 
+
+\textbf{Candidate Generation.} Based on certificate conditions, we encode the constraint for all points of the sampled dataset.
+For transition persistence certificates, the constraint is:
+\begin{align}
+  & \bigwedge_{x \in D_0} B_{k,l}(x; \mathbf{c}) \geq 0 \label{smt:tp-init} \\ 
+  \wedge \; &\bigwedge_{x \in D_{\mathcal{X}}} \big[ B_{k,l}(x; \mathbf{c}) \geq 0 \Rightarrow B_{k,l}(f(x); \mathbf{c}) \geq 0 \big] \label{smt:tp-inv} \\ 
+  \wedge \; &\bigwedge_{\substack{x \in D_{\mathcal{X}} \\ (q_k, \mathfrak{L}(x), q_l) \notin Acc^{k,l}}} B_{k,l}(x; \mathbf{c}) \geq B_{k,l}(f(x); \mathbf{c}) \label{smt:tp-non-dec} \\ 
+  \wedge \; &\bigwedge_{\substack{x \in D_{\mathcal{X}} \\ (q_k, \mathfrak{L}(x), q_l) \in Acc^{k,l}}} B_{k,l}(x; \mathbf{c}) \geq B_{k,l}(f(x); \mathbf{c}) + \epsilon, \label{smt:tp-dec}
+\end{align}
+where $D_0, D_{\mathcal{X}}$ are the datasets sampled from $\mathcal{X}_0$ and $\mathcal{X}$, respectively. We solve the coefficient synthesis problem using the Z3 solver~\cite{de2008z3}. If satisfiable with solution $(\hat{\mathbf{c}}, \hat{\epsilon})$, define the candidate transition persistence certificate as $\hat{B}_{k,l} = B_{k,l}(\cdot; \hat{\mathbf{c}})$.
+
+\textbf{Verification.} To verify $\hat{B}_{k,l}$ is valid, we encode constraints of the negation of conditions and
+verify they are unsatisfiable. For transition persistence certificates, we check:
+\begin{align}
+  & x \in \mathcal{X}_0 \land \hat{B}_{k,l}(x) < 0, \label{smt:tp-cex-init} \\ 
+  & x \in \mathcal{X} \land \hat{B}_{k,l}(x) \geq 0 \land \hat{B}_{k,l}(f(x)) < 0, \label{smt:tp-cex-inv} \\ 
+  & x \in \mathcal{X} \land (q_k, \mathfrak{L}(x), q_l) \in Acc^{k,l} \land \hat{B}_{k,l}(x) < \hat{B}_{k,l}(f(x)) + \hat{\epsilon}, \label{smt:tp-cex-dec} \\ 
+  & x \in \mathcal{X} \land (q_k, \mathfrak{L}(x), q_l) \notin Acc^{k,l} \land \hat{B}_{k,l}(x) < \hat{B}_{k,l}(f(x)). \label{smt:tp-cex-non-dec}
+\end{align}
+
+We use dReal~\cite{gao2013dreal} to check these constraints. If the constraints are satisfiable, we add them to $D_0$ or $D_{\mathcal{X}}$ accordingly. The synthesis process then iterates until no counterexamples are found, yielding a valid transition persistence certificate.
+
+\subsection{Neural Network CEGIS}
+Since neural networks have the capability to approximate arbitrary functions, using them as templates for certificates offers advantages over polynomials~\cite{zhao2020synthesizing}. We first fix the certificate template to be a neural network.
+
+A typical neural network consists of many interconnected neurons organized in a hierarchical structure. Each neuron serves as a unit that responds to weighted inputs received from other neurons and produces an output. Assume that $x \in \mathbb{R}^n$ represents the $n$-dimensional input vector of the neural network, $L-1$ represents the number of hidden layers, and $y$ is the scalar output of the neural network with respect to the input $x$. Thus, the feedforward neural network can be expressed with the following structure:
+
+\[
+\begin{cases}
+z_l = \mathbf{W}_l x_{l-1} + \mathbf{b}_l, & 0 < l \leqslant L \\
+x_l = \sigma(z_l), & 0 < l \leqslant L \\
+y = x_L
+\end{cases}
+\tag{5}
+\]
+
+where,
+\begin{itemize}
+    \item $z_l$ denotes the output vector of the linear operation in the $l$-th layer;
+    \item $\mathbf{W}_l$ and $\mathbf{b}_l$ denote the weight matrix and bias vector for the $l$-th layer of the neural network, respectively;
+    \item $\sigma$ denotes the activation function. Common activation functions include the Tanh function, Sigmoid function, ReLU function.
+\end{itemize}
+
+\textbf{Candidate Generation.} Based on certificate conditions, a loss function is designed for the training dataset. For transition safety certificates, the loss function is:
+\begin{align}
+\mathcal{L}_B = &\sum_{(x,q) \in D_0} \text{ReLU}(-B_k(x, q; \theta)) \nonumber \\ 
+&+ \sum_{(x,q) \in D_u} \text{ReLU}(B_k(x, q; \theta)) \nonumber \\ 
+&+ \sum_{\substack{(x,q) \in D_{\mathcal{X}} \\ (q, \mathfrak{L}(x), q') \in \delta}} \text{ReLU}(B_k(x, q; \theta)) \cdot \text{ReLU}(-B_k(f(x), q'; \theta)),
+\end{align}
+where $D_0, D_u, D_{\mathcal{X}}$ are datasets sampled from $\mathcal{X}_0 \times \{q_0\}$, $\mathcal{X} \times \{q_k\}$, and $\mathcal{X} \times Q$, respectively. The terms in the loss function offer intuitive measures of the extent to which the neural network violates the certificate conditions.
+
+For transition persistence certificates, the loss function is:
+\begin{align}
+\mathcal{L}_B = &\sum_{\substack{x \in D_{\mathcal{X}} \\ (q_k, \mathfrak{L}(x), q_l) \in Acc^{k,l}}} \text{ReLU}(B_{k,l}(f(x); \theta) + \epsilon - B_{k,l}(x; \theta)) \\
+&+ \sum_{\substack{x \in D_{\mathcal{X}} \\ (q_k, \mathfrak{L}(x), q_l) \not\in Acc^{k,l}}} \text{ReLU}(B_{k,l}(f(x); \theta) - B_{k,l}(x; \theta)),
+\end{align}
+where $D_{\mathcal{X}} \subseteq \mathcal{X}$ is the dataset sampled from $\mathcal{X}$.
+
+To generate a neural certificate candidate, we employ gradient descent techniques to minimize the loss function. When the loss decreases to 0, it indicates that the learned neural network can be a candidate certificate. In addition, the activation functions differ: the transition safety certificate employs the linear activation function, while the transition persistence certificate uses the squared activation function. This design eliminates the need to verify non-negativity conditions during verification. We define the candidate transition safety certificate as $\hat{B}_{k} = B_{k}(\cdot, \cdot; \hat{\theta})$ and the candidate transition persistence certificate to be $\hat{B}_{k,l} = B_{k,l}(\cdot; \hat{\theta})$.
+
+\textbf{Verification.} To verify the candidate neural certificate is valid, we formulate the negation of conditions and use dReal~\cite{gao2013dreal} to verify they are unsatisfiable.
+
+For transition safety certificates, we check constraints (\ref{smt:cex-init}), (\ref{smt:cex-unsafe}), and (\ref{smt:cex-inv}). For transition persistence certificates, we verify constraints (\ref{smt:tp-cex-dec}) and (\ref{smt:tp-cex-non-dec}). If counterexamples are found, they are added to the training set accordingly, and the synthesis process iterates until no counterexamples remain.
+
+We choose dReal~\cite{gao2013dreal} as our SMT verifier, which ensures the correctness of its unsat decisions. Therefore, when dReal returns unsat for the given formula, it confirms that no solution exists within the specified precision, and the candidate certificate is valid. Otherwise, it means that dReal has found a counterexample that violates the certificate conditions. These counterexamples are added to the sample sets and the candidate generation phase is repeated. The process iterates until all verification queries are unsatisfiable (within the $\delta$-completeness threshold of dReal), yielding a valid certificate.
+
+%This neural-network-based method does not depend on polynomial templates and can deal with general non-polynomial systems. However, its bottleneck primarily lies in the computation burden of SMT solving, especially when dealing with high-dimensional systems with highly nonlinear dynamics.

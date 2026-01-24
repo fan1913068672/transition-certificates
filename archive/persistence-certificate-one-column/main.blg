@@ -1,0 +1,108 @@
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+Reallocating 'name_of_file' (item size: 1) to 21 items.
+The style file: ACM-Reference-Format.bst
+Reallocating 'name_of_file' (item size: 1) to 10 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'wiz_functions' (item size: 4) to 6000 items.
+Database file #1: reference.bib
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'glb_str_end' (item size: 4) to 20 items.
+Reallocating 'glb_str_ptr' (item size: 4) to 20 items.
+Reallocating 'global_strs' (item size: 1) to 4000000 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'wiz_functions' (item size: 4) to 9000 items.
+Warning--empty publisher in abate2024stochastic
+Warning--empty address in abate2024stochastic
+Warning--empty publisher in ansaripour2023learning
+Warning--empty address in ansaripour2023learning
+Warning--empty address in baier2008principles
+Warning--empty address in buchi1966symposium
+Warning--empty publisher in chakarov2013probabilistic
+Warning--empty address in chakarov2013probabilistic
+Warning--empty publisher in chatterjee2016algorithmic
+Warning--empty address in chatterjee2016algorithmic
+Warning--empty publisher in chatterjee2024sound
+Warning--empty address in chatterjee2024sound
+Warning--empty publisher in couvreur1999fly
+Warning--empty address in couvreur1999fly
+Warning--empty publisher in de2008z3
+Warning--empty address in de2008z3
+Warning--empty publisher in gao2012delta
+Warning--empty address in gao2012delta
+Warning--empty publisher in gao2013dreal
+Warning--empty address in gao2013dreal
+Warning--empty publisher in giannakopoulou2002states
+Warning--empty address in giannakopoulou2002states
+Warning--empty publisher in kong2018delta
+Warning--empty address in kong2018delta
+Warning--empty publisher in murali2024closure
+Warning--empty address in murali2024closure
+Warning--can't use both volume and number fields in neustroev2025neural
+Warning--empty publisher in neustroev2025neural
+Warning--empty address in neustroev2025neural
+Warning--empty publisher in pnueli1977temporal
+Warning--empty address in pnueli1977temporal
+Warning--empty publisher in podelski2004transition
+Warning--empty address in podelski2004transition
+Warning--empty publisher in prajna2004safety
+Warning--empty address in prajna2004safety
+Warning--empty publisher in prajna2002introducing
+Warning--empty address in prajna2002introducing
+Warning--empty publisher in complementnba
+Warning--empty address in complementnba
+Warning--empty address in solar2008program
+Warning--empty address in thomas1990automata
+Warning--no number and no volume in vardi2005automata
+Warning--empty publisher in xue2021reach
+Warning--empty address in xue2021reach
+Warning--empty year in Yuan_SumOfSquares_py
+Warning--using n.d. in Yuan_SumOfSquares_py
+Warning--empty organization in Yuan_SumOfSquares_py
+Warning--can't use both volume and number fields in vzikelic2023learning
+Warning--empty publisher in vzikelic2023learning
+Warning--empty address in vzikelic2023learning
+You've used 35 entries,
+            6056 wiz_defined-function locations,
+            1847 strings with 26931 characters,
+and the built_in function-call counts, 41276 in all, are:
+= -- 4907
+> -- 1096
+< -- 0
++ -- 360
+- -- 377
+* -- 2698
+:= -- 3826
+add.period$ -- 179
+call.type$ -- 35
+change.case$ -- 236
+chr.to.int$ -- 33
+cite$ -- 85
+duplicate$ -- 4023
+empty$ -- 2789
+format.name$ -- 479
+if$ -- 10079
+int.to.chr$ -- 4
+int.to.str$ -- 1
+missing$ -- 148
+newline$ -- 303
+num.names$ -- 247
+pop$ -- 1625
+preamble$ -- 1
+purify$ -- 507
+quote$ -- 0
+skip$ -- 1525
+stack$ -- 0
+substring$ -- 3341
+swap$ -- 450
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 902
+warning$ -- 50
+while$ -- 258
+width$ -- 0
+write$ -- 712
+(There were 50 warnings)

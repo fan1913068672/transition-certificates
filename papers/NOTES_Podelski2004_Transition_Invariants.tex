@@ -1,0 +1,532 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+
+\title{Reading Notes: Transition Invariants}
+\author{Andreas Podelski, Andrey Rybalchenko}
+\date{Paper Read: 2025-12-28}
+
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{remark}{Remark}
+
+\begin{document}
+
+\maketitle
+
+\section{Paper Metadata}
+
+\begin{itemize}
+    \item \textbf{Title}: Transition Invariants
+    \item \textbf{Authors}: Andreas Podelski, Andrey Rybalchenko
+    \item \textbf{Affiliation}: Max-Planck-Institut für Informatik, Saarbrücken, Germany
+    \item \textbf{Publication}: LICS'04 (19th Annual IEEE Symposium on Logic in Computer Science)
+    \item \textbf{Year}: 2004
+    \item \textbf{Funding}: DFG (SFB/TR 14 AVACS), BMBF (Verisoft project)
+\end{itemize}
+
+\section{Core Contribution}
+
+This is a \textbf{foundational paper} that introduces transition invariants for program verification:
+
+\begin{enumerate}
+    \item \textbf{Transition Invariant}: Binary relation over program states containing transitive closure of transition relation
+
+    \item \textbf{Disjunctive Well-foundedness}: Finite union of well-founded relations
+
+    \item \textbf{Characterization of Termination/Liveness}: Program terminates iff there exists disjunctively well-founded transition invariant
+
+    \item \textbf{Proof Rule}: Sound and relatively complete for liveness verification
+
+    \item \textbf{Automation Potential}: Via abstract interpretation of fixed-point operators over relations
+\end{enumerate}
+
+\section{Program Model}
+
+\begin{definition}[Program]
+A program $P = \langle W, I, R \rangle$ consists of:
+\begin{itemize}
+    \item $W$: set of states
+    \item $I$: set of starting states, $I \subseteq W$
+    \item $R$: transition relation, $R \subseteq W \times W$
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Computation]
+A computation is a maximal sequence of states $s_1, s_2, \ldots$ such that:
+\begin{itemize}
+    \item $s_1 \in I$ (starting state)
+    \item $(s_i, s_{i+1}) \in R$ for all $i \geq 1$
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Accessible States]
+The set $Acc$ of accessible states consists of all states appearing in some computation.
+\end{definition}
+
+\begin{definition}[Computation Segment]
+A finite segment $s_i, s_{i+1}, \ldots, s_j$ of a computation where $i < j$.
+\end{definition}
+
+\section{Transition Invariants}
+
+\begin{definition}[Transition Invariant]
+A transition invariant $\mathcal{T}$ is a superset of the transitive closure of the transition relation restricted to accessible states:
+\begin{equation}
+R^+ \cap (Acc \times Acc) \subseteq \mathcal{T}
+\end{equation}
+\end{definition}
+
+\textbf{Key property}: For every computation segment $s_i, s_{i+1}, \ldots, s_j$, the pair $(s_i, s_j) \in \mathcal{T}$.
+
+\textbf{Observation}:
+\begin{itemize}
+    \item The Cartesian product $W \times W$ is a transition invariant (trivial)
+    \item A superset of $R^+$ is a transition invariant, but converse doesn't hold
+    \item State invariants can be derived: $I \cup \{s' \mid s \in I \land (s, s') \in \mathcal{T}\}$
+    \item Transition invariants can be strengthened with state invariants
+\end{itemize}
+
+\section{Disjunctive Well-foundedness}
+
+\begin{definition}[Disjunctive Well-foundedness]
+A relation $\mathcal{T}$ is \emph{disjunctively well-founded} if it is a finite union of well-founded relations:
+\begin{equation}
+\mathcal{T} = T_1 \cup \cdots \cup T_n
+\end{equation}
+where each $T_i$ is well-founded.
+\end{definition}
+
+\textbf{Key observations}:
+\begin{itemize}
+    \item Every well-founded relation is disjunctively well-founded
+    \item Converse does NOT hold in general
+
+    \item Example of disjunctively well-founded but not well-founded:
+    \begin{equation}
+    \text{ACK-REQ} = \{(ack, req)\} \cup \{(req, ack)\}
+    \end{equation}
+    Each component is well-founded, but union has cycle $(ack, req) \to (req, ack) \to (ack, req) \to \cdots$
+
+    \item \textbf{Critical property}: If $\mathcal{T}$ is disjunctively well-founded, then $R^+ \subseteq \mathcal{T}$ implies $R$ is well-founded
+\end{itemize}
+
+\section{Termination Characterization}
+
+\begin{theorem}[Termination via Transition Invariants]
+\label{thm:termination}
+The program $P$ is terminating if and only if there exists a disjunctively well-founded transition invariant for $P$.
+\end{theorem}
+
+\begin{proof}[Proof Sketch - If Direction]
+Assume $\mathcal{T} = T_1 \cup \cdots \cup T_n$ is disjunctively well-founded transition invariant, and $P$ is not terminating.
+
+Contradiction via Ramsey's theorem:
+\begin{enumerate}
+    \item Infinite computation $\sigma = s_1, s_2, \ldots$ exists
+
+    \item Define function $f$ mapping pairs $(k, \ell)$ with $k < \ell$ to subrelation: $f(k, \ell) = T_i$ such that $(s_k, s_\ell) \in T_i$
+
+    \item Function $f$ induces equivalence relation $\sim$ on index pairs:
+    \begin{equation}
+    (k, \ell) \sim (k', \ell') \iff f(k, \ell) = f(k', \ell')
+    \end{equation}
+
+    \item $\sim$ has finite index (range of $f$ is finite)
+
+    \item By Ramsey's theorem: infinite subsequence $K = k_1, k_2, \ldots$ where all pairs belong to same equivalence class with representative $T_m$
+
+    \item Thus $(s_{k_i}, s_{k_{i+1}}) \in T_m$ for all $i \geq 1$
+
+    \item This infinite sequence witnesses that $T_m$ is not well-founded - contradiction!
+\end{enumerate}
+\end{proof}
+
+\begin{proof}[Proof Sketch - Only If Direction]
+Assume $P$ is terminating. Define:
+\begin{equation}
+\mathcal{T} = R^+ \cap (Acc \times Acc)
+\end{equation}
+
+Clearly $\mathcal{T}$ is transition invariant. Assume infinite sequence $s^1, s^2, \ldots$ with $(s^i, s^{i+1}) \in \mathcal{T}$ for all $i$.
+
+Since $s^1$ accessible and $(s^i, s^{i+1}) \in R^+$, there exists infinite computation $s^1, \ldots, s^2, \ldots, s^3, \ldots$ - contradiction to termination.
+
+Hence $\mathcal{T}$ is well-founded (and thus disjunctively well-founded).
+\end{proof}
+
+\section{Liveness Verification}
+
+\subsection{Automata-Theoretic Framework}
+
+Following Vardi's framework, liveness property $\Psi$ and fairness assumption $\Phi$ are given by Büchi automaton $\mathcal{A}_{\Phi,\Psi}$.
+
+\begin{definition}[Büchi Automaton]
+$\mathcal{A}_{\Phi,\Psi} = \langle Q, Q^0, \Delta, F \rangle$ where:
+\begin{itemize}
+    \item $Q$: (possibly infinite) set of states
+    \item $Q^0 \subseteq Q$: starting states
+    \item $\Delta$: transition relation, set of triples $(q, s, q') \in Q \times W \times Q$
+    \item $F \subseteq Q$: accepting states
+\end{itemize}
+
+Automaton accepts word $s_1, s_2, \ldots$ if run $q_1, q_2, \ldots$ exists with $q_i \in F$ for infinitely many $i$.
+\end{definition}
+
+\subsection{Product Construction}
+
+\begin{definition}[Product Program]
+$P_{\Phi,\Psi} = P \times \mathcal{A}_{\Phi,\Psi}$ has:
+\begin{itemize}
+    \item States: $W_Q = W \times Q$
+    \item Starting states: $I \times Q^0$
+    \item Transitions: $((s, q), (s', q')) \in R_Q$ iff $(s, s') \in R$ and $(q, s, q') \in \Delta$
+    \item Accepting states: $W_F = W \times F$
+\end{itemize}
+
+Computation of $P_{\Phi,\Psi}$ is \emph{fair} if it visits $W_F$ infinitely often.
+
+$P$ satisfies $\Psi$ under $\Phi$ iff all computations of $P_{\Phi,\Psi}$ are not fair (fair termination).
+\end{definition}
+
+\begin{theorem}[Liveness via Transition Invariants]
+\label{thm:liveness}
+Program $P$ satisfies liveness property $\Psi$ under fairness assumption $\Phi$ if and only if there exists transition invariant $\mathcal{T}$ for $P_{\Phi,\Psi}$ such that $\mathcal{T} \cap (W_F \times W_F)$ is disjunctively well-founded.
+\end{theorem}
+
+\textbf{Key insight}: Intersecting transition invariant with relation over Büchi accepting states directly accounts for acceptance condition and fairness.
+
+\section{Inductive Transition Invariants}
+
+\begin{definition}[Inductive Relation]
+Given program with transition relation $R$, binary relation $\mathcal{T}$ is \emph{inductive} if:
+\begin{equation}
+R \subseteq \mathcal{T} \quad \text{and} \quad \mathcal{T} \circ R \subseteq \mathcal{T}
+\end{equation}
+where $\circ$ denotes relational composition: $(s, s'') \in S \circ T$ iff $\exists s'. (s, s') \in S \land (s', s'') \in T$.
+\end{definition}
+
+\begin{remark}
+An inductive relation for program $P$ is a transition invariant for $P$.
+\end{remark}
+
+\textbf{Note}: Transition invariant need not be transitive (i.e., $\mathcal{T} \circ \mathcal{T} \not\subseteq \mathcal{T}$ in general).
+
+\begin{corollary}[Compositionality]
+A finite union of well-founded relations is well-founded if it is closed under relational composition with itself.
+\end{corollary}
+
+\section{Proof Rule LIVENESS}
+
+\begin{figure}[h]
+\centering
+\boxed{
+\begin{minipage}{0.9\textwidth}
+\textbf{Given}:
+\begin{itemize}
+    \item Program $P$
+    \item Liveness property $\Psi$, fairness assumption $\Phi$
+    \item Büchi automaton $\mathcal{A}_{\Phi,\Psi}$
+    \item Product $P_{\Phi,\Psi}$ with transition relation $R$, states $W_Q$, accepting states $W_F$
+    \item Relation $\mathcal{T} \subseteq W_Q \times W_Q$
+\end{itemize}
+
+\textbf{Premises}:
+\begin{align}
+\text{P1:} \quad & R \subseteq \mathcal{T}\\
+\text{P2:} \quad & \mathcal{T} \circ R \subseteq \mathcal{T}\\
+\text{P3:} \quad & \mathcal{T} \cap (W_F \times W_F) \text{ is disjunctively well-founded}
+\end{align}
+
+\textbf{Conclusion}: $P$ satisfies $\Psi$ under $\Phi$
+\end{minipage}
+}
+\end{figure}
+
+\begin{theorem}[Soundness and Relative Completeness]
+The rule LIVENESS is:
+\begin{itemize}
+    \item \textbf{Sound}
+    \item \textbf{Complete} relative to first-order assertional validity and well-foundedness validity
+\end{itemize}
+\end{theorem}
+
+\section{Example: LOOPS Program}
+
+Program LOOPS (Figure 1 in paper):
+\begin{verbatim}
+while x >= 0 do
+    m := 1
+    while y < x do
+        y := 2y
+    x := x - 1
+\end{verbatim}
+
+\textbf{Observation}: Two kinds of loops:
+\begin{enumerate}
+    \item Go through $\ell_0$ at least once, decrease non-negative $x$
+    \item Go only through $\ell_2$ (not $\ell_0$), decrease non-negative $x - y$
+\end{enumerate}
+
+\textbf{Transition invariant} (union of relations denoted by assertions over unprimed/primed variables):
+
+\begin{align}
+T_1: \quad & x \geq 0 \land x' < x\\
+T_2: \quad & x - y > 0 \land x' - y' < x - y\\
+T_{ij}: \quad & pc = \ell_i \land pc' = \ell_j \quad \text{where } i \neq j \in \{0, \ldots, 4\}
+\end{align}
+
+Each of $T_1$, $T_2$, and $T_{ij}$'s is well-founded.
+
+\textbf{Inductive transition invariant} (Section 5):
+\begin{align}
+& pc = \ell_0 \land x \geq 0 \land x' \leq x \land pc' = \ell_2\\
+& pc = \ell_2 \land x' < x \land pc' = \ell_0\\
+& pc = \ell_2 \land x - y > 0 \land x' \leq x \land x' - y' \leq x - y \land y' \geq y \land pc' = \ell_2\\
+& pc = \ell_0 \land x \geq 0 \land x' < x \land pc' = \ell_0\\
+& pc = \ell_2 \land x \geq 0 \land x' < x \land pc' = \ell_2
+\end{align}
+
+\section{Automation via Abstract Interpretation}
+
+\subsection{Operator for Inductive Relations}
+
+Define operator $F$ over relations:
+\begin{equation}
+F(\mathcal{T}) = \mathcal{T} \circ R
+\end{equation}
+
+Inductive transition invariants are \textbf{least fixed points above $R$} of operators $F^{\#}$ such that $F^{\#} \supseteq F$.
+
+\subsection{Abstract Interpretation Framework}
+
+Transition invariants satisfying P1 and P2 can be constructed automatically:
+\begin{itemize}
+    \item Compute abstractions of least fixed points
+    \item Use widening or predicate abstraction
+    \item Analogous to techniques for state invariants [Cousot, Graf-Saïdi, Henzinger et al.]
+\end{itemize}
+
+\subsection{Validation of Premises}
+
+\textbf{P1 and P2}: If $R = R_1 \cup \cdots \cup R_m$ (typical for concurrent programs), then:
+\begin{itemize}
+    \item $\mathcal{T} \circ R = \bigcup_{i=1}^m (\mathcal{T} \circ R_i)$
+    \item Each $\mathcal{T} \circ R_i$ is assertion over unprimed/primed variables
+    \item Validation reduces to entailment checks
+\end{itemize}
+
+\textbf{P3}: If transition invariant well-chosen, amounts to testing well-foundedness of "simple while" programs:
+\begin{equation}
+\text{while } g(\bar{X}) \text{ do } e(\bar{X}', \bar{X})
+\end{equation}
+
+For linear arithmetic: efficient termination tests exist [Podelski-Rybalchenko 2004, Tiwari 2004].
+
+\section{Comparison: Podelski-Rybalchenko 2004 vs. Our Work}
+
+\begin{center}
+\begin{tabular}{|p{3.5cm}|p{5.5cm}|p{5.5cm}|}
+\hline
+\textbf{Aspect} & \textbf{Podelski-Rybalchenko 2004} & \textbf{Our Work} \\
+\hline
+\textbf{Core Concept} & Transition invariant: binary relation $\mathcal{T}$ over states containing $R^+ \cap (Acc \times Acc)$ &
+\begin{itemize}
+\item Safety cert: $B_k(x,q)$ on $\mathcal{X} \times Q$
+\item Persistence cert: $B_{k,l}(x)$ on $\mathcal{X}$
+\end{itemize} \\
+\hline
+\textbf{State Space} & General (can be infinite, discrete, or continuous) & Continuous: $\mathcal{X} \subseteq \mathbb{R}^n$ \\
+\hline
+\textbf{Well-foundedness} & Disjunctively well-founded: $\mathcal{T} = T_1 \cup \cdots \cup T_n$, each $T_i$ well-founded &
+\begin{itemize}
+\item Safety: unreachability (no well-foundedness needed)
+\item Persistence: ranking function (single well-founded)
+\end{itemize} \\
+\hline
+\textbf{Verification Approach} &
+\begin{itemize}
+\item Find transition invariant $\mathcal{T}$
+\item Prove $R \subseteq \mathcal{T}$ and $\mathcal{T} \circ R \subseteq \mathcal{T}$
+\item Test disjunctive well-foundedness
+\end{itemize} &
+\begin{itemize}
+\item Safety: block reachability to $q_k \in Acc^{start}$
+\item Persistence: prove finite occurrence via ranking
+\end{itemize} \\
+\hline
+\textbf{Büchi Acceptance} & Intersect with $W_F \times W_F$ (accepting state pairs) & Transition-based: use $Acc^{start}$ and $Acc^{pair}$ \\
+\hline
+\textbf{Inductiveness} & Inductive: $R \subseteq \mathcal{T}$ and $\mathcal{T} \circ R \subseteq \mathcal{T}$ &
+\begin{itemize}
+\item Safety: barrier-like conditions
+\item Persistence: decrease with each accepting transition
+\end{itemize} \\
+\hline
+\textbf{Ramsey's Theorem} & Used to prove that disjunctively well-founded $\mathcal{T}$ with $R^+ \subseteq \mathcal{T}$ implies $R$ well-founded & Not used (different proof technique) \\
+\hline
+\textbf{Fairness} & Encoded in Büchi automaton $\mathcal{A}_{\Phi,\Psi}$, handled via product construction & Encoded in transition-based NBA \\
+\hline
+\textbf{Application Domain} & Concurrent programs (discrete or continuous) & Continuous dynamical systems $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$ \\
+\hline
+\textbf{Soundness/Completeness} & Sound and relatively complete & Sound and relatively complete \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Relation to Our Work}
+
+\subsection{Conceptual Connections}
+
+\begin{enumerate}
+    \item \textbf{Transition-based reasoning}: Both approaches reason about transitions rather than just states
+
+    \item \textbf{Well-foundedness for liveness}:
+    \begin{itemize}
+        \item P-R: Disjunctively well-founded transition invariant
+        \item Our work: Well-founded ranking function (persistence certificate)
+    \end{itemize}
+
+    \item \textbf{Büchi acceptance}:
+    \begin{itemize}
+        \item P-R: Intersect $\mathcal{T}$ with $W_F \times W_F$
+        \item Our work: Separate certificates for accepting transitions
+    \end{itemize}
+
+    \item \textbf{Automation potential}: Both emphasize abstract interpretation for computing certificates/invariants
+\end{enumerate}
+
+\subsection{Key Differences}
+
+\begin{enumerate}
+    \item \textbf{Certificate Structure}:
+    \begin{itemize}
+        \item \textbf{P-R}: Single binary relation $\mathcal{T} \subseteq W \times W$ over all program states
+        \item \textbf{Our work}: Function-based certificates $B_k: \mathcal{X} \times Q \to \mathbb{R}$ (safety) or $B_{k,l}: \mathcal{X} \to \mathbb{R}$ (persistence)
+    \end{itemize}
+
+    \item \textbf{Disjunctive vs. Single Well-foundedness}:
+    \begin{itemize}
+        \item \textbf{P-R}: Union $\mathcal{T} = T_1 \cup \cdots \cup T_n$ of well-founded relations
+        \item \textbf{Our work}: Single ranking function $B_{k,l}$ that is well-founded
+    \end{itemize}
+
+    \item \textbf{Dimension of Certificates}:
+    \begin{itemize}
+        \item \textbf{P-R}: Binary relation (2D: pairs of states)
+        \item \textbf{Our persistence}: Unary function on $\mathcal{X}$ (1D: single state)
+    \end{itemize}
+
+    \item \textbf{Transitivity}:
+    \begin{itemize}
+        \item \textbf{P-R}: Transition invariant must contain $R^+$ (transitive closure)
+        \item \textbf{Our work}: Certificates don't require transitivity, just monotonicity/decrease
+    \end{itemize}
+
+    \item \textbf{Safety vs. Liveness Separation}:
+    \begin{itemize}
+        \item \textbf{P-R}: Unified treatment via transition invariants
+        \item \textbf{Our work}: Explicit separation into safety (reachability-blocking) and persistence (ranking) certificates
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Murali 2024 Connection}
+
+Murali et al.'s closure certificates are the \textbf{functional analog} of Podelski-Rybalchenko's transition invariants:
+
+\begin{itemize}
+    \item \textbf{P-R}: Set-theoretic transition invariant $\mathcal{T} \subseteq W \times W$
+    \item \textbf{Murali}: Function-based closure certificate $\mathcal{T}: \mathcal{X} \times \mathcal{X} \to \mathbb{R}$
+    \item Both satisfy closure property under composition
+    \item Both characterize transitive reachability
+\end{itemize}
+
+\section{Citation Correctness}
+
+\textbf{Verified}: This paper is \textbf{foundational and highly relevant}:
+\begin{itemize}
+    \item Introduces transition invariants (concept used by Murali 2024) ✓
+    \item Proves sound and complete characterization of liveness ✓
+    \item Works with Büchi automata ✓
+    \item Provides proof rule for concurrent programs ✓
+    \item Cited by Murali 2024 as foundational work ✓
+\end{itemize}
+
+\textbf{Recommendation}: This citation is \textbf{essential}. It is the foundational work that:
+\begin{enumerate}
+    \item Introduced transition invariants
+    \item Murali 2024 builds closure certificates as functional analog
+    \item Our work extends to continuous systems with dimension reduction
+\end{enumerate}
+
+\section{Key Insights for Our Paper}
+
+\subsection{Positioning}
+
+When citing this paper in related work:
+
+\begin{quote}
+``Podelski and Rybalchenko~\cite{podelski2004transition} introduced transition invariants as binary relations containing the transitive closure of the transition relation, characterizing program termination and liveness through disjunctively well-founded transition invariants. Murali et al.~\cite{murali2024closure} extended this to closure certificates as functional analogs over continuous state spaces. Our work further reduces the search space by defining persistence certificates solely on $\mathcal{X}$, eliminating automaton state dependence, while maintaining soundness and completeness.''
+\end{quote}
+
+\subsection{Technical Lineage}
+
+\begin{equation}
+\begin{array}{c}
+\text{Podelski-Rybalchenko 2004:} \\
+\text{Transition invariant } \mathcal{T} \subseteq W \times W \\
+\text{(set-theoretic, disjunctively well-founded)}\\
+\downarrow\\
+\text{Murali et al. 2024:}\\
+\text{Closure certificate } \mathcal{T}: \mathcal{X} \times \mathcal{X} \to \mathbb{R}\\
+\text{(functional analog, well-founded)}\\
+\downarrow\\
+\text{Our Work:}\\
+\text{Persistence certificate } B_{k,l}: \mathcal{X} \to \mathbb{R}\\
+\text{(dimension reduction, no automaton state)}
+\end{array}
+\end{equation}
+
+\section{Future Context Recovery Prompt}
+
+当需要引用这篇论文时，使用以下提示词：
+
+\begin{verbatim}
+读取LaTeX笔记：
+E:\fyh\05persistence-certificate-one-column\papers\
+NOTES_Podelski2004_Transition_Invariants.tex
+
+这篇论文是Podelski和Rybalchenko 2004年发表的foundational work：
+
+核心概念：
+- Transition Invariant: 包含R^+ ∩ (Acc × Acc)的二元关系
+- Disjunctive Well-foundedness: 有限个well-founded关系的并
+- Termination characterization: 程序终止 iff 存在disjunctively
+  well-founded transition invariant
+- Inductive transition invariant: R ⊆ T 且 T ∘ R ⊆ T
+
+与我们工作的关系：
+1. 这是foundational work，引入了transition invariant概念
+2. Murali 2024的closure certificate是其functional analog
+3. 我们的persistence certificate进一步降维：定义在X上而非X × X
+4. 关键区别：
+   - P-R: 集合论的二元关系T ⊆ W × W
+   - Murali: 函数T: X × X → ℝ
+   - Our: 函数B_{k,l}: X → ℝ (no automaton state!)
+
+技术贡献：
+- 使用Ramsey定理证明disjunctive well-foundedness的充要性
+- 提出proof rule LIVENESS (sound and relatively complete)
+- 指出通过abstract interpretation自动化的潜力
+
+引用状态：foundational且essential，是transition invariant的
+原始工作，后续Murali和我们的工作都基于此发展。
+\end{verbatim}
+
+\section{Summary}
+
+Podelski and Rybalchenko introduce transition invariants as binary relations containing the transitive closure of the transition relation, proving that program termination is characterized by the existence of disjunctively well-founded transition invariants. This foundational work enables liveness verification through sound and relatively complete proof rules, with automation potential via abstract interpretation. Murali et al. extend this to functional closure certificates, and our work further reduces search space by defining persistence certificates on continuous state space alone, eliminating automaton state dependence.
+
+\end{document}

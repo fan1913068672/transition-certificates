@@ -1,0 +1,286 @@
+\section{Proof}
+\label{appendix-proof}
+\begin{theorem}
+  %\label{transition-safety-lemma}
+  Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a trajectory $\tau=\langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, a labelling function $\mathfrak{L}:\mathcal{X} \rightarrow \Sigma$ and an NBA $\mathcal{A}=(\Sigma, Q, q_0, \delta, Acc)$, if a transition safety certificate $B_{k}(x, q)$ with respect to $q_k \in Acc^{start}$ can be found, then it can be guaranteed that all runs of all \emph{words} in $\mathfrak{L}(\mathfrak{S})$ cannot visit the state $q_k$.
+\end{theorem}
+
+\begin{proof}
+  By Definition~\ref{transition-safety-certificate-definition}, we have $\mathcal{Y}_u = \{(x, q_k) \mid x \in \mathcal{X}\}$ as the unsafe set in the product system $\mathfrak{S} \times \mathcal{A}$. We verify that $B_k$ satisfies the barrier certificate conditions (\ref{bsinn0}, \ref{bsun0}, \ref{bstnn0}) with respect to $\mathcal{Y}_u$:
+  \begin{itemize}
+    \item Condition (\ref{btsc1}) states $B_k(x_0, q_0) \geq 0$ for all $(x_0, q_0) \in \mathcal{Y}_0$, which corresponds to condition (\ref{bsinn0}).
+    \item Condition (\ref{btsc2}) states $B_k(x, q_k) < 0$ for all $(x, q_k) \in \mathcal{Y}_u$, which corresponds to condition (\ref{bsun0}).
+    \item Condition (\ref{btsc3}) states $B_k(x, q) \geq 0 \Rightarrow B_k(x', q') \geq 0$ for all $(x', q') \in F(x, q)$, which corresponds to condition (\ref{bstnn0}).
+  \end{itemize}
+
+  By Theorem~(\ref{corollary_tbsc}), any trajectory of the product system $\mathfrak{S} \times \mathcal{A}$ cannot visit $\mathcal{Y}_u$.
+
+  Now we establish the connection to automaton runs. For any word $w = \mathfrak{L}(\tau) \in \mathfrak{L}(\mathfrak{S})$ where $\tau = \langle x_0, x_1, \dots \rangle$ is a trajectory of $\mathfrak{S}$, the corresponding run $r$ of $w$ on $\mathcal{A}$ is a sequence $r = \langle (r_0, w_0, r_1), (r_1, w_1, r_2), \ldots \rangle$ where $r_0 = q_0$. The sequence of product states $\langle (x_0, r_0), (x_1, r_1), \ldots \rangle$ forms a trajectory in $\mathfrak{S} \times \mathcal{A}$. Since this trajectory cannot visit $\mathcal{Y}_u = \{(x, q_k) \mid x \in \mathcal{X}\}$, we have $r_i \neq q_k$ for all $i$. Therefore, runs of all words in $\mathfrak{L}(\mathfrak{S})$ cannot visit state $q_k$.
+\end{proof}
+
+\begin{theorem}
+  %\label{transition-persistence-lemma}
+  Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$, and $(k, l) \in Acc^{pair}$, if a transition persistence certificate $B_{k, l}$ can be found, then it can be guaranteed that all runs of the words in $\mathfrak{L}(\mathfrak{S})$ make accepting transitions from $q_k$ to $q_l$ happen finitely often.
+\end{theorem}
+
+\begin{proof}
+We define $\mathcal{X}_{k, l}=\{x \mid (q_k, \mathfrak{L}(x), q_l) \in Acc^{k,l}\}$ as the set of states where accepting transitions from $q_k$ to $q_l$ can occur.
+
+Consider any trajectory $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$ and its corresponding word $w = \mathfrak{L}(\tau)$. Let $r$ be a run of $w$ on $\mathcal{A}$ starting from $q_0$. An accepting transition from $q_k$ to $q_l$ can occur at step $i$ only if $(q_k, \mathfrak{L}(x_i), q_l) \in Acc^{k,l}$, which is equivalent to $x_i \in \mathcal{X}_{k,l}$. Therefore, the number of accepting transitions from $q_k$ to $q_l$ is bounded by the number of times the trajectory visits $\mathcal{X}_{k,l}$.
+
+By Definition~\ref{transition-persistence-certificate-definition}, we have:
+\begin{itemize}
+  \item $B_{k,l}(x_0) \geq 0$ by condition (\ref{btpc1}).
+  \item $B_{k,l}(x_i) \geq 0$ for all $i$ by condition (\ref{btpc2}), since $B_{k,l}$ remains non-negative along the trajectory.
+  \item $B_{k,l}(x_i) \geq B_{k,l}(x_{i+1}) + I_{k,l}(x_i)\epsilon$ by condition (\ref{btpc3}), where $I_{k,l}(x_i) = 1$ if $x_i \in \mathcal{X}_{k,l}$ and $0$ otherwise.
+\end{itemize}
+
+Suppose the trajectory visits $\mathcal{X}_{k,l}$ at indices $i_1, i_2, \dots, i_m$ where $m$ is the number of times accepting transitions occur. At each visit, $B_{k,l}$ decreases by at least $\epsilon$:
+\begin{align}
+B_{k,l}(x_0) \geq B_{k,l}(x_{i_1}) + \epsilon \geq B_{k,l}(x_{i_2}) + 2\epsilon \geq \cdots \geq B_{k,l}(x_{i_m}) + m\epsilon.
+\end{align}
+
+Since $B_{k,l}(x_{i_m}) \geq 0$ by condition (\ref{btpc2}), we have $B_{k,l}(x_0) \geq m\epsilon$, which gives $m \leq \frac{B_{k,l}(x_0)}{\epsilon}$. Therefore, the number of accepting transitions from $q_k$ to $q_l$ is bounded, ensuring they occur only finitely often.
+\end{proof}
+
+\section{Experiment}
+\label{appendix-experiment}
+\subsection{Template for Two-Dimensional Kuramoto Oscillator System}
+The transition safety certificate template for the two-dimensional Kuramoto Oscillator system is given by:
+\begin{align*}
+B_0(x_1, x_2, q) = &\, c_0 + c_1 \cdot x_1 + c_2 \cdot x_2^2 + c_3 \cdot x_1 x_2 + c_4 \cdot x_1^3 \\
+                   &+ c_5 \cdot q + c_6 \cdot q^2 + c_7 \cdot q x_1^2 + c_8 \cdot x_2 q
+\end{align*}
+
+\subsection{Template for Two-Room Temperature System}
+For the \textit{transition safety certificate}:
+\begin{align*}
+B_1(x_1, x_2, q) = &\, c_0 + c_1 \cdot I_{X_0}(x_1, x_2) + c_2 \cdot I_{X_{VF}}(x_1, x_2) \\
+                   &+ c_3 \cdot x_1 I_{X_0}(x_1, x_2) + c_4 \cdot x_2 I_{X_0}(x_1, x_2) \\
+                   &+ c_5 \cdot x_1 I_{X_{VF}}(x_1, x_2) + c_6 \cdot x_2 I_{X_{VF}}(x_1, x_2) \\
+                   &+ c_7 \cdot \max(x_1, x_2) + c_8 \cdot x_1^2 + c_9 \cdot x_2^2 + c_{10} \cdot q + c_{11} \cdot q^2.
+\end{align*}
+The template for the \textit{transition persistence certificate} is as follows:
+\begin{align*}
+B_{1,1}(x_1, x_2) = & \, c_0 + c_1 \cdot I_{X_0}(x_1, x_2) + c_2 \cdot I_{X_{VF}}(x_1, x_2) \\
+                    & + c_3 \cdot x_1 I_{X_0}(x_1, x_2)) + c_4 \cdot x_2 I_{X_0}(x_1, x_2) \\
+                   	& + c_5 \cdot x_1 I_{X_{VF}}(x_1, x_2) + c_6 \cdot x_2 I_{X_{VF}}(x_1, x_2) \\ 
+					& + c_7 \cdot \max(x_1, x_2) + c_8 \cdot x_1^2 + c_9 \cdot x_2^2.
+\end{align*}
+
+\subsection{Neural Network Certificate Synthesis Results}
+\label{app:neural_cert_results}
+
+This section provides the neural network certificates synthesized in the three case studies.
+
+\subsubsection{Kuramoto Oscillator: One-Dimensional System}
+\label{app:ko1d_neural}
+\textbf{Valid transition safety certificate network parameters:}
+\begin{itemize}
+    \item \textbf{Network architecture:} 2 → 10 → 1
+    \item \textbf{Layer 1 weights} $W^{(1)} \in \mathbb{R}^{10 \times 2}$:
+    \[
+    W^{(1)} = \begin{bmatrix}
+    -0.00462256 &  0.01221108 \\
+     0.03739256 & -0.07070591 \\
+    -0.03385788 &  0.03532363 \\
+     0.02323357 & -0.04756396 \\
+    -0.02231794 &  0.01263871 \\
+    -0.12405103 &  0.48543116 \\
+     0.01899324 & -0.01110257 \\
+    -0.04676657 &  0.03985026 \\
+     0.01944778 & -0.01133961 \\
+    -0.02552579 &  0.02062751
+    \end{bmatrix}
+    \]
+    
+    \item \textbf{Layer 1 bias} $b^{(1)} \in \mathbb{R}^{10}$:
+    \[
+    b^{(1)} = \begin{bmatrix}
+     0.0172649 & -0.03052891 &  0.0136185 & -0.03174191 & -0.0014399 \\
+    -0.30628562 &  0.00386369 &  0.01954095 &  0.0036539 & -0.00690265
+    \end{bmatrix}^\top
+    \]
+    
+    \item \textbf{Layer 2 weights} $W^{(2)} \in \mathbb{R}^{1 \times 10}$:
+    \[
+    W^{(2)} = \begin{bmatrix}
+     5.4625678\times 10^{-5} & -3.3691346\times 10^{-3} &  1.5689721\times 10^{-2} \\
+     4.9933312\times 10^{-3} &  1.5301542\times 10^{-2} &  5.0629839\times 10^{-2} \\
+    -1.2078640\times 10^{-2} &  2.5881324\times 10^{-2} & -1.2611435\times 10^{-2} \\
+     1.2140879\times 10^{-2}
+    \end{bmatrix}
+    \]
+    
+    \item \textbf{Layer 2 bias} $b^{(2)} \in \mathbb{R}$:
+    \[
+    b^{(2)} = 0.00882112
+    \]
+\end{itemize}
+
+\subsubsection{Kuramoto Oscillator: Two-Dimensional System}
+\label{app:ko2d_neural}
+
+\textbf{Valid transition safety certificate network parameters:}
+
+\begin{itemize}
+    \item \textbf{Network architecture:} 3 → 15 → 1
+    \item \textbf{Layer 1 weights} $W^{(1)} \in \mathbb{R}^{15 \times 3}$:
+    {\footnotesize
+    \[
+    W^{(1)} = \begin{bmatrix}
+    -2.3454\times 10^{-2} &  8.2131\times 10^{-2} &  3.0385\times 10^{-2} \\
+    -3.2091\times 10^{-1} &  4.6090\times 10^{-1} &  2.3015\times 10^{-1} \\
+    -4.6720\times 10^{-1} & -3.0937\times 10^{-1} & -4.7102\times 10^{-1} \\
+     1.9512\times 10^{-3} &  6.0307\times 10^{-3} &  6.0402\times 10^{-2} \\
+     4.1749\times 10^{-1} & -1.5416\times 10^{-2} &  1.7105\times 10^{-1} \\
+    -7.7784\times 10^{-3} &  3.9011\times 10^{-1} &  1.7507\times 10^{-2} \\
+    -3.8521\times 10^{-1} & -1.6144\times 10^{-1} &  2.3747\times 10^{-1} \\
+    -7.4627\times 10^{-4} &  1.7514\times 10^{-3} &  5.2698\times 10^{-3} \\
+     3.3908\times 10^{-2} & -5.2749\times 10^{-2} &  1.0184\times 10^{-1} \\
+    -1.2301\times 10^{-2} &  4.5511\times 10^{-2} &  1.2849\times 10^{-1} \\
+     4.1963\times 10^{-1} &  6.4382\times 10^{-2} &  1.1561\times 10^{-1} \\
+    -7.1149\times 10^{-3} &  7.1185\times 10^{-2} & -2.3238\times 10^{-1} \\
+    -3.7499\times 10^{-1} &  1.0978\times 10^{-1} & -2.0824\times 10^{-1} \\
+     2.2630\times 10^{-1} &  3.4759\times 10^{-1} & -2.9718\times 10^{-1} \\
+     5.6548\times 10^{-3} & -1.0305\times 10^{-4} &  7.3017\times 10^{-2}
+    \end{bmatrix}
+    \]}
+    
+    \item \textbf{Layer 1 bias} $b^{(1)} \in \mathbb{R}^{15}$:
+    {\scriptsize
+    \[
+    b^{(1)} = \begin{bmatrix}
+    -0.1210 & -0.6387 & -0.0146 & -0.0462 &  0.2188 & -0.2637 &  0.3804 \\
+    -0.0038 & -0.0504 & -0.1356 &  0.3777 &  0.2516 & -0.0852 &  0.1380 \\
+    -0.0478
+    \end{bmatrix}^\top
+    \]}
+    
+    \item \textbf{Layer 2 weights} $W^{(2)} \in \mathbb{R}^{1 \times 15}$:
+    {\footnotesize
+    \[
+    W^{(2)} = \begin{bmatrix}
+     0.00190352 &  0.04793187 & -0.07699478 &  0.00256316 &  0.02776624 \\
+    -0.03371546 & -0.05416371 & -0.0001113  &  0.00343324 &  0.00307385 \\
+    -0.10334048 & -0.0316381  & -0.02389356 & -0.07375315 &  0.00079416
+    \end{bmatrix}
+    \]}
+    
+    \item \textbf{Layer 2 bias} $b^{(2)} \in \mathbb{R}$:
+    \[
+    b^{(2)} = 0.05026149
+    \]
+\end{itemize}
+
+\subsubsection{Two-Room Temperature System}
+\label{app:two_room_neural}
+\textbf{Valid transition persistence certificate network parameters:}
+
+\begin{itemize}
+    \item \textbf{Network architecture:} 2 → 3 → 1
+    \item \textbf{Decrease constant $\epsilon$:} 0.01 (fixed)
+    \item \textbf{Layer 1 weights} $W^{(1)} \in \mathbb{R}^{3 \times 2}$:
+    \[
+    W^{(1)} = \begin{bmatrix}
+     0.09350396 & -0.06689734 \\
+     0.3247081  & -0.3753044  \\
+     0.8092528  & -0.7572314
+    \end{bmatrix}
+    \]
+    
+    \item \textbf{Layer 1 bias} $b^{(1)} \in \mathbb{R}^{3}$:
+    \[
+    b^{(1)} = \begin{bmatrix}
+    -0.76164836 & 1.549208 & -1.5467515
+    \end{bmatrix}^\top
+    \]
+\end{itemize}
+
+\subsection{Comparative Method Setting}
+\subsubsection{Closure Certificates Method}
+The synthesis process uses Z3 to find candidate certificates and dReal to find counterexamples, with a dReal precision of 0.0001.
+
+\textbf{One-Dimensional Kuramoto Oscillator System:}
+The NBA is defined as $(\Sigma, Q, q_0, \delta, \text{Acc})$ to represent $F a$.
+\begin{align*}
+    \text{Acc} &= \{0\} \\
+    Q &= \{1, 0\} \\
+    q_0 &= 1 \\
+    \Sigma &= \{\emptyset, \{a\}\} \\
+    \delta &= \{(1, \emptyset, 1), (1, \{a\}, 0), (0, \emptyset, 0), (0, \{a\}, 0)\} \\
+	a &\text{ is defined as } x \in X_{\text{u}}
+\end{align*}
+The certificate templates are:
+\begin{align*}
+    T_{0,0} &= c_0 + c_1 x + c_2 y \\
+    T_{0,1} &= c_3 + c_4 x + c_5 y \\
+    T_{1,0} &= c_6 + c_7 x + c_8 y \\
+    T_{1,1} &= c_9 + c_{10} x + c_{11} y
+\end{align*}
+The final synthesized coefficients are shown in Table~\ref{tab:coeff_1d}.
+
+\begin{table}[h]
+\centering
+\caption{Coefficients for the synthesized closure certificates (One-Dimensional System)}
+\label{tab:coeff_1d}
+\begin{tabular}{lccc}
+\hline
+\textbf{Template} & c_0 & c_1 & c_2 \\
+\hline
+T_{0,0}(x, y) & 0.000000 & 0.000000 & 0.000000 \\
+T_{0,1}(x, y) & -0.500000 & 0.000000 & 0.000000 \\
+T_{1,0}(x, y) & -4.310550 & 1.764117 & 0.000000 \\
+T_{1,1}(x, y) & 0.000000 & 0.000000 & 0.000000 \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Two-Dimensional Kuramoto Oscillator System:}
+The certificate template is defined for $i, j \in \{0, 1\}$ as:
+\begin{align*}
+T_{i,j}((x_1, x_2), (y_1, y_2)) = &\, c_{0, i, j} + c_{1, i, j} y_1 I_{X_0}(x_1, x_2) + c_{2, i, j} y_2 I_{X_0}(x_1, x_2) \\
+                                  &+ c_{3, i, j} y_1 I_{X_u}(x_1, x_2) + c_{4, i, j} y_2 I_{X_u}(x_1, x_2) \\
+                                  &+ c_{5,i,j} y_1 + c_{6,i,j} y_2
+\end{align*}
+
+\textbf{Two-Room Temperature System:}
+The NBA for $a_0 \land F a_1$ is $(\Sigma, Q, q_0, \delta, \text{Acc})$.
+
+\begin{align*}
+    Q &= \{0,1,2,3\} \\
+    \Sigma &= \{\emptyset, \{a_0\}, \{a_1\}, \{a_0, a_1\}\} \\
+    q_0 &= 0 \\
+    \text{Acc} &= \{2\} \\
+    \delta &= \{(q_0, \{a_0\}, q_1), (q_0, \{a_1\}, q_1), (q_0, \{a_0, a_1\}, q_2), (q_0, \emptyset, q_3), \\
+    &\quad\;(q_0, \{a_1\}, q_3), (q_1, \emptyset, q_1), (q_1, \{a_0\}, q_1), (q_1, \{a_1\}, q_2), \\
+    &\quad\;(q_1, \{a_0, a_1\}, q_2), (q_2, \emptyset, q_2), (q_2, \{a_0\}, q_2), (q_2, \{a_1\}, q_2), \\
+    &\quad\;(q_2, \{a_0, a_1\}, q_2), (q_3, \emptyset, q_3), (q_3,\{a_0\},q_3), (q_3, \{a_1\}, q_3), \\
+    &\quad\;(q_3, \{a_0, a_1\}, q_3)\} \\
+	a_0 &\text{ is defined as } x \in X_{0} \\
+	a_1 &\text{ is defined as } x \in X_{VF} \\
+\end{align*}
+The certificate template for this system is defined for $i, j \in \{0, 1, 2, 3\}$ as:
+\begin{align*}
+T_{i,j}((x_1, x_2), (y_1, y_2)) = &\, c_{0, i, j} + c_{1, i, j}x_1 + c_{2, i, j}x_2 + c_{3, i, j}y_1 + c_{4, i, j}y_2 \\
+                                  &+ c_{5, i, j}\max(x_1, x_2) + c_{6, i, j}\max(y_1, y_2) \\
+                                  &+ c_{7, i, j}x_1^2 + c_{8, i, j}x_2^2 + c_{9, i, j}y_1^2 + c_{10, i, j}y_2^2
+\end{align*}
+
+\subsubsection{Neural Closure Certificates Method}
+The configuration for the neural closure certificates is summarized in Table~\ref{tab:ncc_config}. A sampling density $\xi$ of 0.01 and a safety margin $\eta$ of 0.01 are used for all systems. The Lipschitz constant is estimated using the spectral norm-based algorithm.
+
+\begin{table}[h]
+\centering
+\caption{Neural network architecture and parameters for Neural Closure Certificates}
+\label{tab:ncc_config}
+\begin{tabular}{lccc}
+\hline
+\textbf{System} & \textbf{Network Architecture} & \textbf{Activation} & \textbf{Lipschitz Estimation} \\
+\hline
+1D Kuramoto Oscillator & (4-10-1) & ReLU & Spectral Norm \\
+2D Kuramoto Oscillator & (6-10-1) & ReLU & Spectral Norm \\
+Two-Room Temperature & (6-10-1) & ReLU & Spectral Norm \\
+\hline
+\end{tabular}
+\end{table}

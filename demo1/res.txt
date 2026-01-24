@@ -1,0 +1,76 @@
+Synthesizing a state safety certificate using Neural Network Template
+======================================================================
+
+======================================================================
+CEGIS Iteration #0
+======================================================================
+Training data size: init=35, unsafe=629, transition=1258
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000957
+  Epoch 400/1000, Loss: 0.000726
+  Epoch 600/1000, Loss: 0.000544
+  Epoch 800/1000, Loss: 0.000348
+  Epoch 1000/1000, Loss: 0.000213
+
+Step 2: Verifying with dReal...
+  ✓ Initial state condition verified
+  ✓ Unsafe state condition verified
+  Counterexample to transition property (q=1 -> q'=1):
+    x=0.09801267859218288, x'=1.783896157134838, B(x,1)=0.045358747243881226, B(x',1)=-0.19498760998249054
+
+Step 3: Adding counterexamples to training data...
+  Added 1 counterexamples to training data
+
+======================================================================
+CEGIS Iteration #1
+======================================================================
+Training data size: init=35, unsafe=629, transition=1259
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000000
+  Epoch 400/1000, Loss: 0.000000
+  Epoch 600/1000, Loss: 0.000000
+  Epoch 800/1000, Loss: 0.000000
+  Epoch 1000/1000, Loss: 0.000000
+
+Step 2: Verifying with dReal...
+  ✓ Initial state condition verified
+  ✓ Unsafe state condition verified
+  ✓ Transition property verified
+
+======================================================================
+✓ Verification PASSED! Barrier certificate synthesized successfully!
+======================================================================
+
+Final Barrier Certificate:
+----------------------------------------------------------------------
+Network architecture: 2 -> 10 -> 1 (shallow linear network)
+
+Layer 1 weights (W1):
+[[-0.14778951  0.369949  ]
+ [-0.22240849  0.47025698]
+ [ 0.3243543   0.49285817]
+ [-0.24149844 -0.72175485]
+ [ 0.14627285  0.07072166]
+ [ 0.4867393   0.1474035 ]
+ [ 0.4562571  -0.32046717]
+ [-0.25258738  0.1571572 ]
+ [-0.48191658  0.73997414]
+ [-0.06308574  0.36153507]]
+
+Layer 1 bias (b1):
+[-0.4253585  -0.527016    0.49232018 -0.02033929  0.6555996   0.18040745
+  0.5052507   0.1642855   0.2769083  -0.28214747]
+
+Layer 2 weights (W2):
+[[ 0.09746271 -0.01465806  0.2063482  -0.08712051 -0.21734004  0.17149587
+  -0.31477526  0.31302845  0.1470016   0.03963539]]
+
+Layer 2 bias (b2):
+[0.02909342]
+----------------------------------------------------------------------
+
+Analytical expression: B(x, q) = W2 @ (W1 @ [x, q] + b1) + b2
+
+Time taken: 483.4150 seconds
