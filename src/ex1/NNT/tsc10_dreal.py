@@ -554,7 +554,7 @@ if __name__ == "__main__":
         print(f"\n总用时: {end_time - start_time:.4f} 秒")
         print("\n最终屏障证书网络参数:")
         print("-" * 50)
-        print("架构: 2 -> 10 -> 1 (浅层线性网络)")
+        print("架构: 2 -> 10 -> 1 (ReLU 激活网络)")
         print("\n第一层权重 (W1):")
         print(barrier_net.fc1.weight.detach().numpy())
         print("\n第一层偏置 (b1):")
@@ -564,7 +564,7 @@ if __name__ == "__main__":
         print("\n第二层偏置 (b2):")
         print(barrier_net.fc2.bias.detach().numpy())
         print("-" * 50)
-        print(f"\n解析表达式: B(x, q) = W2 @ (W1 @ [x, q] + b1) + b2")
+        print(f"\n解析表达式: B(x, q) = W2 @ ReLU(W1 @ [x, q] + b1) + b2")
         
         # 保存模型
         print("\n" + "=" * 60)
