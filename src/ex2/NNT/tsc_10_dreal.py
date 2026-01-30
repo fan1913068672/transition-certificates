@@ -4,6 +4,10 @@ import torch.nn as nn
 import torch.optim as optim
 import dreal
 import time
+import json
+import os
+from datetime import datetime
+import numpy as np
 
 """
 Case: Two-dimensional Coupled Kuramoto Oscillators
@@ -74,6 +78,68 @@ class BarrierNetwork(nn.Module):
         h = self.relu(h) # 应用 ReLU 激活
         out = self.fc2(h)
         return out.squeeze(-1)
+
+    def save_model(self, filepath):
+        """保存模型参数到文件"""
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        torch.save({
+            'state_dict': self.state_dict(),
+            'input_dim': self.input_dim if hasattr(self, 'input_dim') else 3,
+            'hidden_dim': self.hidden_dim if hasattr(self, 'hidden_dim') else 15
+        }, filepath)
+        print(f"✓ 模型已保存到: {filepath}")
+
+    def save_parameters_json(self, filepath):
+        """保存网络参数为JSON格式"""
+        params = {
+            'W1': self.fc1.weight.detach().numpy().tolist(),
+            'b1': self.fc1.bias.detach().numpy().tolist(),
+            'W2': self.fc2.weight.detach().numpy().tolist(),
+            'b2': self.fc2.bias.detach().numpy().tolist(),
+            'architecture': "3 -> 15 -> 1",
+            'activation': "ReLU",
+            'save_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        with open(filepath, 'w') as f:
+            json.dump(params, f, indent=2)
+        print(f"✓ 网络参数已保存为JSON: {filepath}")
+
+    def save_parameters_txt(self, filepath):
+        """保存网络参数为可读的文本格式"""
+        with open(filepath, 'w') as f:
+            f.write("=" * 60 + "\n")
+            f.write("屏障证书网络参数 (Ex2)\n")
+            f.write(f"保存时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write("=" * 60 + "\n\n")
+            f.write("网络架构: 3 -> 15 -> 1\n")
+            f.write("激活函数: ReLU\n\n")
+            
+            f.write("第一层权重 W1 (15x3):\n")
+            W1 = self.fc1.weight.detach().numpy()
+            for i in range(W1.shape[0]):
+                f.write(f"  W1[{i}, :] = [{W1[i, 0]:.6f}, {W1[i, 1]:.6f}, {W1[i, 2]:.6f}]\n")
+            
+            f.write("\n第一层偏置 b1 (15x1):\n")
+            b1 = self.fc1.bias.detach().numpy()
+            for i in range(b1.shape[0]):
+                f.write(f"  b1[{i}] = {b1[i]:.6f}\n")
+            
+            f.write("\n第二层权重 W2 (1x15):\n")
+            W2 = self.fc2.weight.detach().numpy()
+            f.write("  W2[0, :] = [")
+            for i in range(W2.shape[1]):
+                f.write(f"{W2[0, i]:.6f}")
+                if i < W2.shape[1] - 1:
+                    f.write(", ")
+            f.write("]\n")
+            
+            f.write(f"\n第二层偏置 b2 (1x1):\n")
+            f.write(f"  b2 = {self.fc2.bias.detach().numpy()[0]:.6f}\n\n")
+            
+            f.write("解析表达式:\n")
+            f.write("  B(x1, x2, q) = b2 + Σ_{i=1}^{15} W2[0,i] * ReLU(W1[i,0]*x1 + W1[i,1]*x2 + W1[i,2]*q + b1[i])\n")
+
+        print(f"✓ 网络参数已保存为文本: {filepath}")
 
 
 def In_X_Cond(x1_ce, x2_ce):
@@ -374,16 +440,19 @@ def verify_with_dreal(B_net):
 
     return (not ce_flag, counterexamples)
 
-
-def synthesize_barrier_certificate():
+def synthesize_barrier_certificate(save_dir="saved_models"):
     """
     Main CEGIS loop for synthesizing barrier certificate
     """
     print("Synthesizing a state safety certificate using Neural Network Template")
     print("=" * 70)
-
-    # Initialize neural network
-    B_net = BarrierNetwork(input_dim=3, hidden_dim=10)
+    
+    # 创建保存目录
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    model_dir = os.path.join(save_dir, f"barrier_net_ex2_{timestamp}")
+    os.makedirs(model_dir, exist_ok=True)
+    
+    B_net = BarrierNetwork(input_dim=3, hidden_dim=15)
 
     # Initialize training data with samples
     X1_Samples = step_sample(0, 8 * math.pi / 9, 1)
@@ -463,12 +532,12 @@ def synthesize_barrier_certificate():
         print("✗ Unable to synthesize barrier certificate")
         print("="*70)
 
-    return B_net, cc_flag
+    return B_net, cc_flag, model_dir
 
 
 if __name__ == "__main__":
     start_time = time.time()
-    B_net, success = synthesize_barrier_certificate()
+    B_net, success, model_dir = synthesize_barrier_certificate()
     end_time = time.time()
 
     if success:
@@ -485,5 +554,13 @@ if __name__ == "__main__":
         print(B_net.fc2.bias.detach().numpy())
         print("-" * 70)
         print(f"\nAnalytical expression: B(x1, x2, q) = W2 @ ReLU(W1 @ [x1, x2, q] + b1) + b2")
+        
+        # 保存模型和参数
+        print("\n" + "=" * 70)
+        print("Saving model and parameters...")
+        B_net.save_model(os.path.join(model_dir, "barrier_net.pth"))
+        B_net.save_parameters_json(os.path.join(model_dir, "parameters.json"))
+        B_net.save_parameters_txt(os.path.join(model_dir, "parameters.txt"))
+        print("=" * 70)
 
     print(f"\nTime taken: {end_time - start_time:.4f} seconds")
