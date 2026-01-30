@@ -41,7 +41,7 @@ Method: Neural Network Template with CEGIS
 - Verified with dReal SMT solver
 - Counterexample-guided iterative refinement
 """
-
+PI = 3.1415926
 class BarrierNetwork(nn.Module):
     """Shallow neural network for barrier certificate B(x1, x2, q)"""
     def __init__(self, input_dim=3, hidden_dim=15):
@@ -143,18 +143,18 @@ class BarrierNetwork(nn.Module):
 
 
 def In_X_Cond(x1_ce, x2_ce):
-    return dreal.And(dreal.And(x1_ce >= 0, x1_ce <= dreal.cos(0) / 9 * 8),
-                     dreal.And(x2_ce >= 0, x2_ce <= dreal.cos(0) / 9 * 8))
+    return dreal.And(dreal.And(x1_ce >= 0, x1_ce <= PI / 9 * 8),
+                     dreal.And(x2_ce >= 0, x2_ce <= PI / 9 * 8))
 
 
 def In_X0(x1, x2):
     """Initial state constraint (Python version)"""
-    return x1 >= 0 and x1 <= math.pi / 9 and x2 >= 0 and x2 <= math.pi / 9
+    return x1 >= 0 and x1 <= PI / 9 and x2 >= 0 and x2 <= PI / 9
 
 
 def In_X0_Cond(x1_ce, x2_ce):
-    return dreal.And(dreal.And(x1_ce >= 0, x1_ce <= dreal.cos(0) / 9),
-                     dreal.And(x2_ce >= 0, x2_ce <= dreal.cos(0) / 9))
+    return dreal.And(dreal.And(x1_ce >= 0, x1_ce <= PI / 9),
+                     dreal.And(x2_ce >= 0, x2_ce <= PI / 9))
 
 
 def f_t(x1, x2):
@@ -178,13 +178,13 @@ def f_m(x1, x2):
 
 
 def In_Unsafe(x1, x2):
-    return (x1 >= 5 / 6 * math.pi and x1 <= 8 / 9 * math.pi) or \
-           (x2 >= 5 / 6 * math.pi and x2 <= 8 / 9 * math.pi)
+    return (x1 >= 5 / 6 * PI and x1 <= 8 / 9 * PI) or \
+           (x2 >= 5 / 6 * PI and x2 <= 8 / 9 * PI)
 
 
 def In_Unsafe_Cond(x1_ce, x2_ce):
-    return dreal.Or(dreal.And(x1_ce >= dreal.cos(0) / 6 * 5, x1_ce <= dreal.cos(0) / 9 * 8),
-                    dreal.And(x2_ce >= dreal.cos(0) / 6 * 5, x2_ce <= dreal.cos(0) / 9 * 8))
+    return dreal.Or(dreal.And(x1_ce >= PI / 6 * 5, x1_ce <= PI / 9 * 8),
+                    dreal.And(x2_ce >= PI / 6 * 5, x2_ce <= PI / 9 * 8))
 
 
 def q_trans(q):
@@ -331,8 +331,8 @@ def verify_with_dreal(B_net):
     ce_solver.SetLogic(dreal.Logic.QF_NRA)
     x1_ce = dreal.Variable('x1_ce')
     x2_ce = dreal.Variable('x2_ce')
-    ce_solver.DeclareVariable(x1_ce, 0, dreal.cos(0) / 9 * 8)
-    ce_solver.DeclareVariable(x2_ce, 0, dreal.cos(0) / 9 * 8)
+    ce_solver.DeclareVariable(x1_ce, 0, PI / 9 * 8)
+    ce_solver.DeclareVariable(x2_ce, 0, PI / 9 * 8)
 
     Bp_c = get_Bp_dreal(B_net)
     counterexamples = {'init': [], 'unsafe': [], 'transition': []}
@@ -455,12 +455,12 @@ def synthesize_barrier_certificate(save_dir="saved_models"):
     B_net = BarrierNetwork(input_dim=3, hidden_dim=15)
 
     # Initialize training data with samples
-    X1_Samples = step_sample(0, 8 * math.pi / 9, 1)
-    X2_Samples = step_sample(0, 8 * math.pi / 9, 1)
+    X1_Samples = step_sample(0, 8 * PI / 9, 1)
+    X2_Samples = step_sample(0, 8 * PI / 9, 1)
     Q_Samples = [0, 1]
     Y_Samples = state_space_product(X1_Samples, X2_Samples, Q_Samples)
-    X01_Samples = step_sample(0, math.pi / 9, 1)
-    X02_Samples = step_sample(0, math.pi / 9, 1)
+    X01_Samples = step_sample(0, PI / 9, 1)
+    X02_Samples = step_sample(0, PI / 9, 1)
     Q0_Samples = [1]
     Y0_Samples = state_space_product(X01_Samples, X02_Samples, Q0_Samples)
     Qacc_Samples = [0]
@@ -479,7 +479,7 @@ def synthesize_barrier_certificate(save_dir="saved_models"):
         for qp in qp_list:
             training_data['transition'].append((x1, x2, q, x1p, x2p, qp))
 
-    MAX_ITER = 20
+    MAX_ITER = 2000
     iter = 0
     cc_flag = False
 

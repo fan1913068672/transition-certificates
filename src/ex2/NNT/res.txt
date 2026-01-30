@@ -1,3 +1,4 @@
+(dreal) fyh@DESKTOP-AOHNR90:~/transitioncertificates-main/src/ex2/NNT$ python tsc_10_dreal.py
 Synthesizing a state safety certificate using Neural Network Template
 ======================================================================
 
@@ -16,6 +17,407 @@ Step 1: Training neural network...
 Step 2: Verifying with dReal...
   ✓ Initial state condition verified
   ✓ Unsafe state condition verified
+  Counterexample to transition property (q=1 -> q'=0):
+    x1=2.6702111315324437, x2=2.70528262582176, x1'=0.5680386123281451, x2'=0.5028097484385818
+    B(x1,x2,1)=0.1170826256275177, B(x1',x2',0)=-0.22045069932937622
+
+Step 3: Adding counterexamples to training data...
+  Added 1 counterexamples to training data
+
+======================================================================
+CEGIS Iteration #1
+======================================================================
+Training data size: init=1, unsafe=9, transition=19
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000439
+  Epoch 400/1000, Loss: 0.000000
+  Epoch 600/1000, Loss: 0.000070
+  Epoch 800/1000, Loss: 0.000000
+  Epoch 1000/1000, Loss: 0.000000
+
+Step 2: Verifying with dReal...
+  Counterexample to non-negativity in initial state:
+    x1=0.34886522792621644, x2=0.038296729237141836, B(x1,x2,1)=4.626810550689697e-06
+  Counterexample to negativity in unsafe state:
+    x1=2.0189645914624506, x2=1.785783791569195, B(x1,x2,0)=0.0002645030617713928
+  Counterexample to transition property (q=1 -> q'=1):
+    x1=2.099865804631066, x2=1.89362062570679, x1'=1.4450333540164717, x2'=1.6769878054509053
+    B(x1,x2,1)=0.014940358698368073, B(x1',x2',1)=-0.0017892494797706604
+  Counterexample to transition property (q=0 -> q'=0):
+    x1=1.9195925577825133, x2=1.6814517361165133, x1'=1.650245871243331, x2'=1.8683529613430074
+    B(x1,x2,0)=8.574873208999634e-05, B(x1',x2',0)=-0.0872073844075203
+
+Step 3: Adding counterexamples to training data...
+  Added 4 counterexamples to training data
+
+======================================================================
+CEGIS Iteration #2
+======================================================================
+Training data size: init=2, unsafe=10, transition=21
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000172
+  Epoch 400/1000, Loss: 0.000000
+  Epoch 600/1000, Loss: 0.000000
+  Epoch 800/1000, Loss: 0.000000
+  Epoch 1000/1000, Loss: 0.000000
+
+Step 2: Verifying with dReal...
+  Counterexample to non-negativity in initial state:
+    x1=0.3157823594827349, x2=0.293052481810701, B(x1,x2,1)=-0.023097902536392212
+  ✓ Unsafe state condition verified
+  Counterexample to transition property (q=1 -> q'=1):
+    x1=2.0410196152282056, x2=2.283629601082378, x1'=1.5158491403427163, x2'=1.2002542564349397
+    B(x1,x2,1)=0.002626374363899231, B(x1',x2',1)=-0.0168217271566391
+
+Step 3: Adding counterexamples to training data...
+  Added 2 counterexamples to training data
+
+======================================================================
+CEGIS Iteration #3
+======================================================================
+Training data size: init=3, unsafe=10, transition=22
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000000
+  Epoch 400/1000, Loss: 0.000000
+  Epoch 600/1000, Loss: 0.000000
+  Epoch 800/1000, Loss: 0.000000
+  Epoch 1000/1000, Loss: 0.000000
+
+Step 2: Verifying with dReal...
+  ✓ Initial state condition verified
+  Counterexample to negativity in unsafe state:
+    x1=1.8668961757264766, x2=2.104392820350939, B(x1,x2,0)=0.0017286688089370728
+  Counterexample to transition property (q=1 -> q'=1):
+    x1=1.5770229612469224, x2=1.9710785526969734, x1'=1.9449612418272046, x2'=1.5951553649172228
+    B(x1,x2,1)=0.02825920283794403, B(x1',x2',1)=-0.003452867269515991
+  Counterexample to transition property (q=0 -> q'=0):
+    x1=1.8691757260278155, x2=2.1019758265899338, x1'=1.7014784481887217, x2'=1.4424251206081222
+    B(x1,x2,0)=0.0024501681327819824, B(x1',x2',0)=-0.11555825918912888
+
+Step 3: Adding counterexamples to training data...
+  Added 3 counterexamples to training data
+
+======================================================================
+CEGIS Iteration #4
+======================================================================
+Training data size: init=3, unsafe=11, transition=24
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000000
+  Epoch 400/1000, Loss: 0.000000
+  Epoch 600/1000, Loss: 0.000000
+  Epoch 800/1000, Loss: 0.000000
+  Epoch 1000/1000, Loss: 0.000000
+
+Step 2: Verifying with dReal...
+  ✓ Initial state condition verified
+  ✓ Unsafe state condition verified
+  Counterexample to transition property (q=1 -> q'=1):
+    x1=2.131979326810777, x2=1.6746491350737662, x1'=1.404834161383802, x2'=1.8737083743071579
+    B(x1,x2,1)=3.7863850593566895e-05, B(x1',x2',1)=-0.00250263512134552
+
+Step 3: Adding counterexamples to training data...
+  Added 1 counterexamples to training data
+
+======================================================================
+CEGIS Iteration #5
+======================================================================
+Training data size: init=3, unsafe=11, transition=25
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000000
+  Epoch 400/1000, Loss: 0.000385
+  Epoch 600/1000, Loss: 0.000000
+  Epoch 800/1000, Loss: 0.000000
+  Epoch 1000/1000, Loss: 0.000000
+
+Step 2: Verifying with dReal...
+  Counterexample to non-negativity in initial state:
+    x1=0.013993114631532085, x2=0.34904453915608724, B(x1,x2,1)=-0.000599980354309082
+  ✓ Unsafe state condition verified
+  Counterexample to transition property (q=1 -> q'=1):
+    x1=0.7778046587384396, x2=0.107372794222645, x1'=2.146917972905829, x2'=1.7922766898770348
+    B(x1,x2,1)=0.06762361526489258, B(x1',x2',1)=-0.0016167759895324707
+
+Step 3: Adding counterexamples to training data...
+  Added 2 counterexamples to training data
+
+======================================================================
+CEGIS Iteration #6
+======================================================================
+Training data size: init=4, unsafe=11, transition=26
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000000
+  Epoch 400/1000, Loss: 0.000000
+  Epoch 600/1000, Loss: 0.000000
+  Epoch 800/1000, Loss: 0.000000
+  Epoch 1000/1000, Loss: 0.000000
+
+Step 2: Verifying with dReal...
+  ✓ Initial state condition verified
+  ✓ Unsafe state condition verified
+  Counterexample to transition property (q=1 -> q'=1):
+    x1=2.020872724033987, x2=1.546857894640769, x1'=1.5391964027986673, x2'=1.9649319901829532
+    B(x1,x2,1)=0.0006662309169769287, B(x1',x2',1)=-0.0014384984970092773
+
+Step 3: Adding counterexamples to training data...
+  Added 1 counterexamples to training data
+
+======================================================================
+CEGIS Iteration #7
+======================================================================
+Training data size: init=4, unsafe=11, transition=27
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000000
+  Epoch 400/1000, Loss: 0.000000
+  Epoch 600/1000, Loss: 0.000000
+  Epoch 800/1000, Loss: 0.000000
+  Epoch 1000/1000, Loss: 0.000000
+
+Step 2: Verifying with dReal...
+  ✓ Initial state condition verified
+  ✓ Unsafe state condition verified
+  Counterexample to transition property (q=1 -> q'=1):
+    x1=0.0592014061699535, x2=0.8851089464721275, x1'=1.7483809589137909, x2'=2.15928654200378
+    B(x1,x2,1)=-4.798173904418945e-06, B(x1',x2',1)=-0.005966484546661377
+
+Step 3: Adding counterexamples to training data...
+  Added 1 counterexamples to training data
+
+======================================================================
+CEGIS Iteration #8
+======================================================================
+Training data size: init=4, unsafe=11, transition=28
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000119
+  Epoch 400/1000, Loss: 0.000080
+  Epoch 600/1000, Loss: 0.000826
+  Epoch 800/1000, Loss: 0.000000
+  Epoch 1000/1000, Loss: 0.000000
+
+Step 2: Verifying with dReal...
+  ✓ Initial state condition verified
+  Counterexample to negativity in unsafe state:
+    x1=2.0168646470641223, x2=2.143172523255743, B(x1,x2,0)=0.00012165307998657227
+  Counterexample to transition property (q=1 -> q'=0):
+    x1=2.629533633447296, x2=2.495853570715799, x1'=0.6420397636542572, x2'=0.872881922937836
+    B(x1,x2,1)=0.0016543269157409668, B(x1',x2',0)=-0.13446569442749023
+  Counterexample to transition property (q=1 -> q'=1):
+    x1=2.572124637132781, x2=2.133121908021284, x1'=0.7434801556755524, x2'=1.4034361826159851
+    B(x1,x2,1)=0.027133792638778687, B(x1',x2',1)=-0.00799533724784851
+  Counterexample to transition property (q=0 -> q'=0):
+    x1=1.3781137363784628, x2=1.0591372007774198, x1'=2.0587218664350764, x2'=2.153373519913088
+    B(x1,x2,0)=0.006203547120094299, B(x1',x2',0)=-0.006604000926017761
+
+Step 3: Adding counterexamples to training data...
+  Added 4 counterexamples to training data
+
+======================================================================
+CEGIS Iteration #9
+======================================================================
+Training data size: init=4, unsafe=12, transition=31
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000000
+  Epoch 400/1000, Loss: 0.000739
+  Epoch 600/1000, Loss: 0.001767
+  Epoch 800/1000, Loss: 0.000000
+  Epoch 1000/1000, Loss: 0.000000
+
+Step 2: Verifying with dReal...
+  ✓ Initial state condition verified
+  ✓ Unsafe state condition verified
+  Counterexample to transition property (q=1 -> q'=1):
+    x1=1.3120809568122334, x2=1.7941473034835336, x1'=2.087240748867886, x2'=1.772630348032161
+    B(x1,x2,1)=0.003933727741241455, B(x1',x2',1)=-0.006012707948684692
+
+Step 3: Adding counterexamples to training data...
+  Added 1 counterexamples to training data
+
+======================================================================
+CEGIS Iteration #10
+======================================================================
+Training data size: init=4, unsafe=12, transition=32
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000040
+  Epoch 400/1000, Loss: 0.000000
+  Epoch 600/1000, Loss: 0.000000
+  Epoch 800/1000, Loss: 0.000000
+  Epoch 1000/1000, Loss: 0.000000
+
+Step 2: Verifying with dReal...
+  ✓ Initial state condition verified
+  ✓ Unsafe state condition verified
+  Counterexample to transition property (q=1 -> q'=1):
+    x1=0.31170314676073574, x2=0.8994211055322302, x1'=1.9510479054561447, x2'=2.1600220087912634
+    B(x1,x2,1)=0.03212246298789978, B(x1',x2',1)=9.953975677490234e-06
+
+Step 3: Adding counterexamples to training data...
+  Added 1 counterexamples to training data
+
+======================================================================
+CEGIS Iteration #11
+======================================================================
+Training data size: init=4, unsafe=12, transition=33
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000000
+  Epoch 400/1000, Loss: 0.000000
+  Epoch 600/1000, Loss: 0.000000
+  Epoch 800/1000, Loss: 0.000000
+  Epoch 1000/1000, Loss: 0.000000
+
+Step 2: Verifying with dReal...
+  ✓ Initial state condition verified
+  ✓ Unsafe state condition verified
+  Counterexample to transition property (q=1 -> q'=1):
+    x1=0.2222549315382779, x2=0.7797501001630094, x1'=1.8870073358329116, x2'=2.147256920074208
+    B(x1,x2,1)=-8.791685104370117e-07, B(x1',x2',1)=-9.098649024963379e-05
+
+Step 3: Adding counterexamples to training data...
+  Added 1 counterexamples to training data
+
+======================================================================
+CEGIS Iteration #12
+======================================================================
+Training data size: init=4, unsafe=12, transition=34
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000000
+  Epoch 400/1000, Loss: 0.000064
+  Epoch 600/1000, Loss: 0.000000
+  Epoch 800/1000, Loss: 0.000000
+  Epoch 1000/1000, Loss: 0.000000
+
+Step 2: Verifying with dReal...
+  ✓ Initial state condition verified
+  ✓ Unsafe state condition verified
+  Counterexample to transition property (q=1 -> q'=1):
+    x1=0.04925325463853697, x2=0.6208334314888178, x1'=1.7389951425369465, x2'=2.1067500061691797
+    B(x1,x2,1)=0.005685359239578247, B(x1',x2',1)=-0.01361265778541565
+
+Step 3: Adding counterexamples to training data...
+  Added 1 counterexamples to training data
+
+======================================================================
+CEGIS Iteration #13
+======================================================================
+Training data size: init=4, unsafe=12, transition=35
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000001
+  Epoch 400/1000, Loss: 0.000000
+  Epoch 600/1000, Loss: 0.000000
+  Epoch 800/1000, Loss: 0.000000
+  Epoch 1000/1000, Loss: 0.000000
+
+Step 2: Verifying with dReal...
+  ✓ Initial state condition verified
+  Counterexample to negativity in unsafe state:
+    x1=1.5514396640906412, x2=1.4074502197625376, B(x1,x2,0)=0.0005661174654960632
+  Counterexample to transition property (q=1 -> q'=0):
+    x1=2.630211411088196, x2=2.321123063272169, x1'=0.6408107400155529, x2'=1.145931584468622
+    B(x1,x2,1)=0.0018126517534255981, B(x1',x2',0)=-0.12259474396705627
+  Counterexample to transition property (q=0 -> q'=0):
+    x1=1.5012395329687516, x2=1.3369059014793392, x1'=1.993250605264904, x2'=2.0770628660116537
+    B(x1,x2,0)=0.0011759772896766663, B(x1',x2',0)=-0.039185360074043274
+
+Step 3: Adding counterexamples to training data...
+  Added 3 counterexamples to training data
+
+======================================================================
+CEGIS Iteration #14
+======================================================================
+Training data size: init=4, unsafe=13, transition=37
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000000
+  Epoch 400/1000, Loss: 0.000050
+  Epoch 600/1000, Loss: 0.000000
+  Epoch 800/1000, Loss: 0.000233
+  Epoch 1000/1000, Loss: 0.000000
+
+Step 2: Verifying with dReal...
+  ✓ Initial state condition verified
+  Counterexample to negativity in unsafe state:
+    x1=1.8586207844406755, x2=1.7734003685198758, B(x1,x2,0)=0.012430042028427124
+  Counterexample to transition property (q=0 -> q'=0):
+    x1=1.8383474158561375, x2=1.7385983724651828, x1'=1.7314361510567122, x2'=1.8215150194948948
+    B(x1,x2,0)=0.016439899802207947, B(x1',x2',0)=-0.025778762996196747
+
+Step 3: Adding counterexamples to training data...
+  Added 2 counterexamples to training data
+
+======================================================================
+CEGIS Iteration #15
+======================================================================
+Training data size: init=4, unsafe=14, transition=38
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000200
+  Epoch 400/1000, Loss: 0.000428
+  Epoch 600/1000, Loss: 0.000213
+  Epoch 800/1000, Loss: 0.000093
+  Epoch 1000/1000, Loss: 0.000068
+
+Step 2: Verifying with dReal...
+  ✓ Initial state condition verified
+  Counterexample to negativity in unsafe state:
+    x1=1.7935874700698005, x2=1.724484704622272, B(x1,x2,0)=4.2691826820373535e-06
+  Counterexample to transition property (q=1 -> q'=1):
+    x1=0.9400061806828743, x2=0.0008256724470059386, x1'=2.160876374520596, x2'=1.6918737342341634
+    B(x1,x2,1)=0.00048119574785232544, B(x1',x2',1)=-0.01983528584241867
+  Counterexample to transition property (q=0 -> q'=0):
+    x1=1.6993470507399682, x2=1.5561159107636993, x1'=1.8540393140327498, x2'=1.9588882161247363
+    B(x1,x2,0)=0.01093040406703949, B(x1',x2',0)=-0.025040335953235626
+
+Step 3: Adding counterexamples to training data...
+  Added 3 counterexamples to training data
+
+======================================================================
+CEGIS Iteration #16
+======================================================================
+Training data size: init=4, unsafe=15, transition=40
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000428
+  Epoch 400/1000, Loss: 0.000217
+  Epoch 600/1000, Loss: 0.000043
+  Epoch 800/1000, Loss: 0.000000
+  Epoch 1000/1000, Loss: 0.000000
+
+Step 2: Verifying with dReal...
+  ✓ Initial state condition verified
+  ✓ Unsafe state condition verified
+  Counterexample to transition property (q=1 -> q'=1):
+    x1=1.2987303984238407, x2=1.9980982790141046, x1'=2.0924442778446997, x2'=1.5651045932261511
+    B(x1,x2,1)=0.0051520466804504395, B(x1',x2',1)=-0.00015404075384140015
+
+Step 3: Adding counterexamples to training data...
+  Added 1 counterexamples to training data
+
+======================================================================
+CEGIS Iteration #17
+======================================================================
+Training data size: init=4, unsafe=15, transition=41
+
+Step 1: Training neural network...
+  Epoch 200/1000, Loss: 0.000047
+  Epoch 400/1000, Loss: 0.000008
+  Epoch 600/1000, Loss: 0.000000
+  Epoch 800/1000, Loss: 0.000000
+  Epoch 1000/1000, Loss: 0.000000
+
+Step 2: Verifying with dReal...
+  ✓ Initial state condition verified
+  ✓ Unsafe state condition verified
   ✓ Transition property verified
 
 ======================================================================
@@ -27,43 +429,44 @@ Final Barrier Certificate:
 Network architecture: 3 -> 15 -> 1 (ReLU activation network)
 
 Layer 1 weights (W1):
-[[ 0.368821    0.21426417 -0.27063084]
- [ 0.38767242 -0.34277806 -0.56638485]
- [-0.10614192  0.1017765   0.35308045]
- [ 0.39566696  0.02745469  0.22107358]
- [-0.34837446  0.14805606  0.24267028]
- [ 0.52283484 -0.40397552 -0.2974638 ]
- [-0.26874307 -0.35853648 -0.08454622]
- [ 0.32883835 -0.03116678  0.27311325]
- [-0.23449835  0.2836412  -0.02363347]
- [ 0.34249198  0.48593876  0.40912253]
- [ 0.15564398  0.24776264 -0.05351136]
- [-0.42059284 -0.4022341   0.4730993 ]
- [-0.29187173  0.40865818 -0.32036188]
- [ 0.30400956 -0.29551807  0.37481174]
- [-0.2186117  -0.6543935   0.3730659 ]]
+[[ 0.16947323 -0.21574873  0.13164099]
+ [-0.08310825 -0.01274627 -0.04113036]
+ [-0.06397208 -0.54293144 -0.02944631]
+ [-0.31079152  0.06346325 -0.08720846]
+ [-0.08576902  0.09323277  0.05105818]
+ [ 0.3797034  -0.6118731   0.02912938]
+ [-0.12490943 -0.05650124 -0.19199097]
+ [-1.1089448   0.63800216 -0.06427222]
+ [-0.17578183  0.6446198  -0.03190435]
+ [ 0.14327501  0.08219448 -0.22752807]
+ [-0.08726892  0.63300693  0.099369  ]
+ [-0.01736208  0.02708694  0.01039273]
+ [ 0.77797484 -0.3705437  -0.0628436 ]
+ [ 0.49392858  0.17566358  0.6906795 ]
+ [-0.65604967 -0.7597173   0.65568864]]
 
 Layer 1 bias (b1):
-[-0.5578633  -0.45127833  0.21094148 -0.06365761 -0.06682236  0.13753304
- -0.25970662 -0.09199592 -0.16152161 -0.14885901 -0.55956113 -0.25026843
-  0.29666626  0.24203597  0.10353521]
+[-0.3937957  -0.06559433 -0.04345877 -0.30200312 -0.19063747 -0.08473465
+ -0.09027798 -0.3402408  -1.0315664  -0.5757264  -1.0280879  -0.05099108
+ -0.7655195  -0.6736446   0.26159883]
 
 Layer 2 weights (W2):
-[[ 0.00554921 -0.26194778  0.03086621 -0.1675863   0.07771984 -0.24872236
-   0.21347432  0.2566359  -0.2519573   0.11465922 -0.173294    0.0606578
-  -0.15579142  0.03152496  0.12440839]]
+[[ 7.6742917e-03 -1.9551411e-02 -2.1718296e-01  1.7923115e-01
+   5.3102765e-03 -3.5746995e-01  8.7629128e-03 -1.0855321e+00
+  -1.4935373e+00 -1.3878155e-01 -4.4775316e-01 -7.7066163e-04
+  -7.2719783e-01  2.1761930e-01  2.1799223e-01]]
 
 Layer 2 bias (b2):
-[-0.02176889]
+[-0.14020069]
 ----------------------------------------------------------------------
 
 Analytical expression: B(x1, x2, q) = W2 @ ReLU(W1 @ [x1, x2, q] + b1) + b2
 
 ======================================================================
 Saving model and parameters...
-✓ 模型已保存到: saved_models/barrier_net_ex2_20260130_234106/barrier_net.pth
-✓ 网络参数已保存为JSON: saved_models/barrier_net_ex2_20260130_234106/parameters.json
-✓ 网络参数已保存为文本: saved_models/barrier_net_ex2_20260130_234106/parameters.txt
+✓ 模型已保存到: saved_models/barrier_net_ex2_20260131_005509/barrier_net.pth
+✓ 网络参数已保存为JSON: saved_models/barrier_net_ex2_20260131_005509/parameters.json
+✓ 网络参数已保存为文本: saved_models/barrier_net_ex2_20260131_005509/parameters.txt
 ======================================================================
 
-Time taken: 4.0380 seconds
+Time taken: 234.1070 seconds

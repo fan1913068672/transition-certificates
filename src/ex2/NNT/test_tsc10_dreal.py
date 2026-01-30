@@ -15,7 +15,6 @@ NATURAL_FREQUENCY = 0.01
 COUPLING_COEFFICIENT = 0.0006
 QUADRATIC_TERM = 0.532
 CONSTANT_TERM = 1.69
-
 def in_initial_set(x1, x2):
     return 0 <= x1 <= math.pi / 9 and 0 <= x2 <= math.pi / 9
 
