@@ -118,60 +118,65 @@ This section provides the neural network certificates synthesized in the three c
     \]
 \end{itemize}
 
-\subsubsection{Kuramoto Oscillator: Two-Dimensional System}
-\label{app:ko2d_neural}
-
-\textbf{Valid transition safety certificate network parameters:}
-
-\begin{itemize}
-    \item \textbf{Network architecture:} 3 → 15 → 1
-    \item \textbf{Layer 1 weights} $W^{(1)} \in \mathbb{R}^{15 \times 3}$:
-    {\footnotesize
-    \[
-    W^{(1)} = \begin{bmatrix}
-    -2.3454\times 10^{-2} &  8.2131\times 10^{-2} &  3.0385\times 10^{-2} \\
-    -3.2091\times 10^{-1} &  4.6090\times 10^{-1} &  2.3015\times 10^{-1} \\
-    -4.6720\times 10^{-1} & -3.0937\times 10^{-1} & -4.7102\times 10^{-1} \\
-     1.9512\times 10^{-3} &  6.0307\times 10^{-3} &  6.0402\times 10^{-2} \\
-     4.1749\times 10^{-1} & -1.5416\times 10^{-2} &  1.7105\times 10^{-1} \\
-    -7.7784\times 10^{-3} &  3.9011\times 10^{-1} &  1.7507\times 10^{-2} \\
-    -3.8521\times 10^{-1} & -1.6144\times 10^{-1} &  2.3747\times 10^{-1} \\
-    -7.4627\times 10^{-4} &  1.7514\times 10^{-3} &  5.2698\times 10^{-3} \\
-     3.3908\times 10^{-2} & -5.2749\times 10^{-2} &  1.0184\times 10^{-1} \\
-    -1.2301\times 10^{-2} &  4.5511\times 10^{-2} &  1.2849\times 10^{-1} \\
-     4.1963\times 10^{-1} &  6.4382\times 10^{-2} &  1.1561\times 10^{-1} \\
-    -7.1149\times 10^{-3} &  7.1185\times 10^{-2} & -2.3238\times 10^{-1} \\
-    -3.7499\times 10^{-1} &  1.0978\times 10^{-1} & -2.0824\times 10^{-1} \\
-     2.2630\times 10^{-1} &  3.4759\times 10^{-1} & -2.9718\times 10^{-1} \\
-     5.6548\times 10^{-3} & -1.0305\times 10^{-4} &  7.3017\times 10^{-2}
-    \end{bmatrix}
-    \]}
-    
-    \item \textbf{Layer 1 bias} $b^{(1)} \in \mathbb{R}^{15}$:
-    {\scriptsize
-    \[
-    b^{(1)} = \begin{bmatrix}
-    -0.1210 & -0.6387 & -0.0146 & -0.0462 &  0.2188 & -0.2637 &  0.3804 \\
-    -0.0038 & -0.0504 & -0.1356 &  0.3777 &  0.2516 & -0.0852 &  0.1380 \\
-    -0.0478
-    \end{bmatrix}^\top
-    \]}
-    
-    \item \textbf{Layer 2 weights} $W^{(2)} \in \mathbb{R}^{1 \times 15}$:
-    {\footnotesize
-    \[
-    W^{(2)} = \begin{bmatrix}
-     0.00190352 &  0.04793187 & -0.07699478 &  0.00256316 &  0.02776624 \\
-    -0.03371546 & -0.05416371 & -0.0001113  &  0.00343324 &  0.00307385 \\
-    -0.10334048 & -0.0316381  & -0.02389356 & -0.07375315 &  0.00079416
-    \end{bmatrix}
-    \]}
-    
-    \item \textbf{Layer 2 bias} $b^{(2)} \in \mathbb{R}$:
-    \[
-    b^{(2)} = 0.05026149
-    \]
-\end{itemize}
+	\subsubsection{Kuramoto Oscillator: Two-Dimensional System}
+	\label{app:ko2d_neural}
+	
+	\textbf{Valid transition safety certificate network parameters:}
+	
+	\begin{itemize}
+	    \item \textbf{Network architecture:} 3 → 15 → 1 (ReLU activation network)
+	    \item \textbf{Layer 1 weights} $W^{(1)} \in \mathbb{R}^{15 \times 3}$:
+	    {\footnotesize
+	    \[
+	    W^{(1)} = \begin{bmatrix}
+	     0.16947323 & -0.21574873 &  0.13164099 \\
+	    -0.08310825 & -0.01274627 & -0.04113036 \\
+	    -0.06397208 & -0.54293144 & -0.02944631 \\
+	    -0.31079152 &  0.06346325 & -0.08720846 \\
+	    -0.08576902 &  0.09323277 &  0.05105818 \\
+	     0.3797034  & -0.6118731  &  0.02912938 \\
+	    -0.12490943 & -0.05650124 & -0.19199097 \\
+	    -1.1089448  &  0.63800216 & -0.06427222 \\
+	    -0.17578183 &  0.6446198  & -0.03190435 \\
+	     0.14327501 &  0.08219448 & -0.22752807 \\
+	    -0.08726892 &  0.63300693 &  0.099369   \\
+	    -0.01736208 &  0.02708694 &  0.01039273 \\
+	     0.77797484 & -0.3705437  & -0.0628436  \\
+	     0.49392858 &  0.17566358 &  0.6906795  \\
+	    -0.65604967 & -0.7597173  &  0.65568864
+	    \end{bmatrix}
+	    \]}
+	    
+	    \item \textbf{Layer 1 bias} $b^{(1)} \in \mathbb{R}^{15}$:
+	    {\scriptsize
+	    \[
+	    b^{(1)} = \begin{bmatrix}
+	    -0.3938 & -0.0656 & -0.0435 & -0.3020 & -0.1906 & -0.0847 & -0.0903 \\
+	    -0.3402 & -1.0316 & -0.5757 & -1.0281 & -0.0510 & -0.7655 & -0.6736 \\
+	     0.2616
+	    \end{bmatrix}^\top
+	    \]}
+	    
+	    \item \textbf{Layer 2 weights} $W^{(2)} \in \mathbb{R}^{1 \times 15}$:
+	    {\footnotesize
+	    \[
+	    W^{(2)} = \begin{bmatrix}
+	     0.00767429 & -0.01955141 & -0.21718296 &  0.17923115 &  0.00531028 \\
+	    -0.35746995 &  0.00876291 & -1.0855321  & -1.4935373  & -0.13878155 \\
+	    -0.44775316 & -0.00077066 & -0.72719783 &  0.2176193  &  0.21799223
+	    \end{bmatrix}
+	    \]}
+	    
+	    \item \textbf{Layer 2 bias} $b^{(2)} \in \mathbb{R}$:
+	    \[
+	    b^{(2)} = -0.14020069
+	    \]
+	    
+	    \item \textbf{Analytical expression:}
+	    \[
+	    B(x_1, x_2, q) = W^{(2)} \cdot \text{ReLU}(W^{(1)} \cdot [x_1, x_2, q]^\top + b^{(1)}) + b^{(2)}
+	    \]
+	\end{itemize}
 
 \subsubsection{Two-Room Temperature System}
 \label{app:two_room_neural}
