@@ -268,8 +268,8 @@ def convert_network_to_dreal(B_net):
             for i in range(len(b1)):
                 # 线性部分
                 h_linear = W1[i, 0] * x + W1[i, 1] * q + b1[i]
-                # ReLU 激活: max(0, h_linear)
-                h_relu = dreal.max(0, h_linear)
+                # ReLU 激活: max(0, h_linear) -> 使用 if_then_else 替代
+                h_relu = dreal.if_then_else(h_linear > 0, h_linear, 0)
                 # 第二层加权求和
                 expr += W2[0, i] * h_relu
             return expr
