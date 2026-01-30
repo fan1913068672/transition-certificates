@@ -26,7 +26,7 @@ We say $s$ visits $S$ if there exists $i \in \mathbb{N}$ such that $s_i \in S$. 
 \label{dtds}
 A discrete-time dynamical system $\mathfrak{S}$ is a tuple $(\mathcal{X}, \mathcal{X}_0, f)$, where $\mathcal{X} \subseteq \mathbb{R}^n$ represents the state set, $\mathcal{X}_{0} \subseteq \mathcal{X}$ represents a set of initial states, and $f: \mathcal{X} \rightarrow \mathcal{X}$ represents the transition function. The evolution of the system state is described as follows:
 \[
-  x_{t+1} = f(x_t)
+  x_{t+1} = f(x_t).
 \]
 % A system is \emph{deterministic} if $ |f(x)|  = 1$ for $x \in \mathcal{X}$. If $\mathfrak{S}$ is deterministic, then $f$ can be regarded as a \emph{state transition function}.
 %We assume that state set of the systems under consideration are compact. 
@@ -72,7 +72,7 @@ We denote $\mathfrak{L}(\mathfrak{S}) = \{\mathfrak{L}(\tau) \mid \tau \in \math
 \subsection{Certificates}
 Barrier certificates and closure certificates are used to LTL properties \cite{murali2024closure}, respectively. We provide their definitions and related conclusions from prior work.
 
-\begin{definition}[barrier certificate\cite{prajna2004safety}]
+\begin{definition}[barrier certificate~\cite{prajna2004safety}]
   \label{SCDEF}
   Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$ and $\mathcal{X}_{u} \subseteq \mathcal{X}$, a bounded function $B(x): \mathcal{X} \rightarrow \mathbb{R}$ is a \emph{barrier certificate} with respect to $\mathcal{X}_{u}$ such that $x_0 \in \mathcal{X}_0, x_u \in \mathcal{X}_u, x \in \mathcal{X}$ and $x^{\prime} = f(x)$. We have:
   \begin{align}
@@ -81,7 +81,7 @@ Barrier certificates and closure certificates are used to LTL properties \cite{m
     &B(x) \geq 0 \Rightarrow B(x^{\prime}) \geq 0. \label{bstnn0} % transition will remain non-negative
   \end{align}
 \end{definition}
-\begin{theorem}[Safety]
+\begin{theorem}[Safety~\cite{prajna2004safety}]
   \label{corollary_tbsc}
   The existence of a barrier certificate \( B(x) \)  implies that the system $\mathfrak{S}$ is safe with respect to $\mathcal{X}_u$.
 \end{theorem}
