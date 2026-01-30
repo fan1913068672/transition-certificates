@@ -7,40 +7,19 @@ import time
 
 """
 Case: Temperature Control System with 2 Rooms
-LTL specification: G F ¬(q=1) (Eventually always avoid accepting state)
-NBA: q=1 is the accepting state of the Büchi automaton
+LTL specification: F G not (VF) (Eventually always avoid VF)
 
-STEP 2: Synthesize TRANSITION PERSISTENCE CERTIFICATE for transition (1, 1)
-=============================================================================
 Accepting Transition: (qi=1, qj=1) - staying in accepting state q=1
 Accepting Condition (Satisfaction Set VF): (x₁, x₂) ∈ [20, 26]²
 
-Persistence Property to Prove:
-- The start state qi=1 of accepting transition (1, 1) is visited only FINITELY many times
-  when the system satisfies the accepting condition (in VF region)
-- Key mechanism: B(x) strictly DECREASES by ε > 0 when system is in VF and stays in q=1
-- This proves: Transition (1,1) under accepting condition VF occurs only finitely many times
-- Therefore: The NBA is not accepted (no infinite run staying in q=1 within VF infinitely)
-
-Complementarity with Step 1:
-- Step 1 (Safety): FAILS - accepting state q=1 IS reachable from initial states
-- Step 2 (Persistence): SUCCEEDS - start state q=1 of accepting transition (1,1)
-  is visited only finitely many times under accepting condition VF
-- Conclusion: Although q=1 can be reached, the system cannot remain in q=1∩VF infinitely
-
-Barrier Certificate Conditions:
+TPC Conditions:
 1. B(x₀) ≥ 0 for initial states in [21, 24]²
-2. B(x) ≥ B(x') for all transitions (non-increasing)
-3. B(x) ≥ B(x') + ε when accepting transition (1,1) occurs under accepting condition VF
-   (strictly decreasing by ε > 0)
+2. B(x) >= 0 implies B(x') >= 0 for states in [20, 34]²
+3. B(x) ≥ B(x') for all transitions (non-increasing)
+4. B(x) ≥ B(x') + ε when accepting transition (1,1) occurs under accepting condition VF (strictly decreasing by ε > 0)
 
-Condition 3 ensures that the accepting transition (1,1) under accepting condition VF
-can only occur finitely many times, as B is bounded and strictly decreases by ε each time.
-
-Method: Neural Network Template with CEGIS
-- B(x₁, x₂) with learnable ε parameter for strict decrease
-- Note: B does not depend on q, only on continuous state (x₁, x₂)
-- Trained for transition (1,1) with accepting condition VF
+使用平方激活函数， 这样1,2两个条件就不需要验证了。
+然后只需要验证3,4两个条件。
 """
 
 class BarrierNetwork(nn.Module):
@@ -203,17 +182,6 @@ def train_candidate(B_net, training_data, epochs=1000, lr=0.01):
 
         epsilon = B_net.get_epsilon()
 
-        # Loss 1: B(x0) >= 0 for initial states
-        if len(training_data['init']) > 0:
-            init_loss = 0.0
-            for x1, x2 in training_data['init']:
-                B_init = B_net(
-                    torch.tensor(float(x1), dtype=torch.float32),
-                    torch.tensor(float(x2), dtype=torch.float32)
-                )
-                init_loss += torch.relu(-B_init + 0.01)
-            loss_total += init_loss / len(training_data['init'])
-
         # Loss 2: B(x) >= B(x') for non-accepting transitions
         if len(training_data['non_acc_trans']) > 0:
             non_acc_loss = 0.0
@@ -273,25 +241,8 @@ def verify_with_dreal(B_net):
     counterexamples = {'init': [], 'non_acc': [], 'acc': []}
     ce_flag = False
 
-    # Verify 1: B(x0) >= 0 for initial states
-    ce_solver.Push(2)
-    ce_solver.Assert(In_X0_Cond(x1_ce, x2_ce))
-    ce_solver.Assert(Bp_c(x1_ce, x2_ce) < 0)
-    ce_model = ce_solver.CheckSat()
-    if ce_model != None:
-        print("  Counterexample to non-negativity at initial state:")
-        x1_val = ce_model[x1_ce].mid()
-        x2_val = ce_model[x2_ce].mid()
-        B_val = B_net(torch.tensor(x1_val, dtype=torch.float32),
-                     torch.tensor(x2_val, dtype=torch.float32)).item()
-        print(f"    x1={x1_val}, x2={x2_val}, B={B_val}")
-        counterexamples['init'].append((x1_val, x2_val))
-        ce_flag = True
-    else:
-        print("  ✓ Initial state condition verified")
-    ce_solver.Pop(2)
 
-    # Verify 2: B(x) >= B(x') for all transitions (non-increasing)
+    # Verify 1: B(x) >= B(x') for all transitions (non-increasing)
     ce_solver.Push(2)
     ce_solver.Assert(In_X_Cond(x1_ce, x2_ce))
     x1p_ce, x2p_ce = f_t(x1_ce, x2_ce)
@@ -317,7 +268,7 @@ def verify_with_dreal(B_net):
         print("  ✓ Non-increasing property verified")
     ce_solver.Pop(2)
 
-    # Verify 3: B(x) >= B(x') + epsilon in VF (strict decrease)
+    # Verify 2: B(x) >= B(x') + epsilon in VF (strict decrease)
     ce_solver.Push(2)
     ce_solver.Assert(In_X_Cond(x1_ce, x2_ce))
     x1p_ce, x2p_ce = f_t(x1_ce, x2_ce)
