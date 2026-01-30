@@ -157,12 +157,12 @@ def in_state_space(x_ce):
 
 def in_initial_set(x):
     """初始状态约束: x ∈ [0, π/9] (数值格式)"""
-    return 0 <= x <= PI / 9
+    return 4*PI/9 <= x <= PI*5 / 9
 
 
 def in_initial_set_dreal(x_ce):
     """初始状态约束 (dreal格式)"""
-    return dreal.And(x_ce >= 0, x_ce <= PI / 9)
+    return dreal.And(x_ce >= 4*PI/9, x_ce <= PI*5 / 9)
 
 
 def system_dynamics(x_ce):
@@ -452,7 +452,7 @@ def synthesize_barrier_certificate(save_dir="saved_models"):
     all_states = multi_cartesian_product(x_samples, q_samples)
     print(f"  all_states: 完整状态空间大小 = {len(all_states)}")
     
-    x0_samples = generate_samples(0, PI / 9, 0.1)
+    x0_samples = generate_samples(PI*4 / 9, PI*5 / 9, 0.1)
     print(f"  x0_samples: 初始状态采样点数量 = {len(x0_samples)}")
     
     initial_states = multi_cartesian_product(x0_samples, [1])

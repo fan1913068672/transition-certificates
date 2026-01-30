@@ -51,13 +51,7 @@ class BarrierNetwork(nn.Module):
     def __init__(self, input_dim=2, hidden_dim=8):  # 增加隐藏层维度以弥补深度减少
         super(BarrierNetwork, self).__init__()
         self.fc1 = nn.Linear(input_dim, hidden_dim, bias=True)
-        # 移除了fc2层
-        self.fc3 = nn.Linear(hidden_dim, 1, bias=False)
-        
-        # 固定输出层权重为1.0
-        # with torch.no_grad():
-        #    self.fc3.weight.fill_(1.0)
-        # self.fc3.weight.requires_grad = False
+        self.fc2 = nn.Linear(hidden_dim, 1, bias=False)
         
         self.epsilon = 0.01
         
@@ -77,7 +71,7 @@ class BarrierNetwork(nn.Module):
         # 平方和激活：使用平方函数
         h = self.fc1(inp)
         h = h ** 2  # 平方函数，自动保证非负性
-        out = self.fc3(h)
+        out = self.fc2(h)
         return out.squeeze(-1)
     
     def get_epsilon(self):
@@ -89,7 +83,7 @@ def get_Bp_dreal(B_net):
     
     网络结构：
     fc1: Linear(in_features=2, out_features=hidden_dim) -> 平方激活
-    fc3: Linear(in_features=hidden_dim, out_features=1, bias=False)
+    fc2: Linear(in_features=hidden_dim, out_features=1, bias=False)
     
     表达式：B(x) = Σ_i [W3_i * (W1_i1*x1 + W1_i2*x2 + b1_i)²]
     """
@@ -98,7 +92,7 @@ def get_Bp_dreal(B_net):
     
     W1 = B_net.fc1.weight.detach().cpu().numpy()  # (hidden_dim, 2)
     b1 = B_net.fc1.bias.detach().cpu().numpy()    # (hidden_dim,)
-    W3 = B_net.fc3.weight.detach().cpu().numpy()  # (1, hidden_dim)
+    W3 = B_net.fc2.weight.detach().cpu().numpy()  # (1, hidden_dim)
     
     hidden_dim = W1.shape[0]
     
@@ -202,7 +196,6 @@ def space_product(s1, s2):
 
 
 def state_space_product(s1, *args):
-    """Multi-dimensional Cartesian product"""
     res = space_product(s1, args[0])
     for sp in args[1:]:
         res = space_product(res, sp)
@@ -210,10 +203,8 @@ def state_space_product(s1, *args):
 
 
 def clip_weights_nonnegative(B_net, min_val=1e-8):
-    """确保权重非负"""
     with torch.no_grad():
-        # 确保输出层权重非负
-        B_net.fc3.weight.data = torch.clamp(B_net.fc3.weight.data, min=min_val)
+        B_net.fc2.weight.data = torch.clamp(B_net.fc2.weight.data, min=min_val)
         
 
 def train_candidate(B_net, training_data, epochs=100, lr=0.001):

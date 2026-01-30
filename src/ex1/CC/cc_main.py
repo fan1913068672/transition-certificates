@@ -14,13 +14,13 @@ def In_X_Cond(x):
     return dreal.And(x >= 0, x <= PI * 2)
 
 def In_X0_Cond(x):
-    return dreal.And(x >= 0, x <= PI / 9)
+    return dreal.And(x >= PI * 4 / 9, x <= PI * 5 / 9)
 
 def In_Unsafe_Cond(x):
     return dreal.And(x >= 7 * PI / 9, x <= 8 * PI / 9)
 
 def In_X0(x):
-    return x >= 0 and x <= PI / 9
+    return x >= PI * 4 / 9 and x <= PI * 5 / 9
 
 def In_Unsafe(x):
     return x >= 7 * PI / 9 and x <= 8 * PI / 9
@@ -370,7 +370,7 @@ class ClosureCertificateSynthesizer:
         # 采样点
         X_samples = step_sample(0, 2.0 * PI, 0.1)
         Y_samples = X_samples.copy()
-        X0_samples = step_sample(0, PI/9, 0.1)
+        X0_samples = step_sample(PI * 4 / 9, PI * 5 / 9, 0.1)
         
         # 添加初始约束
         self._add_initial_constraints(solver, coeffs, EPSILON, 

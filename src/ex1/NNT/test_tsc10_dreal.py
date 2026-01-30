@@ -15,9 +15,9 @@ NATURAL_FREQUENCY = 0.01
 COUPLING_COEFFICIENT = 0.0006
 QUADRATIC_TERM = 0.532
 CONSTANT_TERM = 1.69
-
+PI = 3.1415926
 def in_initial_set(x):
-    return 0 <= x <= math.pi / 9
+    return math.pi * 4 / 9 <= x <= math.pi * 5 / 9
 
 def in_unsafe_set(x):
     return 7 * math.pi / 9 <= x <= 8 * math.pi / 9
