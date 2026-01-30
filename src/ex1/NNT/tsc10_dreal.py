@@ -29,6 +29,7 @@ class BarrierNetwork(nn.Module):
     def __init__(self, input_dim=2, hidden_dim=10):
         super().__init__()
         self.fc1 = nn.Linear(input_dim, hidden_dim, bias=True)
+        self.relu = nn.ReLU() # 添加 ReLU 激活函数
         self.fc2 = nn.Linear(hidden_dim, 1, bias=True)
         self.input_dim = input_dim
         self.hidden_dim = hidden_dim
@@ -52,7 +53,8 @@ class BarrierNetwork(nn.Module):
             q = q.unsqueeze(0)
 
         inp = torch.cat([x.unsqueeze(-1), q.unsqueeze(-1)], dim=-1)
-        h = self.fc1(inp)  # 线性激活，便于解析表达式
+        h = self.fc1(inp)
+        h = self.relu(h) # 应用 ReLU 激活
         out = self.fc2(h)
         return out.squeeze(-1)
     
@@ -95,7 +97,7 @@ class BarrierNetwork(nn.Module):
             f.write("=" * 60 + "\n\n")
             
             f.write(f"网络架构: {self.input_dim} -> {self.hidden_dim} -> 1\n")
-            f.write(f"激活函数: 线性 (无激活)\n\n")
+            f.write(f"激活函数: ReLU\n\n")
             
             f.write("第一层权重 W1 (10x2):\n")
             W1 = self.fc1.weight.detach().numpy()
@@ -120,7 +122,7 @@ class BarrierNetwork(nn.Module):
             f.write(f"  b2 = {self.fc2.bias.detach().numpy()[0]:.6f}\n\n")
             
             f.write("解析表达式:\n")
-            f.write("  B(x, q) = b2 + Σ_{i=1}^{10} W2[0,i] * (W1[i,0]*x + W1[i,1]*q + b1[i])\n\n")
+            f.write("  B(x, q) = b2 + Σ_{i=1}^{10} W2[0,i] * ReLU(W1[i,0]*x + W1[i,1]*q + b1[i])\n\n")
             
             f.write("Python计算函数:\n")
             f.write("  def B(x, q):\n")
@@ -128,8 +130,9 @@ class BarrierNetwork(nn.Module):
             f.write("      b1 = np.array(...)\n")
             f.write("      W2 = np.array(...)\n")
             f.write("      b2 = ...\n")
-            f.write("      h = W1[:,0]*x + W1[:,1]*q + b1\n")
-            f.write("      return b2 + np.sum(W2[0,:] * h)\n")
+            f.write("      h_linear = W1[:,0]*x + W1[:,1]*q + b1\n")
+            f.write("      h_relu = np.maximum(0, h_linear)\n")
+            f.write("      return b2 + np.sum(W2[0,:] * h_relu)\n")
         
         print(f"✓ 网络参数已保存为文本: {filepath}")
 
@@ -259,15 +262,19 @@ def convert_network_to_dreal(B_net):
     W2 = B_net.fc2.weight.detach().numpy()
     b2 = B_net.fc2.bias.detach().numpy()
 
-    def barrier_dreal(x, q):
-        """dReal表达式形式的屏障函数"""
-        expr = b2[0]
-        for i in range(len(b1)):
-            h_i = W1[i, 0] * x + W1[i, 1] * q + b1[i]
-            expr += W2[0, i] * h_i
-        return expr
+        def barrier_dreal(x, q):
+            """dReal表达式形式的屏障函数 (支持 ReLU)"""
+            expr = b2[0]
+            for i in range(len(b1)):
+                # 线性部分
+                h_linear = W1[i, 0] * x + W1[i, 1] * q + b1[i]
+                # ReLU 激活: max(0, h_linear)
+                h_relu = dreal.max(0, h_linear)
+                # 第二层加权求和
+                expr += W2[0, i] * h_relu
+            return expr
 
-    return barrier_dreal
+        return barrier_dreal
 
 
 # ==================== 训练函数 ====================
