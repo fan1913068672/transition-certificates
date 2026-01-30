@@ -43,6 +43,7 @@ class BarrierNetwork(nn.Module):
     def __init__(self, input_dim=3, hidden_dim=15):
         super(BarrierNetwork, self).__init__()
         self.fc1 = nn.Linear(input_dim, hidden_dim, bias=True)
+        self.relu = nn.ReLU() # 添加 ReLU 激活函数
         self.fc2 = nn.Linear(hidden_dim, 1, bias=True)
 
     def forward(self, x1, x2, q):
@@ -69,7 +70,8 @@ class BarrierNetwork(nn.Module):
             q = q.unsqueeze(0)
 
         inp = torch.cat([x1.unsqueeze(-1), x2.unsqueeze(-1), q.unsqueeze(-1)], dim=-1)
-        h = self.fc1(inp)  # Linear activation for analytical expression
+        h = self.fc1(inp)
+        h = self.relu(h) # 应用 ReLU 激活
         out = self.fc2(h)
         return out.squeeze(-1)
 
@@ -180,7 +182,7 @@ def state_space_product(s1, *args):
 def get_Bp_dreal(B_net):
     """
     Convert neural network to dReal expression
-    B(x1, x2, q) = W2 @ (W1 @ [x1, x2, q] + b1) + b2
+    B(x1, x2, q) = W2 @ ReLU(W1 @ [x1, x2, q] + b1) + b2
     """
     W1 = B_net.fc1.weight.detach().numpy()
     b1 = B_net.fc1.bias.detach().numpy()
@@ -191,8 +193,9 @@ def get_Bp_dreal(B_net):
         """dReal expression for B(x1, x2, q)"""
         expr = b2[0]
         for i in range(len(b1)):
-            h_i = W1[i, 0] * x1 + W1[i, 1] * x2 + W1[i, 2] * q + b1[i]
-            expr = expr + W2[0, i] * h_i
+            h_linear = W1[i, 0] * x1 + W1[i, 1] * x2 + W1[i, 2] * q + b1[i]
+            h_relu = dreal.if_then_else(h_linear > 0, h_linear, 0)
+            expr = expr + W2[0, i] * h_relu
         return expr
 
     return Bp_c
@@ -471,7 +474,7 @@ if __name__ == "__main__":
     if success:
         print("\nFinal Barrier Certificate:")
         print("-" * 70)
-        print("Network architecture: 3 -> 15 -> 1 (shallow linear network)")
+        print("Network architecture: 3 -> 15 -> 1 (ReLU activation network)")
         print("\nLayer 1 weights (W1):")
         print(B_net.fc1.weight.detach().numpy())
         print("\nLayer 1 bias (b1):")
@@ -481,6 +484,6 @@ if __name__ == "__main__":
         print("\nLayer 2 bias (b2):")
         print(B_net.fc2.bias.detach().numpy())
         print("-" * 70)
-        print(f"\nAnalytical expression: B(x1, x2, q) = W2 @ (W1 @ [x1, x2, q] + b1) + b2")
+        print(f"\nAnalytical expression: B(x1, x2, q) = W2 @ ReLU(W1 @ [x1, x2, q] + b1) + b2")
 
     print(f"\nTime taken: {end_time - start_time:.4f} seconds")
