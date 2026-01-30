@@ -73,50 +73,53 @@ B_{1,1}(x_1, x_2) = & \, c_0 + c_1 \cdot I_{X_0}(x_1, x_2) + c_2 \cdot I_{X_{VF}
 
 This section provides the neural network certificates synthesized in the three case studies.
 
-\subsubsection{Kuramoto Oscillator: One-Dimensional System}
-\label{app:ko1d_neural}
-\textbf{Valid transition safety certificate network parameters:}
-\begin{itemize}
-    \item \textbf{Network architecture:} 2 → 10 → 1
-    \item \textbf{Layer 1 weights} $W^{(1)} \in \mathbb{R}^{10 \times 2}$:
-    \[
-    W^{(1)} = \begin{bmatrix}
-    -0.00462256 &  0.01221108 \\
-     0.03739256 & -0.07070591 \\
-    -0.03385788 &  0.03532363 \\
-     0.02323357 & -0.04756396 \\
-    -0.02231794 &  0.01263871 \\
-    -0.12405103 &  0.48543116 \\
-     0.01899324 & -0.01110257 \\
-    -0.04676657 &  0.03985026 \\
-     0.01944778 & -0.01133961 \\
-    -0.02552579 &  0.02062751
-    \end{bmatrix}
-    \]
-    
-    \item \textbf{Layer 1 bias} $b^{(1)} \in \mathbb{R}^{10}$:
-    \[
-    b^{(1)} = \begin{bmatrix}
-     0.0172649 & -0.03052891 &  0.0136185 & -0.03174191 & -0.0014399 \\
-    -0.30628562 &  0.00386369 &  0.01954095 &  0.0036539 & -0.00690265
-    \end{bmatrix}^\top
-    \]
-    
-    \item \textbf{Layer 2 weights} $W^{(2)} \in \mathbb{R}^{1 \times 10}$:
-    \[
-    W^{(2)} = \begin{bmatrix}
-     5.4625678\times 10^{-5} & -3.3691346\times 10^{-3} &  1.5689721\times 10^{-2} \\
-     4.9933312\times 10^{-3} &  1.5301542\times 10^{-2} &  5.0629839\times 10^{-2} \\
-    -1.2078640\times 10^{-2} &  2.5881324\times 10^{-2} & -1.2611435\times 10^{-2} \\
-     1.2140879\times 10^{-2}
-    \end{bmatrix}
-    \]
-    
-    \item \textbf{Layer 2 bias} $b^{(2)} \in \mathbb{R}$:
-    \[
-    b^{(2)} = 0.00882112
-    \]
-\end{itemize}
+	\subsubsection{Kuramoto Oscillator: One-Dimensional System}
+	\label{app:ko1d_neural}
+	\textbf{Valid transition safety certificate network parameters:}
+	\begin{itemize}
+	    \item \textbf{Network architecture:} 2 → 10 → 1 (ReLU activation network)
+	    \item \textbf{Layer 1 weights} $W^{(1)} \in \mathbb{R}^{10 \times 2}$:
+	    \[
+	    W^{(1)} = \begin{bmatrix}
+	     0.36732605 & -0.29466873 \\
+	     0.44511154 & -0.10065039 \\
+	    -0.2463612  &  0.13090049 \\
+	     0.5710599  &  0.18457386 \\
+	    -0.16401595 &  0.800196   \\
+	     0.16680917 & -0.54196787 \\
+	     0.03139566 & -0.581802   \\
+	    -0.2696909  & -0.6400563  \\
+	     0.6605623  &  0.6877757  \\
+	    -0.12304431 &  0.4023705
+	    \end{bmatrix}
+	    \]
+	    
+	    \item \textbf{Layer 1 bias} $b^{(1)} \in \mathbb{R}^{10}$:
+	    \[
+	    b^{(1)} = \begin{bmatrix}
+	     0.3557 & -0.1530 & -0.2855 & -0.3364 &  0.1495 \\
+	     0.1568 &  0.2077 &  0.4496 & -0.1997 & -0.8233
+	    \end{bmatrix}^\top
+	    \]
+	    
+	    \item \textbf{Layer 2 weights} $W^{(2)} \in \mathbb{R}^{1 \times 10}$:
+	    \[
+	    W^{(2)} = \begin{bmatrix}
+	     0.12380187 &  0.04241462 & -0.10408211 & -0.1692231  &  0.32869837 \\
+	    -0.3943727  & -0.09415235 & -0.1155376  &  0.12839615 & -0.03449793
+	    \end{bmatrix}
+	    \]
+	    
+	    \item \textbf{Layer 2 bias} $b^{(2)} \in \mathbb{R}$:
+	    \[
+	    b^{(2)} = -0.12770885
+	    \]
+	    
+	    \item \textbf{Analytical expression:}
+	    \[
+	    B(x, q) = W^{(2)} \cdot \text{ReLU}(W^{(1)} \cdot [x, q]^\top + b^{(1)}) + b^{(2)}
+	    \]
+	\end{itemize}
 
 	\subsubsection{Kuramoto Oscillator: Two-Dimensional System}
 	\label{app:ko2d_neural}
