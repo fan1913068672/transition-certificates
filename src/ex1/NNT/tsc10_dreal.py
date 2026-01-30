@@ -262,19 +262,19 @@ def convert_network_to_dreal(B_net):
     W2 = B_net.fc2.weight.detach().numpy()
     b2 = B_net.fc2.bias.detach().numpy()
 
-        def barrier_dreal(x, q):
-            """dReal表达式形式的屏障函数 (支持 ReLU)"""
-            expr = b2[0]
-            for i in range(len(b1)):
-                # 线性部分
-                h_linear = W1[i, 0] * x + W1[i, 1] * q + b1[i]
-                # ReLU 激活: max(0, h_linear)
-                h_relu = dreal.max(0, h_linear)
-                # 第二层加权求和
-                expr += W2[0, i] * h_relu
-            return expr
+    def barrier_dreal(x, q):
+        """dReal表达式形式的屏障函数 (支持 ReLU)"""
+        expr = b2[0]
+        for i in range(len(b1)):
+            # 线性部分
+            h_linear = W1[i, 0] * x + W1[i, 1] * q + b1[i]
+            # ReLU 激活: max(0, h_linear)
+            h_relu = dreal.max(0, h_linear)
+            # 第二层加权求和
+            expr += W2[0, i] * h_relu
+        return expr
 
-        return barrier_dreal
+    return barrier_dreal
 
 
 # ==================== 训练函数 ====================
