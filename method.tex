@@ -1,9 +1,9 @@
 \section{Transition Certificates}
 \label{sec:method}
-Existing methods face significant limitations: the state-triplet method suffers from conservatism, while closure certificates encounter computational bottlenecks from their high-dimensional search space. To address these challenges, we propose transition certificates for LTL verification. To verify that a system $\mathfrak{S}$ satisfies an LTL formula $\phi$, the core idea of transition certificates is to reduce the verification problem to analyzing the behavior of accepting transitions in the NBA $\mathcal{A}$ for $\neg\phi$. By the definition of the transition-based acceptance condition, a word is accepted by $\mathcal{A}$ if and only if accepting transitions occur infinitely often along one of its runs. Therefore, to prove $\mathfrak{S} \models_{\mathfrak{L}} \phi$, it suffices to show that for all trajectories of $\mathfrak{S}$, every accepting transition in $\mathcal{A}$ occurs at most finitely many times. We introduce two complementary types of certificates: \emph{transition safety certificates} and \emph{transition persistence certificates}. While each type is theoretically sufficient for LTL verification on its own, their combined use is crucial for practical effectiveness, as it significantly reduces conservatism. The two certificates address the problem from fundamentally different angles:
+We propose a new type of proof certificates, called transition certificates, to verify that a system $\mathfrak{S}$ satisfies an LTL formula $\phi$. The core idea of transition certificates is to reduce the verification problem to analyzing the behavior of accepting transitions in the NBA $\mathcal{A}$ for $\neg\phi$. By the definition of the transition-based acceptance condition, a word is accepted by $\mathcal{A}$ if and only if accepting transitions occur infinitely often along one of its runs. Therefore, to prove $\mathfrak{S} \models_{\mathfrak{L}} \phi$, it suffices to show that for all trajectories of $\mathfrak{S}$, every accepting transition in $\mathcal{A}$ occurs at most finitely many times. We introduce two complementary types of transition certificates: \emph{transition safety certificates} and \emph{transition persistence certificates}. While each type is theoretically sufficient for LTL verification on its own, their combined use is crucial for practical effectiveness, as it significantly reduces conservatism. The two certificates address the problem from fundamentally different angles:
 \begin{itemize}
-    \item A \emph{transition safety certificate} proves that the system's trajectories can never reach $Acc^{start}$, thereby guaranteeing that related accepting transitions \textbf{never occur} (i.e., occur zero times).
-    \item A \emph{transition persistence certificate} allows the system to reach $Acc^{start}$ but proves, via a ranking function, that related accepting transitions can only be taken \textbf{finitely often}.
+    \item A \emph{transition safety certificate} proves that the system's trajectories can never reach $Acc^{start}$, thereby guaranteeing that related accepting transitions \textbf{never occur}.
+    \item A \emph{transition persistence certificate} allows the system to reach $Acc^{start}$ but proves that related accepting transitions can only be taken \textbf{finitely often}.
 \end{itemize}
 
 
@@ -23,12 +23,13 @@ To verify that accepting transitions never occur, we show that the starting stat
 
 % Intuitively, these conditions ensure that: 1) the certificate value is non-negative at the initial state; 2) it becomes negative precisely on the unsafe set $\mathcal{Y}_u^k$ associated with $q_k$; and 3) once non-negative, its value remains non-negative along any trajectory of the product system. The certificate $B_k$ guarantees $q_k$ is unreachable, preventing all accepting transitions from $q_k$. The following lemma formalizes this guarantee. Its proof is provided in the Appendix~\ref{appendix-proof}.
 
-Intuitively, these conditions ensure the following:
+Intuitively,
 \begin{itemize}
-    \item Condition (\ref{btsc1}) guarantees that the certificate value is non-negative at the initial state of the product system.
-    \item Condition (\ref{btsc2}) ensures that the certificate becomes negative precisely on the unsafe set $\mathcal{Y}_u^k$ associated with $q_k$, thereby marking states where accepting transitions could originate.
-    \item Condition (\ref{btsc3}) implies that once the certificate value is non-negative at a state, it remains non-negative along any trajectory of the product system, thus preserving the safety invariant.
+\item condition (\ref{btsc1}) guarantees that the certificate value is non-negative at the initial state of the product system;
+\item condition (\ref{btsc2}) ensures that the certificate becomes negative precisely on the unsafe set $\mathcal{Y}_u^k$ associated with $q_k$, thereby marking states where accepting transitions could originate;
+\item condition (\ref{btsc3}) implies that once the certificate value is non-negative at a state, it remains non-negative along any trajectory of the product system, thus preserving the safety invariant.
 \end{itemize}
+
 Collectively, these conditions ensure that the certificate $B_k$ guarantees $q_k$ is unreachable, preventing all accepting transitions from $q_k$. The following lemma formalizes this guarantee. Its proof is provided in Appendix~\ref{appendix-proof}.
 
 \begin{lemma}
@@ -40,7 +41,7 @@ The next theorem follows directly from applying the above lemma to every state i
 
 \begin{theorem}
   \label{transition-safety-LTL}
-  Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a labelling function $\mathfrak{L}:\mathcal{X} \rightarrow 2^{AP}$ and an NBA $\mathcal{A} = (2^{AP}, Q, q_0, \delta, Acc)$ for $\neg\phi$. if for any $q_i \in Acc^{start}$, a corresponding transition safety certificate $B_i$ can be found, then it can be guaranteed that $\mathfrak{S} \models_{\mathfrak{L}} \phi$.
+  Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a labelling function $\mathfrak{L}:\mathcal{X} \rightarrow 2^{AP}$ and an NBA $\mathcal{A} = (2^{AP}, Q, q_0, \delta, Acc)$ for $\neg\phi$. If for any $q_i \in Acc^{start}$, a transition safety certificate $B_i$ can be found, then it can be guaranteed that $\mathfrak{S} \models_{\mathfrak{L}} \phi$.
 \end{theorem}
 
 \begin{proof}
@@ -60,7 +61,21 @@ In contrast, the \emph{transition persistence certificate} offers a less conserv
   \end{align}
 \end{definition}
 
-The certificate $B_{k,l}$ is non-negative initially (\ref{btpc1}), remains non-negative along trajectories (\ref{btpc2}), and decreases by $\epsilon$ whenever the state's label matches an accepting transition from $q_k$ to $q_l$ (\ref{btpc3}). By (\ref{btpc1}) and (\ref{btpc2}), $B_{k,l}$ remains non-negative along any trajectory starting from $x_0 \in \mathcal{X}_0$. By (\ref{btpc3}), $B_{k,l}$ decreases by at least $\epsilon$ each time $I_{k,l}(x) = 1$. Since accepting transitions from $q_k$ to $q_l$ can only occur when $(q_k, \mathfrak{L}(x), q_l) \in Acc^{k,l}$, the number of such transitions is bounded by $B_{k,l}(x_0)/\epsilon$, ensuring finite occurrence. This yields the following lemma. Its proof is provided in the Appendix~\ref{appendix-proof}.
+%Intuitively, 
+%The certificate $B_{k,l}$ is non-negative initially (\ref{btpc1}), remains non-negative along trajectories (\ref{btpc2}), and decreases by $\epsilon$ whenever the state's label matches an accepting transition from $q_k$ to $q_l$ (\ref{btpc3}). 
+
+Intuitively,
+\begin{itemize}
+\item condition (\ref{btpc1}) guarantees that the certificate $B_{k,l}$ is non-negative at the initial state of the system;
+
+\item condition (\ref{btpc2}) ensures that $B_{k,l}$ remains non-negative along any trajectory of the system;
+
+\item condition (\ref{btpc3}) implies that $B_{k,l}$ decreases by at least $\epsilon$ whenever the state's label matches an accepting transition from $q_k$ to $q_l$, and remains non-increasing otherwise.
+\end{itemize}
+
+% By (\ref{btpc1}) and (\ref{btpc2}), $B_{k,l}$ remains non-negative along any trajectory starting from $x_0 \in \mathcal{X}_0$. By (\ref{btpc3}), $B_{k,l}$ decreases by at least $\epsilon$ each time $I_{k,l}(x) = 1$. 
+
+Since accepting transitions from $q_k$ to $q_l$ can only occur when $(q_k, \mathfrak{L}(x), q_l) \in Acc^{k,l}$, the number of such transitions is bounded by $B_{k,l}(x_0)/\epsilon$, ensuring finite occurrence. This yields the following lemma. Its proof is provided in the Appendix~\ref{appendix-proof}.
 
 \begin{lemma}
   \label{transition-persistence-lemma}
@@ -78,28 +93,7 @@ The next theorem is obtained by applying the lemma to every accepting transition
 By leveraging Lemma~\ref{transition-persistence-lemma}, all accepting transitions occur only finitely often, which ensures that the system's language is not accepted, thereby guaranteeing $\mathfrak{S} \models_{\mathfrak{L}} \phi$.
 \end{proof}
 
-While both Theorem~\ref{transition-safety-LTL} and Theorem~\ref{transition-persistence-LTL} can verify LTL properties, each is subject to conservatism. This leads to a complementary relationship between the two certificates. This complementarity is essential. In some scenarios, requiring the system to completely avoid certain states (as the safety certificate does) might be too strict, making transition safety certificates impossible to find. However, the system might still satisfy the property if the accepting transitions occur only finitely often, a condition that can be certified by a transition persistence certificate. Conversely, consider verifying $\mathbf{G} \neg a$ using the NBA for $\mathbf{F} a$, where $Acc^{0,0} = \{(q_0, \emptyset, q_0), (q_0, \{a\}, q_0)\}$. For the persistence certificate $B_{0,0}$, condition (\ref{btpc3}) requires $B_{0,0}(x) \geq B_{0,0}(f(x)) + \epsilon$ for any $x$ where an accepting transition is enabled. This would demand an infinite descent in the bounded certificate value, which is impossible, preventing the transition persistence certificate from being found. Yet, a transition safety certificate can successfully verify the property by proving that state $q_0$ (the start of the accepting transitions) is unreachable in the product system. Thus, providing both certificates covers a wider range of system behaviors, enhancing the method's applicability. We now present the main theorem for LTL verification. For each accepting transition start state in the NBA, we use either a transition safety certificate or transition persistence certificates to prove accepting transitions from that state occur finitely often.
-
-\begin{theorem}[LTL verification]
-  \label{ltl-verification-theorem}
-   Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$ and an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$ representing the negation of an LTL formula $\phi$. For each $q_k \in Acc^{start}$, if we can find either:
-  \begin{enumerate}
-      \item A transition safety certificate $B_k$ for $q_k$, or
-      \item Transition persistence certificates $B_{k,l}$ for $Acc^{k,l}$ where $(k, l) \in Acc^{pair}$,
-  \end{enumerate}
-  then it can be guaranteed that $\mathfrak{S} \models_{\mathfrak{L}} \phi$.
-\end{theorem}
-
-\begin{proof}
-  Given an accepting transition start state $q_k \in Acc^{start}$:
-  \begin{enumerate}
-      \item If a transition safety certificate $B_k$ is found, by Lemma~(\ref{transition-safety-lemma}), all runs never visit state $q_k$, thereby preventing all accepting transitions starting from $q_k$.
-
-      \item If a transition persistence certificate $B_{k,l}$ is found, by Lemma~(\ref{transition-persistence-lemma}), all runs make accepting transitions from $q_k$ to $q_l$ happen finitely often.
-  \end{enumerate}
-
-  This ensures that all accepting transitions in $Acc$ occur only finitely often. By the definition of NBA acceptance, a word $w$ is accepted if and only if there exists a run where accepting transitions occur infinitely often, i.e., $\mathit{Inf}(r) \cap Acc \neq \emptyset$. Since all accepting transitions occur only finitely often, for any word $w \in \mathfrak{L}(\mathfrak{S})$ and any run $r$ on $w$, we have $\mathit{Inf}(r) \cap Acc = \emptyset$. Therefore, no word in $\mathfrak{L}(\mathfrak{S})$ is accepted by automaton $\mathcal{A}$, implying $\mathfrak{L}(\mathfrak{S}) \cap \mathfrak{L}(\mathcal{A}) = \emptyset$. Since $\mathfrak{L}(\mathcal{A}) = \mathfrak{L}(\neg \phi)$, we have $\mathfrak{L}(\mathfrak{S}) \subseteq \mathfrak{L}(\phi)$, and consequently $\mathfrak{S} \models_{\mathfrak{L}} \phi$.
-\end{proof}
+While both Theorem~\ref{transition-safety-LTL} and Theorem~\ref{transition-persistence-LTL} can verify LTL properties, the two types of transition certificates yield better effects when used in combination. In some scenarios, requiring the system to completely avoid certain states might be too strict, making transition safety certificates impossible to find. However, the system might still satisfy the property if the accepting transitions occur only finitely often, a condition that can be certified by a transition persistence certificate. Conversely, consider verifying $\mathbf{G} \neg a$ using the NBA for $\mathbf{F} a$, where $Acc^{0,0} = \{(q_0, \emptyset, q_0), (q_0, \{a\}, q_0)\}$. For the persistence certificate $B_{0,0}$, condition (\ref{btpc3}) requires $B_{0,0}(x) \geq B_{0,0}(f(x)) + \epsilon$ for any $x$ where an accepting transition is enabled. This would demand an infinite descent in the bounded certificate value, which is impossible, preventing the transition persistence certificate from being found. Yet, a transition safety certificate can successfully verify the property by proving that state $q_0$ (the start of the accepting transitions) is unreachable in the product system. Thus, providing both certificates covers a wider range of system behaviors, enhancing the method's applicability. We now present the main theorem for LTL verification. For each accepting transition start state in the NBA, we use either a transition safety certificate or transition persistence certificates to prove accepting transitions from that state occur finitely often.
 
 
 In summary, the combination of transition safety certificates and transition persistence certificates offers a less conservative verification framework. It maintains a smaller search space compared to closure certificates while providing two distinct mechanisms to ensure that accepting transitions occur only finitely often, ultimately proving that the system satisfies its LTL specification.
