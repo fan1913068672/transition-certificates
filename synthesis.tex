@@ -2,7 +2,7 @@
 \label{sec:synthesis}
 This section develops automated synthesis techniques for transition certificates. We leverage the Counterexample-Guided Inductive Synthesis (CEGIS) framework~\cite{solar2008program}, a well-established paradigm in barrier certificate synthesis, to iteratively refine candidate solutions. By alternating between candidate generation and formal verification, this approach ensures that the discovered certificates are valid and proves that the system meets the specified LTL properties. Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$ and an NBA $\mathcal{A} = (2^{AP}, Q, q_0, \delta, Acc)$ representing $\neg \phi$, we adopt a uniform notation where $B_k$ represents the transition safety certificate template for states $q_k \in Acc^{\text{start}}$, and $B_{k,l}$ represents the transition persistence certificate template for $Acc^{k,l}$. To find transition certificates, we present CEGIS frameworks for polynomial and neural network templates, respectively. The synthesis proceeds in two alternating phases: \textit{candidate generation} and \textit{verification}.
 
-\subsection{Polynomial CEGIS}
+\subsection{Polynomial Template CEGIS}
 \subsubsection{Transition Safety Certificates} 
 We define a parametric polynomial template:
 \begin{align}
@@ -56,7 +56,7 @@ verify they are unsatisfiable. For transition persistence certificates, we check
 
 We use dReal~\cite{gao2013dreal} to check these constraints. If the constraints are satisfiable, we add them to $D_0$ or $D_{\mathcal{X}}$ accordingly. The synthesis process then iterates until no counterexamples are found, yielding a valid transition persistence certificate.
 
-\subsection{Neural Network CEGIS}
+\subsection{Neural Template CEGIS}
 Since neural networks have the capability to approximate arbitrary functions, using them as templates for certificates offers advantages over polynomials~\cite{zhao2020synthesizing}. Assume that $x \in \mathbb{R}^n$ represents the $n$-dimensional input vector of the neural network, $L-1$ represents the number of hidden layers, and $y$ is the scalar output of the neural network with respect to the input $x$. Thus, the feedforward neural network can be expressed with the following structure:
 
 \[

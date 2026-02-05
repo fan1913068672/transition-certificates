@@ -24,7 +24,7 @@ We say $s$ visits $S$ if there exists $i \in \mathbb{N}$ such that $s_i \in S$. 
 
 \subsection{Discrete-time Dynamical System}
 \label{dtds}
-A discrete-time dynamical system $\mathfrak{S}$ is a tuple $(\mathcal{X}, \mathcal{X}_0, f)$, where $\mathcal{X} \subseteq \mathbb{R}^n$ represents the state set, $\mathcal{X}_{0} \subseteq \mathcal{X}$ represents a set of initial states, and $f: \mathcal{X} \rightarrow \mathcal{X}$ represents the transition function. The evolution of the system state is described as follows:
+A discrete-time dynamical system $\mathfrak{S}$ = $(\mathcal{X}, \mathcal{X}_0, f)$, where $\mathcal{X} \subseteq \mathbb{R}^n$ represents the state set, $\mathcal{X}_{0} \subseteq \mathcal{X}$ represents a set of initial states, and $f: \mathcal{X} \rightarrow \mathcal{X}$ represents the transition function. The evolution of the system state is described as follows:
 \[
   x_{t+1} = f(x_t).
 \]
@@ -69,8 +69,8 @@ For an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$, we define:
 
 We denote $\mathfrak{L}(\mathfrak{S}) = \{\mathfrak{L}(\tau) \mid \tau \in \mathfrak{T}(\mathfrak{S})\}$ as the \emph{language} of $\mathfrak{S}$, and $\mathfrak{L}(\mathcal{A})$ as the language accepted by $\mathcal{A}$. To verify $\mathfrak{S} \models_{\mathfrak{L}} \phi$, we construct an NBA $\mathcal{A}$ for $\neg \phi$ and show $\mathfrak{L}(\mathfrak{S}) \cap \mathfrak{L}(\mathcal{A}) = \emptyset$.
 
-\subsection{Certificates}
-Barrier certificates and closure certificates are used to LTL properties~\cite{pnueli1977temporal}, respectively. We provide their definitions and related conclusions from prior work.
+\subsection{Proof Certificates}
+Barrier certificates~\cite{prajna2004safety} and closure certificates~\cite{murali2024closure} are used to LTL properties~\cite{pnueli1977temporal}, respectively. We provide their definitions and related conclusions from prior work.
 
 \begin{definition}[barrier certificate~\cite{prajna2004safety}]
   \label{SCDEF}
@@ -107,7 +107,7 @@ and for all states $x_0 \in \mathcal{X}_0$, and $\ell, \ell' \in Acc$, we have:
 \end{align}
 \end{definition}
 
-\begin{theorem}[LTL~\cite{murali2024closure}]
+\begin{theorem}[LTL Verification~\cite{murali2024closure}]
 Consider a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, a set of atomic propositions $AP$, a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow 2^{AP}$ and an LTL formula $\phi$. Let an NBA $\mathcal{A} = (2^{AP}, Q, q_0, \delta, Acc)$ represent $\neg \phi$. The existence of a closure certificate satisfying conditions \eqref{eq:closure1}-\eqref{eq:closure3} implies that $\mathfrak{S} \models_\mathfrak{L} \phi$.
 \end{theorem}
 
@@ -123,4 +123,4 @@ In this paper, we investigate the following LTL verification problem.
 \noindent
 \textbf{Problem.} Given a discrete-time dynamical system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a set of atomic propositions $AP$, a labeling function $\mathfrak{L}: \mathcal{X} \rightarrow 2^{AP}$, and an LTL formula $\phi$, verify that $\mathfrak{S} \models_{\mathfrak{L}} \phi$ holds.
 
-Closure certificates require searching a large space, making synthesis slow, and the state-triplet method can be overly conservative. In this paper, we propose a new approach to address both issues.
+In this paper, we propose a new approach to address the LTL verification problem.

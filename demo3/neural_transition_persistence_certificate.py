@@ -49,9 +49,7 @@ class BarrierNetwork(nn.Module):
         super(BarrierNetwork, self).__init__()
         self.fc1 = nn.Linear(input_dim, hidden_dim, bias=True)
         self.fc2 = nn.Linear(hidden_dim, 1, bias=True)
-        # Learnable epsilon for strict decrease
-        self.log_epsilon = nn.Parameter(torch.tensor(0.0))  # log(epsilon) for positivity
-
+        self.log_epsilon = nn.Parameter(torch.tensor(0.0))
     def forward(self, x1, x2):
         """
         Args:
