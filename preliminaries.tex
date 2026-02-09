@@ -24,7 +24,7 @@ We say $s$ visits $S$ if there exists $i \in \mathbb{N}$ such that $s_i \in S$. 
 
 \subsection{Discrete-time Dynamical System}
 \label{dtds}
-A discrete-time dynamical system $\mathfrak{S}$ = $(\mathcal{X}, \mathcal{X}_0, f)$, where $\mathcal{X} \subseteq \mathbb{R}^n$ represents the state set, $\mathcal{X}_{0} \subseteq \mathcal{X}$ represents a set of initial states, and $f: \mathcal{X} \rightarrow \mathcal{X}$ represents the transition function. The evolution of the system state is described as follows:
+A discrete-time dynamical system is defined as $\mathfrak{S}$ = $(\mathcal{X}, \mathcal{X}_0, f)$, where $\mathcal{X} \subseteq \mathbb{R}^n$ represents the state set, $\mathcal{X}_{0} \subseteq \mathcal{X}$ represents a set of initial states, and $f: \mathcal{X} \rightarrow \mathcal{X}$ represents the transition function. The evolution of the system state is described as follows:
 \[
   x_{t+1} = f(x_t).
 \]
@@ -70,7 +70,7 @@ For an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$, we define:
 We denote $\mathfrak{L}(\mathfrak{S}) = \{\mathfrak{L}(\tau) \mid \tau \in \mathfrak{T}(\mathfrak{S})\}$ as the \emph{language} of $\mathfrak{S}$, and $\mathfrak{L}(\mathcal{A})$ as the language accepted by $\mathcal{A}$. To verify $\mathfrak{S} \models_{\mathfrak{L}} \phi$, we construct an NBA $\mathcal{A}$ for $\neg \phi$ and show $\mathfrak{L}(\mathfrak{S}) \cap \mathfrak{L}(\mathcal{A}) = \emptyset$.
 
 \subsection{Proof Certificates}
-Barrier certificates~\cite{prajna2004safety} and closure certificates~\cite{murali2024closure} are used to LTL properties~\cite{pnueli1977temporal}, respectively. We provide their definitions and related conclusions from prior work.
+Barrier certificates~\cite{prajna2004safety} and closure certificates~\cite{murali2024closure} are used to LTL properties~\cite{wongpiromsarn2015automata,murali2024closure}, respectively. We provide their definitions and related conclusions from prior work.
 
 \begin{definition}[barrier certificate~\cite{prajna2004safety}]
   \label{SCDEF}
@@ -88,9 +88,6 @@ Barrier certificates~\cite{prajna2004safety} and closure certificates~\cite{mura
 
 The state-triplet approach\cite{wongpiromsarn2015automata} uses barrier certificates to verify LTL properties. Given an LTL specification $\phi$, it proves that accepting states are unreachable in the NBA for $\neg\phi$ by finding barrier certificates to ensure that runs on $\mathfrak{L}(\mathfrak{S})$ will never visit accepting states, verifying $\mathfrak{S} \models_{\mathfrak{L}} \phi$. The state-triplet method need to find barrier certificates for each simple path, a certificate corresponding to a specific state triplet to individually block a simple path. The state-triplet method introduces conservatism: it cannot be applied for systems that satisfy the LTL specification because they cannot be proven safe under this restrictive constraints.
 
-% Our transition certificates share this reachability-blocking principle but operates on the product system $\mathfrak{S} \times \mathcal{A}$, eliminating the need to enumerate simple paths in the NBA from initial state to accepting state. 
-
-%The state-triplet method requires one certificate for some triplet to block each simple path individually, while we synthesize one certificate per accepting transition start state in $Acc^{start}$. Transition certificates further allows visiting accepting states while proving transitions occur finitely often and reduce conservatism.
 
 \begin{definition}[closure certificate~\cite{murali2024closure}]
 \label{LTLCC}
@@ -118,9 +115,7 @@ Closure certificates are defined by characterizing an over-approximation of the 
 
 
 \subsection{Problem Statement}
-In this paper, we investigate the following LTL verification problem.
-
-\noindent
 \textbf{Problem.} Given a discrete-time dynamical system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a set of atomic propositions $AP$, a labeling function $\mathfrak{L}: \mathcal{X} \rightarrow 2^{AP}$, and an LTL formula $\phi$, verify that $\mathfrak{S} \models_{\mathfrak{L}} \phi$ holds.
 
+\noindent
 In this paper, we propose a new approach to address the LTL verification problem.
