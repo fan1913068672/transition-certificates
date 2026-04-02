@@ -1,0 +1,66 @@
+﻿\documentclass[a4paper,fleqn]{cas-sc}
+
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[misc]{ifsym}
+\usepackage{amsthm}
+\DeclareUnicodeCharacter{200B}{}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\begin{document}
+\let\WriteBookmarks\relax
+\def\floatpagepagefraction{1}
+\def\textpagefraction{.001}
+
+\shorttitle{Efficient LTL Verification via Transition Certificates}
+\shortauthors{Y. Fan et al.}
+
+\title[mode=title]{Efficient Verification Framework of LTL via Transition Certificates}
+
+\author[1]{Yuheng Fan}
+\author[1]{Zenan Qian}
+\author[1]{Wang Lin}
+\cormark[1]
+\ead{linwang@zstu.edu.cn}
+
+\affiliation[1]{organization={Zhejiang Sci-Tech University},
+                city={Hangzhou},
+                state={Zhejiang},
+                country={China}}
+
+\cortext[cor1]{Corresponding author}
+
+\\begin{abstract}
+Verifying Linear Temporal Logic (LTL) specifications for discrete-time dynamical systems with continuous state spaces is critical for safety-critical applications. The existing state-triplet method and closure certificate often face a trade-off between conservatism and high computational cost. To overcome the limitations, we propose a novel framework to verify LTL specifications via proof certificates. The key insight of our approach is to decompose LTL verification into two types of certificates: transition persistence certificates, which guarantee accepting transitions take finitely often, and transition safety certificates, which render accepting transitions unreachable. This design not only reduces the search space significantly compared to closure certificates but also mitigates conservatism inherent in state-triplet methods. We introduce automated synthesis techniques based on polynomial and neural network templates, balancing expressiveness and computational efficiency. Experimental evaluations on benchmark case studies, including the Kuramoto oscillator and a two-room temperature model, show that transition certificates achieve significant speedup over baseline methods while providing formal guarantees, highlighting their practicality for LTL verification tasks.
+\\end{abstract}
+
+\begin{highlights}
+\item We propose transition safety and transition persistence certificates for LTL verification.
+\item We develop polynomial and neural-network-based CEGIS synthesis for the certificates.
+\item Case studies show clear speedups over state-triplet and closure-certificate baselines.
+\end{highlights}
+
+\begin{keywords}
+Linear temporal logic \sep certificate-based verification \sep cyber-physical systems \sep CEGIS
+\end{keywords}
+
+\maketitle
+
+\input{introduction}
+\input{preliminaries}
+\input{method}
+\input{synthesis}
+\input{casestudy}
+\input{conclusion}
+
+\bibliographystyle{cas-model2-names}
+\bibliography{reference}
+
+\appendix
+\input{appendix}
+
+\end{document}
+
