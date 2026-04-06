@@ -1,0 +1,940 @@
+FILE: ncc.pdf
+PAGES: 8
+
+
+===== PAGE 1 =====
+Neural Closure Certificates
+Alireza Nadali, Vishnu Murali, Ashutosh Trivedi, Majid Zamani
+University of Colorado Boulder
+{a nadali, vishnu.murali, ashutosh.trivedi, majid.zamani}@colorado.edu
+Abstract
+Notions of transition invariants and closure certificates have
+seen recent use in the formal verification of controlled dy-
+namical systems against ω-regular properties. The existing
+approaches face limitations in two directions. First, they re-
+quire a closed-form mathematical expression representing the
+model of the system. Such an expression may be difficult to
+find, too complex to be of any use, or unavailable due to
+security or privacy constraints. Second, finding such invari-
+ants typically rely on optimization techniques such as sum-of-
+squares (SOS) or satisfiability modulo theory (SMT) solvers.
+This restricts the classes of systems that need to be formally
+verified. To address these drawbacks, we introduce a notion
+of neural closure certificates. We present a data-driven algo-
+rithm that trains a neural network to represent a closure cer-
+tificate. Our approach is formally correct under some mild as-
+sumptions, i.e., one is able to formally show that the unknown
+system satisfies the ω-regular property of interest if a neural
+closure certificate can be computed. Finally, we demonstrate
+the efficacy of our approach with relevant case studies.
+Introduction
+The recent advances in deep learning and neural networks
+have revolutionized the capability in perception and nat-
+ural language processing (V oulodimos et al. 2018; Otter,
+Medina, and Kalita 2020). As a result, control and robotics
+applications in modern critical infrastructure are progres-
+sively incorporating deep neural networks into their oper-
+ations, leading to the grand challenge of ensuring safety
+in learning-enabled cyber-physical systems. Examples of
+safety-critical such systems include implantable medical de-
+vices, autonomous vehicles, and surgical robots.
+In response to this overarching challenge, substantial ef-
+forts have been directed (Haesaert, Van den Hof, and Abate
+2017; Ratschan 2017; Nejati et al. 2023) towards adapt-
+ing successful classical formal and statistical approaches
+to verify systems with unknown dynamics. Among these
+approaches, neural network based barrier certificates have
+shown considerable promise. These certificates capture state
+invariants providing a certificate for safety (“nothing bad
+happens”). We extend this line of research by developing
+Copyright © 2024, Association for the Advancement of Artificial
+Intelligence (www.aaai.org). All rights reserved.
+neural network based certificates to capture liveness proper-
+ties (“something good eventually happens”) by approximat-
+ing the transitive closure of state transitions. We dub these
+certificates neural closure certificates.
+Neural Barrier Certificates for Safety. A key contribu-
+tion in the use of neural networks as a verification tool has
+been that of neural barrier certificates (Zhao et al. 2020)
+to demonstrate the safety of dynamical systems. We say
+that a dynamical system is safe with respect to a set of un-
+safe states, if it never reaches these states as it evolves. To
+address the problem of safety verification, Prajna and Jad-
+babaie (2004) proposed a notion of barrier certificates.
+A barrier certificate is real-valued function that is non-
+positive over the initial states, positive over the unsafe states
+and non-increasing over the evolution of the system. These
+conditions together ensure that the system is safe. Observe
+that a barrier certificate is a functionalinductive state invari-
+ant. Every initial state has a barrier value which is nonposi-
+tive. Furthermore, given any state with a nonpositive barrier
+value, all of its successors must also be nonpositive via an
+inductive proof. Lastly, as the unsafe states do not have a
+nonpositive barrier value, they cannot be reached from the
+initial states. As the search for a barrier certificate involves
+finding a function that satisfies the above constraints, there
+has been a widespread adoption of novel techniques and ap-
+proaches to make use of neural networks to represent such
+certificates (Abate et al. 2021; Dawson, Gao, and Fan 2023;
+Nadali, Trivedi, and Zamani 2023).
+Beyond Safety. While neural barrier certificates have seen
+significant success in ensuring the safety of systems, they are
+inadequate in certifying an important class of specifications
+known as liveness. A system satisfies a liveness property if
+something good eventually happens (Alpern and Schneider
+1987). An example of such a property is to ensure that a sys-
+tem visits a set of states infinitely often. While safety can
+be demonstrated using an inductive argument, one needs to
+develop a well-foundedness argument (Cook 2009) to es-
+tablish liveness. To address this question, Podelski and Ry-
+balchenko (2004) proposed a notion oftransition invariants.
+A transition invariant is a set of pairs of states such that
+it may be possible to reach the second element from the
+first. This represents a superset of the transitive closure of
+the transition relation that represents the evolution of the
+The Thirty-Eighth AAAI Conference on Artiﬁcial Intelligence (AAAI-24)
+21446
+
+
+===== PAGE 2 =====
+system. Using transition invariants, they developed a well-
+foundedness argument to refute a liveness property to prove
+program termination.
+Certification Beyond Safety. The ω-regular properties
+are an expressive and well-behaved class of formal specifica-
+tions that capture linear-time properties. These are precisely
+those properties that can be compiled intoω-automata (Vardi
+2005). Their compilation into automata, allows for one to
+make use of algorithms over the automata, which entail auto-
+matic proofs. Podelski and Rybalchenko (2004) demonstrate
+how one may use transition invariants to verify programs
+against ω-regular properties. Inspired by this approach, Mu-
+rali, Trivedi, and Zamani (2023) developed the notion of
+closure certificates, functional transition invariants, to ver-
+ify dynamical systems against ω-regular properties.
+Formally, a closure certificate is a real-valued function
+that is defined over pairs of states of the system. Consider
+the states x, yand z where the state y is the immediate suc-
+cessor of state x. As a base case, the closure certificate must
+be nonnegative for every pair (x, y). If the closure certifi-
+cate is nonnegative for the pair (y, z), then it must also be
+nonnegative for the pair (x, z). These together ensure that if
+state z is reachable from state x, then one has the value of
+the closure certificate to be nonnegative for the pair (x, z).
+One adds additional constraints to the above to verify safety,
+refute liveness or prove ω-regular properties of interest.
+Though closure certificates hold promise, one must ad-
+dress their shortcomings. Notably, current methods of
+searching for these certificates require knowing the precise
+mathematical model of the dynamical system. In many cases
+finding such closed-form expression is difficult, due to the
+complexities of the system and requires significant manual
+effort. Moreover, existing approaches for searching for clo-
+sure certificates rely on the dynamics of the system to be of
+a certain form. They either rely on optimization techniques
+such as Sum-of-Squares programming (SOS) (Parrilo 2003)
+or Satisfiability Modulo Theory (SMT) (Barrett and Tinelli
+2018) solvers. In the former, one requires the dynamics to
+be specified as a polynomial, while in the latter the dynam-
+ics need to be supported by the chosen SMT solver.
+Neural Closure Certificates. We propose a novel data-
+driven algorithm to formally verify unknown dynamical sys-
+tems against ω-regular properties. To do so, we represent
+closure certificates as neural networks. We construct a loss
+function such that it being zero in tandem with a validity
+condition, is sufficient to ensure that our neural network
+is a closure certificate, provided our system is Lipschitz-
+continuous. Unlike earlier SOS and SMT approaches which
+restrict the class of functions that act as closure certificates,
+our use of neural networks allows us to consider any Borel-
+measurable function as a candidate closure certificate.
+Organization. The paper is organized as follows. We be-
+gin the formal discussion by introducing notations and defi-
+nitions in the Preliminaries. We then discuss closure certifi-
+cates and their properties. Next, we introduce a data-driven
+approach to find Neural Closure Certificates assuming the
+system dynamics are Lipschitz continuous. This ensures that
+our trained neural network provides a formal guarantee of
+correctness and proves that the system does in fact satisfy the
+ω-regular property of interest. Moreover, we illustrate the ef-
+ficacy of our proposed algorithm with relevant case studies
+in the corresponding section.
+Preliminaries
+Notations. We useN and R to denote the set of natural num-
+bers and reals, respectively. For any given a ∈ R, R≥a and
+R>a refer to intervals [a, ∞) and (a, ∞), respectively. Like-
+wise, for any b ∈ N, N≥b denotes the set of natural numbers
+greater than or equal to b. We use ∥v∥∞ to represent the in-
+finity norm of vector v ∈ Rn for some n ∈ N.
+For a given alphabetA, we write A∗ and Aω for the set of
+finite and infinite sequences of elements in A, respectively.
+As usual, |A|, A \ B, and A × B represent the cardinality,
+set difference and Cartesian product of sets A and B.
+We call a function f : A→R bounded if there exist u, l∈
+R such that l≤f(a)≤u, for all a ∈ A. We define the RELU :
+R → R activation function as RELU(z) = max(0, z) for all
+z ∈ R. A function f : Rn → R is Lipschitz continuous with
+respect to the infinity norm, and with Lipschitz constantL, if
+for all x, y∈ Rn, one has ∥f(x)−f(y)∥∞ ≤ L∥
+ 
+x−y)∥∞ .
+System Definition
+Definition 1 (Discrete-time Dynamical System). A discrete-
+time dynamical system is a tuple S = ( X, X0, f), where
+X ⊂Rn represents the state set,X0 ⊆ Xdenotes the initial
+set, and f : X → Xis the transition function (or model) of
+the system. The evolution of the system can be described as:
+S : x(t + 1) = f(x(t)). (1)
+A state sequence is an infinite seriesx0x1 . . .∈ Xω where
+x0 ∈ X0 and xi+1 = f(xi), for all i ∈ N. We assume the
+state set X to be compact and the function f to be Lips-
+chitz continous. Furthermore, we say that system isunknown
+when we do not have an explicit closed form expression for
+the function f. To reason aboutω-regular properties, we em-
+ploy a labeling function L : X →Σ that maps a state of the
+system to a letter in a finite alphabet. This labeling function
+extends naturally to map a state sequence to an infinite trace
+(or word) w = L(x0)L(x1) . . .∈ Σω. Let T(S, L) denote
+the set of all traces of system S under labeling function L.
+Specification
+Definition 2 (Nondeterministic B ¨uchi Automata (NBA)).
+A nondeterministic B ¨uchi automata (NBA) A is a tuple
+(Q, Σ, q0, δ, Qacc) where Q denotes a finite set of states, Σ
+denotes a finite alphabet, δ : Q × Σ → 2Q denotes the tran-
+sition relation, and q0 ∈ Q and Qacc ⊆ Q denote the initial
+state1 and set of accepting states, respectively.
+A run of A on an infinite word w = σ0σ1 . . .∈ Σω is
+an infinite sequence ρ = q0q1q2 . . .∈ Qω such that qi+1 ∈
+δ(qi, σi) for all i ∈ N. A word w = w0w1 . . .is accepted by
+the NBA A if there exists a corresponding run ρ = q0q1 . . .
+1Without loss of generality, one can convert an NBA with a set
+of initial states to an NBA with a single initial state.
+The Thirty-Eighth AAAI Conference on Artiﬁcial Intelligence (AAAI-24)
+21447
+
+
+===== PAGE 3 =====
+of the NBA on w such that for every j ∈ N, there exists
+some i ∈ N≥j, such that qi ∈ Qacc.
+As the state set of the NBA is finite, one can equivalently
+think of the setQ as the set{0, 1, . . . ,|Q|−1}. The language
+of an NBA A, denoted by L(A), is defined as the set of all
+words w that are accepted by it, and the language character-
+izes an ω-regular property. Finally, NBAs are closed under
+complementation (Safra 1988), i.e., given an NBA A′, one
+can construct its complement A where L(A) = Σω \L(A′).
+Verification
+We say that a system satisfies an ω-regular property char-
+acterized by an NBA A′ under labeling function L, if
+T(S, L) ⊆ L(A′) and denote it as S |=L A′. In the fol-
+lowing, we implicitly infer the labeling function from the
+context unless it needs to be explicitly specified. Lastly, as
+NBAs are closed under complement, one can instead ver-
+ify that S |=L A′ by showing that T(S, L) ∩ L(A) = ∅
+where the NBA A denotes the complement of A′. A well-
+known approach (automata-theoretic approach) to determine
+whether a system satisfies a desired ω-regular property or
+not is to first construct the synchronous product of the sys-
+tem and the (complement of) the specification.
+Definition 3 (Synchronous Product). We define the syn-
+chronous product S ⊗ Aof a system S = (X, X0, f), and
+an NBA A = ( Q, Σ, q0, δ, Qacc) as the tuple (X′, X′
+0, f′)
+where X′ = X × {0, . . . ,|Q| −1} and X′
+0 = X0 × q0
+denote state and initial set, respectively. The transition func-
+tion f′ : X′ → 2X′
+is defined as:
+f′((x, i)) =
+
+(f(x), j) | qj ∈ δ(qi, L(x))
+	
+.
+We should add that the set f′((x, i)) is finite for every
+x ∈ X, and qi ∈ Q.
+For complex learning-enabled cyber-physical systems, it
+is impractical and difficult to find a closed form expression
+of the transition function. To overcome this challenge, our
+goal is to develop approaches to verify a systemSagainst an
+ω-regular property when the transition function is unknown.
+To do so, we assume that we have access to the next step
+evolution of the system based on samples, that is, given a
+sample state ˆx ∈ X, we can get the value of f(ˆx). Further-
+more, we assume that the functionf is Lipschitz continuous.
+Now we are in the position to state the central problem
+studied in this paper.
+Problem 1. Given an unknown system S, and an ω-regular
+specification, expressed by an NBA A′, verify whether
+S |=L A′.
+Closure Certificates
+A functional approach to formally verify a dynamical sys-
+tem against a desired ω-regular property, is through the use
+of transition invariants (Podelski and Rybalchenko 2004)
+and closure certificates (Murali, Trivedi, and Zamani 2023).
+As neural closure certificates employ notions of closure cer-
+tificates to provide guarantees against ω-regular properties,
+we provide a sketch of the main results as well as the proofs
+for self-containment. We refer the interested reader to (Mu-
+rali, Trivedi, and Zamani 2023) for detailed proofs. First, we
+discuss the use of closure certificates in ensuring safety.
+Definition 4 (Closure Certificate for Safety). A bounded
+function T : X×X→ R is a Closure Certificate for S =
+(X, X0, f) with a set of unsafe states Xu if there exists a
+value δ ∈ R>0 such that for all states x, y∈ X, x0 ∈ X0
+and xu ∈ Xu we have:
+T (x, f(x)) ≥ 0, (2)
+T (f(x), y) ≥ 0 =⇒ T(x, y) ≥ 0, and (3)
+T (x0, xu) ≤ −δ. (4)
+Theorem 1 (Closure Certificate imply Safety). Consider a
+system S = ( X, X0, f). The existence of a function T :
+X × X →R satisfying (2)-(4) implies that no trace of the
+system reaches Xu.
+Intuitively, the first two conditions ensure that all the pairs
+of states that are in the transitive closure of the function f
+have a nonnegative closure certificate value. The first con-
+dition encodes the condition that the successor of a state
+x ∈ Xis reachable from x and acts as the base case of
+induction. The second condition acts as an inductive step,
+where we require that if some state y ∈ Xmay be reachable
+from the state f(x) ∈ X, then it is reachable from the state
+x ∈ X. Thus, the value of T (x, y) is nonnegative for ev-
+ery state y ∈ Xthat is reachable from state x ∈ X. Lastly,
+condition (4) ensures that the value of T (x0, xu) is nega-
+tive for every pair of initial state x0 ∈ X0 and unsafe sate
+xu ∈ Xu. Hence, no unsafe state is reachable from any ini-
+tial state. Similar to how closure certificates can be used to
+demonstrate safety, they may also be used to prove a region
+is visited finitely often. This can be achieved by changing
+the last condition to a decreasing argument as follows.
+Definition 5 (Closure Certificate for Persistence). Consider
+a system S = (X, X0, f). A bounded functionT : X ×X →
+R is a Closure Certificate for S with a set of states XV F⊆
+X, which must be visited finitely often, if there exists a value
+δ ∈ R>0 such that for all states x, z∈ X, x0 ∈ X0, and
+y, y′ ∈ XV Fwe have:
+T (x, f(x)) ≥ 0, (5)
+T (f(x), z) ≥ 0 =⇒ T(x, z) ≥ 0, and (6) 
+T (x0, y) ≥ 0
+
+∧
+ 
+T (y, y′) ≥ 0
+
+=⇒ 
+T (x0, y′) ≤ T(x0, y) − δ
+
+. (7)
+Theorem 2 (Closure Certificate imply Persistence). Con-
+sider a system S = (X, X0, f). The existence of a function
+T : X ×X →R satisfying conditions (5) to (7) implies that
+the traces of the system visit the set XV Ffinitely often.
+Observe that similar to the case of safety the first two con-
+ditions overapproximate the set of states z ∈ Xthat are
+reachable from state x ∈ X. Let us suppose that there exist
+pairs of states y, y′ ∈ XV Fthat may be reachable from an
+initial state x0 ∈ X0. Then the last condition requires that the
+The Thirty-Eighth AAAI Conference on Artiﬁcial Intelligence (AAAI-24)
+21448
+
+
+===== PAGE 4 =====
+value of the closure certificate decreases for the pair(x0, y′)
+compared to the pair (x0, y). As the function T is bounded,
+there can only be a finite amount of such decreases before
+the value of T (x0, y′) becomes negative. This ensures that
+only a finite number of values y, y′ ∈ XV Fcan occur in any
+given state sequence of the system and, hence, the setXV Fis
+visited finitely often. We make use of this idea to show how
+closure certificates can be used to prove that the accepting
+states of the complement of an NBA is visited finitely often.
+To do so, let us consider NBA A′ to denote the ω-regular
+property of interest and the NBA A its complement.
+Definition 6 (Closure Certificate for B ¨uchi Objectives).
+Consider a system S = (X, X0, f) and a desired ω-regular
+property specified by an NBA A′ = ( Q′, Σ, q′
+0, δ′, Q′
+acc).
+Let the complement of NBA A′ be an NBA A =
+(Q, Σ, q0, δ, Qacc). A bounded function T : X ×N × X ×
+N → R is a closure certificate for S and NBA A if there
+exists a value δ ∈ R>0 such that for all states x, y∈ X, and
+states qζ, qℓ ∈ Q, and qξ ∈ δ(qζ, L(x)) we have:
+T (x, ξ, f(x), ζ) ≥ 0, (8)
+T (f(x), ζ, y, ℓ) ≥ 0 = ⇒ T(x, ξ, y, ℓ) ≥ 0, (9)
+and for all states x0 ∈ X0, y, y′ ∈ X, and states qj, qj′ ∈
+Qacc, we have:
+ 
+T (x0, 0, y, j) ≥ 0
+
+∧
+ 
+T (y, j, y′, j′) ≥ 0
+
+=⇒ 
+(T (x0, 0, y′, j′) ≤ T(x0, 0, y, j) − δ
+
+. (10)
+Theorem 3 (Closure Certificate imply B ¨uchi Objectives).
+Consider a system S and an ω-regular property specified by
+the NBA A′. Let NBA A denote the complement of A′. The
+existence of a closure certificate T satisfying conditions (8)
+to (10) implies that S |=L A′.
+The above closure certificate ensures that the accepting
+state of the NBA A is visited finitely often by the system S,
+thus, the system satisfies the original property of interest.
+Neural Closure Certificates
+Unfortunately, the search for a suitable closure certificate
+in many cases is either computationally expensive (Murali,
+Trivedi, and Zamani 2023) or relies on an expert choice of
+well-behaved functions (either specified as polynomials or
+functions that can be reasoned about in SMT solvers). Cur-
+rent methods also require the model of the system to be spec-
+ified. In many real-world systems the model is unknown ei-
+ther due to security concerns or difficulty in finding a closed-
+form expression. While such close-form expressions may be
+unavailable, it is often a reasonable assumption to have ac-
+cess to samples or a black-box model, that is, for a given
+state ˆx ∈ X, one has access to the value of f(ˆx). Thus, we
+develop a novel data-driven algorithm which relies on sam-
+pling to find a closure certificate for a given system to guar-
+antee the satisfaction of a desired ω-regular property. To do
+so, we learn the closure certificates as neural networks and
+we dub our approach neural closure certificates.
+We provide an outline for our algorithm in Figure 1. First,
+we partition the state space into finitely many cover elements
+and pick representative points from these cover elements.
+We then train the neural network on these sample points un-
+til a stopping criterion (the loss functionl′
+s in equation (18) is
+zero and condition (20) holds) is met. If we succeed, then the
+trained neural network is a neural closure certificate. Other-
+wise, the neural network training continues until we reach
+a threshold number of maximum iterations. If this fails, we
+change the hyperparameters of the neural network, such as
+the architecture of the neural network, or the learning rate,
+and train again. We should emphasise that the trained neural
+network provides a formal guarantee for the satisfaction of
+ω-regular property, under the assumption that the unknown
+transition function is Lipschitz continuous. To learn a neural
+network to represent a closure certificate, we first reformu-
+late the implication in conditions (8)-(10). Our reformula-
+tion utilizes bilinearity (Gusev and Likhtarnikov 2006; Mu-
+rali, Trivedi, and Zamani 2023) and is defined as follows:
+Definition 7 (Encoding Closure Certificates). Consider a
+system S = (X, X0, f), and NBA A′ = (Q′, Σ, q′
+0δ′, Q′
+acc),
+representing an ω-regular property of interest. Let NBA
+A = ( Q, Σ, q0, δ, Qacc) represent the complement of A′.
+A bounded function T : X ×N × X ×N → R is a
+closure certificate for S and NBA A if there exist values
+δ, λ1, λ2 ∈ R>0 such that for all states x, y∈ X, and states
+qζ, qℓ ∈ Q, and qξ ∈ δ(qζ, L(x)), we have:
+g1,T (x, ζ, ξ) ≥ 0, (11)
+g2,T (x, ζ, ξ, y, ℓ) ≥ 0, (12)
+and for all x0 ∈ X0, y, y′ ∈ X, and qj, qj′ ∈ Qacc, we have:
+g3,T (x, 0, y, j, y′, j′) ≥ 0, (13)
+where functions g1,T g2,T , and g3,T are parameterized over
+T and defined as:
+g1,T (x, ζ, ξ)=T (x, ζ, f(x), ξ), (14)
+g2,T (x, ζ, y, ℓ)=T (x, ζ, y, ℓ)−T (f(x), ξ, y, ℓ), and (15)
+g3,T (x, 0, y, j, y′, j′)=(1 − λ1)T (x, 0, y, j)
+−T (x, 0, y′, j′)−δ−λ2T (y, j, y′, j′). (16)
+Observe that a function T satisfying conditions (11)
+to (13) satisfies conditions (8) to (10). This follows from the
+well-known reduction of an implication to a bilinear con-
+straint following the S-procedure (Gusev and Likhtarnikov
+2006). However, note that this is only sufficient. Namely,
+one may still be able to find a closure certificate satisfying
+conditions (8) to (10) even if one is unable to find a clo-
+sure certificate satisfying conditions (11) to (13). While the
+above conditions are only sufficient, we found that they en-
+sure the loss is relatively stable while training a candidate
+neural closure certificate. This is in contrast to encoding the
+conditions as implications where the loss is much less stable
+and so finding a neural closure certificate is more difficult.
+We now illustrate how one can represent closure certifi-
+cates as neural networks. To do so, we define a function ls
+with respect to a system S = ( X, X0, f), the NBA A =
+(Q, Σ, q0, δ, Qacc) representing the complement of the spec-
+ification of interest, and a functionT : X ×N×X ×N → R.
+The function ls is defined over the states x, y, y′ ∈ X,
+The Thirty-Eighth AAAI Conference on Artiﬁcial Intelligence (AAAI-24)
+21449
+
+
+===== PAGE 5 =====
+Undesirab
+le behavior
+(complement of the specification)
+q0 q1
+q2
+a
+b
+b a
+a, b,
+c
+c c
+Neural
+Network
+l′
+s = 0?
+max iter
+ations?Unknown
+discrete-time dynamical system
+Conditions
+Verified
+Inconclusive
+Yes
+No
+Yes
+No
+Change h
+yperparameters
+Figure 1:
+Our proposed algorithm. The property of interest and unknown dynamical system are the inputs. At each iteration,
+the algorithm checks if function l′
+s (18) is zero and if the validity condition holds, if so, training stops. Otherwise, the training
+of the neural network continues until the maximum number of iterations is reached.
+x0 ∈ X0, qℓ, qζ ∈ Q, qξ ∈ δ(qζ, L(x)), and qj, qj′ ∈ Qacc
+as follows:
+ls =RELU(−g1,T (x, ζ, ξ))
++ RELU(−g2,T (x, ζ, ξ, y, ℓ))
++ RELU(−g3,T (x0, q0, y, j, y′, j′)). (17)
+Suppose that the above function is zero for all the values in
+its domain, then we can conclude that the function T satis-
+fies conditions (11) to (13) and is thus a closure certificate.
+We make use of this idea to learn closure certificates us-
+ing neural networks. Let us specify the template for function
+T as a neural network Fθ : X ×N × X ×N → R with
+parameters θ (the weights and biases). We choose the acti-
+vation function of Fθ to be R ELU for all its neurons. This
+ensures that Fθ is Lipschitz-continuous over its domain. We
+then perturb function ls by adding a robustness parameter η.
+Consider function l′
+s, defined over the same domain as ls:
+l′
+s =RELU(−g1,Fθ (x, ζ, ξ) + η)
++ RELU(−g2,Fθ (x, ζ, ξ, y, ℓ) + η)
++ RELU(−g3,Fθ (x0, 0, y, j, y′, j′) + η). (18)
+Observe that if η ≥ 0 and l′
+s is zero for all values in its do-
+main, then function ls is also zero with T = Fθ and, hence,
+one obtains that the neural network Fθ is a closure certifi-
+cate satisfying conditions (11) to (13). We now show how
+one can train the neural network Fθ over only finitely many
+data points with the loss function specified as l′
+s to repre-
+sent a closure certificate. To do so, let us partition the state
+set X into finitely many cells X1, X2, . . . ,XM , by picking a
+discretization parameter ϵ >0. We then pick sample points
+xi ∈ Xi from each of these cells such that:
+∥x − xi∥∞ ≤ ϵ
+2, for all x ∈ Xi. (19)
+Let us denote the set of all those sampled points by Xd. One
+way of partitioning the state set into such cells, is to par-
+tition it into hyperrectangles. We then pick the centers of
+these hyperrectangles as the representative points. Without
+loss of generality, we assume that labeling function L does
+not change within these hyperrectangles, meaning all points
+inside a hyperrectangle have the same label. That is, for any
+hyperrectangle Xi, we have L(xi) = L(x) for all x ∈ Xi,
+where xi is the center of Xi. As the function f is Lipschitz
+continuous and we make use of the R ELU activation func-
+tion for the neural network Fθ, we have function g1,Fθ to
+be Lipschitz continuous with respect to the first argument,
+function g2,Fθ to be Lipschitz continuous with respect to the
+first, and fourth argument, and function g3,Fθ to be Lips-
+chitz continuous with respect to the first, third, and fifth ar-
+guments. Let their Lipschitz constants be L1, L2, and L3,
+respectively. Let the maximum of these Lipschitz constants
+be denoted by L. We now state the main result of our paper:
+Theorem 4 (Correctness of Neural Closure Certificates).
+Consider a neural network Fθ where θ represents its pa-
+rameters, a system S = ( X, X0, f), and an NBA A′ =
+(Q′, Σ, q′
+0, δ′, Q′
+acc) representing an ω-regular property of
+interest. Let NBA A = (Q, Σ, q0, δ, Qacc) denote the com-
+plement of A′. Let Xd be the set of sample points with a
+discretization parameter ϵ. Assume that the trained neural
+network Fθ ensures that the functionl′
+s is zero for all sample
+points and:
+Lϵ
+2 − η ≤ 0. (20)
+Then we can conclude that S |=L A′.
+Proof. To prove that the system satisfies the desired prop-
+erty, we show that conditions (11) to (13) hold in their re-
+The Thirty-Eighth AAAI Conference on Artiﬁcial Intelligence (AAAI-24)
+21450
+
+
+===== PAGE 6 =====
+spective domains. First, let us consider condition (11) and
+states x ∈ X, qζ ∈ Q, and qξ ∈ δ(qζ, L(x)). Observe that
+function l′
+s is zero for all sample points and, hence, condi-
+tion (11) holds for all points in Xd. Now, let x be an out of
+sample point, i.e., x /∈ Xd. By our construction, there exists
+some sample point xd ∈ Xd such that ∥x −xd∥∞ ≤ ϵ
+2 . Fur-
+thermore, states x and xd are in the same cell and, hence.
+L(xd) = L(x), and δ(qζ, L(xd)) = δ(qζ, L(x)) for all
+states qζ ∈ Q. We thus obtain the following inequality:
+g1,Fθ (xd, ζ, ξ) − g1,Fθ (x, ζ, ξ) ≤
+L∥(x, ζ, ξ), (xd, ζ, ξ)∥∞ ≤ Lϵ
+2 ,
+for all states qζ ∈ Q, and qξ ∈ δ(qζ, L(xd)).
+Since Lϵ
+2 ≤ η due to (20), one has:
+g1,Fθ (xd, ζ, ξ) − g1,Fθ (x, ζ, ξ) ≤ η, or,
+g1,Fθ (x, ζ, ξ) ≥ g1,Fθ (xd, ζ, ξ) − η.
+Since the function in (18) is zero at the sample pointxd, one
+get g1,Fθ (xd, ζ, ξ) ≥ η. By combining these two inequal-
+ities, one gets: g1,Fθ (x, ζ, ξ) ≥ 0. Thus, condition (11) is
+satisfied for any out-of-sample point x ∈ X \ Xd and sam-
+ple points in Xd. One can use similar reasoning for condi-
+tions (12) and (13). Therefore, the neural network Fθ is a
+closure certificate for the system S, and the NBA A. This
+ensures that the system satisfies the ω-regular property rep-
+resented by A′. The proof is now complete.
+Observe that one needs to know the Lipschitz constants
+of functions g1,Fθ , g2,Fθ , and g3,Fθ to formally verify the
+correctness of the neural closure certificate. While the sys-
+tem designers may not have a closed-form expression of the
+function f, they may be able to accurately determine the
+Lipschitz constant of the transition functionf. In such cases,
+one can use existing techniques (Pauli et al. 2021) to deter-
+mine the Lipschitz constant of the trained neural networkFθ
+and hence the value of L. Even if the Lipschitz constant of
+function f is unknown, one may make use of (Weng et al.
+2018, Algorithm I) to estimate an upper bound of it. Finally,
+one can leverage regularization terms (Goodfellow, Bengio,
+and Courville 2016) to force the neural network to have a
+small Lipschitz constant, and hence reduce the value of L.
+Case Studies
+We demonstrate the effectiveness of neural closure certifi-
+cates with relevant case studies, a 1-dimensional Kuramoto
+oscillator, a two room temperature, and finally an inverted
+pendulum model where the inverted pendulum is controlled
+by a neural network controller. In all case studies, we learn
+a candidate neural closure certificate to verify an ω-regular
+property whose negation is described by the NBA A in Fig-
+ure 2. The property of interest combines both safety and per-
+sistence, and requires that the traces of a given system do not
+visit states with a label c, while also ensuring that they visits
+states with a label a only finitely often.
+To train a candidate neural closure certificate, we first par-
+tition the state set X into finitely many hyperrectangles of
+diameter ϵ. We then pick the center of each of these hyper-
+rectangles as sample points. We train a candidate neural clo-
+sure certificate on these points, while minimizing the loss
+l′
+s as specified in equation (18). If (18) is zero for all sam-
+pled points, we estimate the Lipschitz constant of the neu-
+ral network, and hence L. We then check if condition (20)
+holds, and if so, we guarantee the neural network is indeed
+a neural closure certificate and the system satisfies the de-
+sired ω-regular property. Moreover, we ensure the neural
+network has a small Lipschitz constant by adding regular-
+ization terms to the loss function. We repeat the above pro-
+cedure till a maximum number of iterations is reached. If we
+are unsuccessful, we change the hyperparameters (architec-
+ture or the discretization parameter) and train again. If this
+fails, our approach is inconclusive.
+We employ the same neural network architecture of one
+hidden layer with 80 neurons to train the neural closure cer-
+tificates for our case studies. The input layer is dependant on
+the system, and the output layer is always one-dimensional.
+We used the normalized Adam optimizer (Kingma and Ba
+2014; Zhang 2018) to train the neural network in our im-
+plementations. All our experiments are conducted on a sin-
+gle Nvidia RTX 4090 graphics card coupled with an Intel
+13700k CPU and 32GB of RAM. Finally, we should empha-
+sise that while we state the transition functions in all case
+studies, they are purely for collecting samples. We do not
+use these functions to encode or verify the conditions, only
+to get the value of f(ˆx) for each sample points ˆx.
+Kuramoto Oscillator
+The Kuramoto model has been extensively deployed to rep-
+resent chemical oscillators, with a wide array of applications
+in neuroscience as well as modern power system analysis
+(Guo et al. 2021). As the first case study, we consider sys-
+tem S = (X, X0, f) as a one dimensional Kuramoto oscil-
+lator where X = [0, 2π] and X0 = [ 4π
+9 , 5π
+9 ]. Furthermore,
+the dynamics governing the system are described as:
+f(x) = x + τΩ + tsK sin(−x) − 0.532x2 + 1.69,
+where x ∈ Xdenotes the phase of the oscillator, ts = 0.1
+is the sampling time, ω = 0.01 is the natural frequency, and
+K = 0.0006 is the coupling strength.
+We verify the above system against an ω-regular speci-
+fication whose complement is specified by NBA A in Fig-
+ure 2. The labeling function L : X →Σ is defined as:
+L(x) =
+
+
+
+b if x ∈ [11π
+18 , 12π
+18 ]
+c if x ∈ [7π
+9 , 8π
+9 ]
+a otherwise.
+To do so we partition the state set X into finitely many hy-
+perrectangles of diameter ϵ = 0.02. We then select the cen-
+ters of these hyperrectangles as representative sample points
+to train our neural network. We train the candidate neural
+closure certificate on the points while minimizing the lossl′
+s
+as specified in equation (18). We stop training when equa-
+tion (18) is zero for all sampled points. When we stop train-
+ing, we find the values of δ = η = 0 .01. We then esti-
+mate the Lipschitz constant L = 0.2798, and check if con-
+dition (20) holds. For the above values, this is indeed true,
+The Thirty-Eighth AAAI Conference on Artiﬁcial Intelligence (AAAI-24)
+21451
+
+
+===== PAGE 7 =====
+q0 q1
+q2
+a
+b
+b a
+a, b, c
+c c
+Figure 2: An NBA denoting the complement of the specifi-
+cation for our case studies.
+and so our candidate certificate is indeed a neural closure
+certificate that demonstrates that the system satisfies the de-
+sired ω-regular property. The time taken for our training to
+converge was 5 hours.
+We depict some state sequences of the system starting
+from some initial states in Fig 3a. One observes that these
+state sequences satisfy the desired ω-regular property.
+(a)
+ (b)
+Figure 3: Some state sequences showing the evolution of the
+phase of the oscillator (Figure 3a) and the temperature of
+two rooms (Figure 3b). The areas marked with red and yel-
+low indicate the unsafe and finite visit sets, respectively. We
+denote the initial set by the dotted black square and line.
+Two Room Temperature Model
+In our second case study, we consider a two dimensional
+room temperature model S = ( X, X0, f) where X =
+[9, 19] × [9, 19] ∈ R2 represents the set of temperatures of
+both rooms, and X0 = [9, 10] × [9, 10] indicates the initial
+set. Moreover, transition function is described as:
+f (T1, T2) = A
+
+T1
+T2
+
++ µTh
+
+u (T1)
+u (T2)
+
++ θ
+
+Te
+Te
+
+,
+where Ti denotes the temperature of the room i ∈ {1,2}.
+The matrix A is:
+A :=
+
+1 − 2α − θ − µu(T1) α
+α 1 − 2α − θ − µu(T2)
+
+,
+where α = 0 .01, θ = 0 .06, and µ = 0 .145 denote the
+conduction factors, and u(Ti) = 0.59 − 0.011xi represents
+the controller for each room. Constants Th = 40C and
+Te = −5C indicate the heater and ambient temperatures, re-
+spectively. We consider the ω-regular property whose nega-
+tion is expressed by an NBA in Figure 2 under the labeling
+function L : X →Σ defined as:
+L(x) =
+
+
+
+b if x ∈ [11, 12] × [11, 12]
+c if x ∈ [21, 23] × [21, 23]
+a otherwise.
+We repeat the above procedure with a discretization parame-
+ter ϵ = 0.5, and find the values ofδ = η = 0.2. We then esti-
+mate the Lipschitz constant of the conditions asL = 0.6814.
+This does in fact satisfy condition (20) and so the network
+is indeed a neural closure certificate. The time taken to learn
+the neural closure certificate was around than 4 hours. We
+depict some traces of the system in Figure 3b. One can read-
+ily observe that all properties of interest are satisfied.
+Inverted Pendulum
+As the third case study, we consider the system S =
+(X, X0, f) to be an inverted pendulum where X =
+[−π
+4 , π
+4 ] × [−π
+4 , π
+4 ] and X0 = [−π
+15 , π
+15 ] × [−π
+15 , π
+15 ]. The tran-
+sition function is given by:
+f(x1, x2) =
+ x1 + τx2
+x2 + gτ
+l sin
+ 
+x1 + 1
+ml2 u(x1, x2)
+
+
+,
+where x1 and x2 are the angular position and velocity, re-
+spectively. Furthermore, g = 9.8 is the gravitation accelera-
+tion, and constantsl = 1 and m = 1 represent the length and
+the mass of pendulum, and τ = 0.01 is the sampling time.
+We represent the control input of the system by u(x1, x2),
+represented by a neural network trained for safety based on
+(Anand and Zamani 2023, Algorithm I). We consider theω-
+regular property whose complement NBA is shown in Fig-
+ure 2 with the following labelling function L : X →Σ:
+L(x) =
+
+
+
+b if x ∈ [0.1, 0.15] × [0.1, 0.15]
+c if x ∈ X \
+
+[−π
+6 , π
+6 ] × [−π
+6 , π
+6 ]
+
+a otherwise.
+We then partitioning the state set into hyperrectangles of
+diameter ϵ = 0.05 and train a candidate neural closure cer-
+tificate. We find the values ofδ = η = 0.2, and then estimate
+the value of L = 1 .002. The above values satisfy condi-
+tion (20) and hence we have a neural closure certificate that
+certifies the system satisfies the ω-regular property.
+Conclusion
+This paper introduces a notion of neural closure certificates
+to verify systems against ω-regular properties. We demon-
+strated the effectiveness of neural closure certificates using
+some case studies. A key direction for future research is
+to leverage compositional reasoning to alleviate the sample
+complexity inherent to neural closure certificates. Another
+key challenge is to leverage neural closure certificates to aid
+in the correct-by-construction design of controllers for sys-
+tems. A final challenge is to adapt these notions for the ver-
+ification and synthesis for continuous time systems.
+The Thirty-Eighth AAAI Conference on Artiﬁcial Intelligence (AAAI-24)
+21452
+
+
+===== PAGE 8 =====
+Acknowledgements
+This work was supported in part by the NSF through the
+NSF CAREER awards CCF-2146563, and CNS-2145184,
+and is supported by grants ECCS-2015403, CNS-2039062,
+and CNS-2111688.
+References
+Abate, A.; Ahmed, D.; Edwards, A.; Giacobbe, M.; and Pe-
+ruffo, A. 2021. FOSSIL: a software tool for the formal syn-
+thesis of lyapunov functions and barrier certificates using
+neural networks. In Proceedings of the 24th International
+Conference on Hybrid Systems: Computation and Control ,
+1–11.
+Alpern, B.; and Schneider, F. B. 1987. Recognizing safety
+and liveness. Distributed computing, 2: 117–126.
+Anand, M.; and Zamani, M. 2023. Formally verified neural
+network control barrier certificates for unknown systems. In
+Proceedings of the 22nd World Congress of the International
+Federation of Automatic Control, 2742–2747.
+Barrett, C.; and Tinelli, C. 2018. Satisfiability modulo theo-
+ries. Springer.
+Cook, B. 2009. Principles of program termination. Engi-
+neering Methods and Tools for Software Safety and Security,
+22(161): 125.
+Dawson, C.; Gao, S.; and Fan, C. 2023. Safe control with
+learned certificates: A survey of neural lyapunov, barrier,
+and contraction methods for robotics and control. IEEE
+Transactions on Robotics.
+Goodfellow, I.; Bengio, Y .; and Courville, A. 2016. Deep
+Learning. MIT Press. http://www.deeplearningbook.org.
+Guo, Y .; Zhang, D.; Li, Z.; Wang, Q.; and Yu, D. 2021.
+Overviews on the applications of the Kuramoto model in
+modern power system analysis. International Journal of
+Electrical Power & Energy Systems, 129.
+Gusev, S. V .; and Likhtarnikov, A. L. 2006. Kalman-Popov-
+Yakubovich lemma and the S-procedure: A historical essay.
+Automation and Remote Control, 67: 1768–1810.
+Haesaert, S.; Van den Hof, P. M.; and Abate, A. 2017. Data-
+driven and model-based verification via Bayesian identifica-
+tion and reachability analysis. Automatica, 79: 115–126.
+Kingma, D. P.; and Ba, J. 2014. Adam: A method for
+stochastic optimization. arXiv preprint arXiv:1412.6980.
+Murali, V .; Trivedi, A.; and Zamani, M. 2023. Closure Cer-
+tificates. arXiv preprint arXiv:2305.17519.
+Nadali, A.; Trivedi, A.; and Zamani, M. 2023. Transfer
+Learning for Barrier Certificates. In 62nd IEEE Conference
+on Decision and Control (CDC), 7994–7999.
+Nejati, A.; Lavaei, A.; Jagtap, P.; Soudjani, S.; and Zamani,
+M. 2023. Formal Verification of Unknown Discrete-and
+Continuous-Time Systems: A Data-Driven Approach. IEEE
+Transactions on Automatic Control.
+Otter, D. W.; Medina, J. R.; and Kalita, J. K. 2020. A survey
+of the usages of deep learning for natural language process-
+ing. IEEE transactions on neural networks and learning
+systems, 32(2): 604–624.
+Parrilo, P. A. 2003. Semidefinite programming relaxations
+for semialgebraic problems. Mathematical programming,
+96: 293–320.
+Pauli, P.; Koch, A.; Berberich, J.; Kohler, P.; and Allg¨ower,
+F. 2021. Training robust neural networks using Lipschitz
+bounds. IEEE Control Systems Letters, 6: 121–126.
+Podelski, A.; and Rybalchenko, A. 2004. Transition invari-
+ants. In Proceedings of the 19th Annual IEEE Symposium
+on Logic in Computer Science, 2004., 32–41. IEEE.
+Prajna, S.; and Jadbabaie, A. 2004. Safety verification of
+hybrid systems using barrier certificates. In International
+Workshop on Hybrid Systems: Computation and Control ,
+477–492.
+Ratschan, S. 2017. Simulation based computation of cer-
+tificates for safety of dynamical systems. In Formal Model-
+ing and Analysis of Timed Systems: 15th International Con-
+ference, FORMATS 2017, Berlin, Germany, September 5–7,
+2017, Proceedings 15, 303–317. Springer.
+Safra, S. 1988. On the complexity of ω-automata. In Proc.
+29th IEEE Symp. Found. of Comp. Sci, 319–327.
+Vardi, M. Y . 2005. An automata-theoretic approach to lin-
+ear temporal logic. Logics for concurrency: structure versus
+automata, 238–266.
+V oulodimos, A.; Doulamis, N.; Doulamis, A.; Protopa-
+padakis, E.; et al. 2018. Deep learning for computer vi-
+sion: A brief review. Computational intelligence and neu-
+roscience, 2018.
+Weng, T.-W.; Zhang, H.; Chen, P.-Y .; Yi, J.; Su, D.; Gao, Y .;
+Hsieh, C.-J.; and Daniel, L. 2018. Evaluating the Robust-
+ness of Neural Networks: An Extreme Value Theory Ap-
+proach. In International Conference on Learning Represen-
+tations (ICLR).
+Zhang, Z. 2018. Improved adam optimizer for deep neural
+networks. In 2018 IEEE/ACM 26th international symposium
+on quality of service (IWQoS), 1–2. Ieee.
+Zhao, H.; Zeng, X.; Chen, T.; and Liu, Z. 2020. Synthesizing
+barrier certificates using neural networks. In Proceedings of
+the 23rd international conference on hybrid systems: com-
+putation and control, 1–11.
+The Thirty-Eighth AAAI Conference on Artiﬁcial Intelligence (AAAI-24)
+21453

@@ -1,0 +1,54 @@
+This is BibTeX, Version 0.99d (TeX Live 2023)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+The style file: cas-model2-names.bst
+Database file #1: reference.bib
+Repeated entry---line 1497 of file reference.bib
+ : @inproceedings{de2008z3
+ :                        ,
+I'm skipping whatever remains of this entry
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Warning--empty pages in giacobbe2025let
+Warning--empty pages in wang2025verifying
+You've used 36 entries,
+            2990 wiz_defined-function locations,
+            1204 strings with 19055 characters,
+and the built_in function-call counts, 26694 in all, are:
+= -- 2144
+> -- 1008
+< -- 29
++ -- 390
+- -- 351
+* -- 2807
+:= -- 3747
+add.period$ -- 88
+call.type$ -- 36
+change.case$ -- 294
+chr.to.int$ -- 35
+cite$ -- 38
+duplicate$ -- 1996
+empty$ -- 1973
+format.name$ -- 469
+if$ -- 5187
+int.to.chr$ -- 2
+int.to.str$ -- 1
+missing$ -- 360
+newline$ -- 175
+num.names$ -- 144
+pop$ -- 736
+preamble$ -- 1
+purify$ -- 261
+quote$ -- 0
+skip$ -- 724
+stack$ -- 0
+substring$ -- 1241
+swap$ -- 1437
+text.length$ -- 18
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 315
+warning$ -- 2
+while$ -- 183
+width$ -- 0
+write$ -- 502
+(There was 1 error message)

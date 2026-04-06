@@ -254,17 +254,17 @@ T_{i,j}((x_1, x_2), (y_1, y_2)) = &\, c_{0, i, j} + c_{1, i, j} y_1 I_{X_0}(x_1,
 \end{align*}
 
 \textbf{Two-Room Temperature System:}
-The NBA for $a_0 \land F a_1$ is $(\Sigma, Q, q_0, \delta, \text{Acc})$.
+The NBA for $a_0 \land \mathbf{GF}\, a_1$ is $(\Sigma, Q, q_0, \delta, \text{Acc})$.
 
 \begin{align*}
     Q &= \{0,1,2,3\} \\
     \Sigma &= \{\emptyset, \{a_0\}, \{a_1\}, \{a_0, a_1\}\} \\
     q_0 &= 0 \\
     \text{Acc} &= \{2\} \\
-    \delta &= \{(q_0, \{a_0\}, q_1), (q_0, \{a_1\}, q_1), (q_0, \{a_0, a_1\}, q_2), (q_0, \emptyset, q_3), \\
-    &\quad\;(q_0, \{a_1\}, q_3), (q_1, \emptyset, q_1), (q_1, \{a_0\}, q_1), (q_1, \{a_1\}, q_2), \\
-    &\quad\;(q_1, \{a_0, a_1\}, q_2), (q_2, \emptyset, q_2), (q_2, \{a_0\}, q_2), (q_2, \{a_1\}, q_2), \\
-    &\quad\;(q_2, \{a_0, a_1\}, q_2), (q_3, \emptyset, q_3), (q_3,\{a_0\},q_3), (q_3, \{a_1\}, q_3), \\
+    \delta &= \{(q_0, \{a_0\}, q_1), (q_0, \{a_0, a_1\}, q_2), (q_0, \emptyset, q_3), (q_0, \{a_1\}, q_3), \\
+    &\quad\;(q_1, \emptyset, q_1), (q_1, \{a_0\}, q_1), (q_1, \{a_1\}, q_2), (q_1, \{a_0, a_1\}, q_2), \\
+    &\quad\;(q_2, \emptyset, q_1), (q_2, \{a_0\}, q_1), (q_2, \{a_1\}, q_2), (q_2, \{a_0, a_1\}, q_2), \\
+    &\quad\;(q_3, \emptyset, q_3), (q_3,\{a_0\},q_3), (q_3, \{a_1\}, q_3), \\
     &\quad\;(q_3, \{a_0, a_1\}, q_3)\} \\
 	a_0 &\text{ is defined as } x \in X_{0} \\
 	a_1 &\text{ is defined as } x \in X_{VF} \\
@@ -287,9 +287,9 @@ The configuration for the neural closure certificates is summarized in Table~\re
 \hline
 \textbf{System} & \textbf{Network Architecture} & \textbf{Activation} & \textbf{Lipschitz Estimation} \\
 \hline
-1D Kuramoto Oscillator & (4-10-1) & ReLU & Spectral Norm \\
-2D Kuramoto Oscillator & (6-10-1) & ReLU & Spectral Norm \\
-Two-Room Temperature & (6-10-1) & ReLU & Spectral Norm \\
+1D Kuramoto Oscillator & (4-80-1) & ReLU & Spectral Norm \\
+2D Kuramoto Oscillator & (6-80-1) & ReLU & Spectral Norm \\
+Two-Room Temperature & (6-80-1) & ReLU & Spectral Norm \\
 \hline
 \end{tabular}
 \end{table}

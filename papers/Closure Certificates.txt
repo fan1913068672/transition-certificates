@@ -1,0 +1,1578 @@
+FILE: Closure Certificates.pdf
+PAGES: 14
+
+
+===== PAGE 1 =====
+arXiv:2305.17519v3  [cs.LO]  5 Mar 2024
+Closure Certificates
+Vishnu Murali
+University of Colorado Boulder
+Boulder, USA
+vishnu.murali@colorado.edu
+Ashutosh Trivedi
+University of Colorado Boulder
+Boulder, USA
+ashutosh.trivedi@colorado.edu
+Majid Zamani
+University of Colorado Boulder
+Boulder, USA
+majid.zamani@colorado.edu
+ABSTRACT
+A barrier certiﬁcate, deﬁned over the states of a dynamical system,
+is a real-valued function whose zero level set characterize s an in-
+ductively veriﬁable state invariant separating reachable states from
+unsafe ones. When combined with powerful decision procedur es—
+such as sum-of-squares programming (SOS) or satisﬁability -modulo-
+theory solvers (SMT)—barrier certiﬁcates enable an automa ted de-
+ductive veriﬁcation approach to safety. The barrier certiﬁ cate ap-
+proach has been extended to refute LTL and /u1D714-regular speciﬁca-
+tions by separating consecutive transitions of correspond ing /u1D714-
+automata in the hope of denying all accepting runs. Unsurpri singly,
+such tactics are bound to be conservative as refutation of recurrence
+properties requires reasoning about the well-foundedness of the
+transitive closure of the transition relation. This paper i ntroduces
+the notion of closure certiﬁcates as a natural extension of barrier
+certiﬁcates from state invariants to transition invariant s. We aug-
+ment these deﬁnitions with SOS and SMT based characterizati on
+for automating the search of closure certiﬁcates and demons trate
+their eﬀectiveness over some case studies.
+ACM Reference Format:
+Vishnu Murali, Ashutosh Trivedi, and Majid Zamani. 2024. Closure Cert iﬁ-
+cates. In 27th ACM International Conference on Hybrid Systems: Compu ta-
+tion and Control (HSCC ’24), May 14–16, 2024, Hong Kong, Hong Kong. ACM,
+New York, NY, USA, 14 pages. https://doi.org/10.1145/36415 13.3650120
+1 INTRODUCTION
+As cyber-physical systems and internet-of-things continu e to pro-
+liferate within critical infrastructure, the need for prac tical ver-
+iﬁcation algorithms for inﬁnite-state dynamical systems i s ever-
+present. Structural induction over the transition structu re of dy-
+namical systems provides a lightweight yet powerful proof m ethod
+to establish safety and invariance guarantees. However, wh en the
+invariant is not inductive, human ingenuity is required in s trength-
+ening the invariant to an inductive one. The notion of barrier cer-
+tiﬁcates [27], when combined with automatic decision procedures
+automate the search for an inductive state invariant. This p aper
+presents closure certiﬁcates as a generalization of barrier certiﬁ-
+cates to capture the transitive closure of transition relations to au-
+tomate veriﬁcation of linear temporal logic (LTL) and /u1D714-regular
+speciﬁcations of discrete-time dynamical systems.
+Permission to make digital or hard copies of part or all of thi s work for personal or
+classroom use is granted without fee provided that copies ar e not made or distributed
+for proﬁt or commercial advantage and that copies bear this n otice and the full citation
+on the ﬁrst page. Copyrights for third-party components of t his work must be honored.
+For all other uses, contact the owner/author(s).
+HSCC ’24, May 14–16, 2024, Hong Kong, Hong Kong
+© 2024 Copyright held by the owner/author(s).
+ACM ISBN 979-8-4007-0522-9/24/05.
+https://doi.org/10.1145/3641513.3650120
+Barrier Certiﬁcates for State Invariants. Intuitively, a barrier
+certiﬁcate [27] is a real-valued function over the state spa ce that
+is negative over the initial states, positive over the unsaf e states,
+and it does not increase with transitions. From this deﬁniti on and
+the principle of structural induction, it follows that the z ero level
+set of the barrier certiﬁcate over-approximate the set of re achable
+states. This, together with the positivity requirement ove r the un-
+safe states, provide a separation between reachable and uns afe states,
+guaranteeing safety. The results in [37] extended the barri er certiﬁ-
+cate based approach to refute violations of linear temporal logic
+(LTL) speciﬁcations expressed via /u1D714-automata. In this so-called
+state-triplet approach, barrier certiﬁcates provide separation be-
+tween consecutive transitions (involving three states) of the given
+/u1D714-automaton in such a way that denies accepting runs. The ap-
+proach has been extended for veriﬁcation and synthesis for m ore
+general dynamical systems [1, 2, 15, 16]. These state-tripl et ap-
+proach are bound to suﬀer from conservatism as the veriﬁcati on of
+a general /u1D714-regular property requires refutation of inﬁnitely many
+visits to some state and that in turn requires a well-founded argu-
+ment [6, 25] over transitive closure of transition relation .
+Closure Certiﬁcates for Transition Invariants. Podelski and
+Rybalchenko, in an inﬂuential paper [25], introduced disju nctively
+well-founded transition invariants to verify programs against /u1D714-
+regular properties. They deﬁned the transition invariant a s an over-
+approximation of the transitive closure of the transition r elation,
+restricted to the set of reachable states. If the transition invariant
+restricted to pairs of accepting states is disjunctively we ll-founded,
+then they showed that no execution can visit these accepting states
+inﬁnitely often, refuting the /u1D714-regular speciﬁcation. We introduce
+closure certiﬁcates as a functional analog of transition invariants
+and enable the use of SOS programming and SMT solvers to searc h
+for these certiﬁcates.
+Intuitively, a closure certiﬁcate T : X × X → Ris a real-valued
+function over the Cartesian product of the state set and itse lf (state
+pairs), such that T (/u1D465,/u1D465′) ≥ 0 if /u1D465′ is reachable from /u1D465. The closure
+certiﬁcate characterizes a transition invariant /u1D447⊆ X × X , with the
+set of initial states X0, in the following fashion:
+/u1D447= {(/u1D465,/u1D465′) : T (/u1D465,/u1D465′)≥0 and T (/u1D4650,/u1D465)≥ 0 for some /u1D4650 ∈ X0}. (1)
+It is easy to see (Theorem 4) that the existence of a barrier ce r-
+tiﬁcate implies the existence of a closure certiﬁcate estab lishing
+the same property. On the other hand, to appreciate the utili ty of
+closure certiﬁcate, we show that, even for safety propertie s (state
+inviariants), it is often possible to construct a closure ce rtiﬁcate of
+simpler shape (e.g., lower degree polynomials) than a barri er cer-
+tiﬁcate. To demonstrate this, consider the simple ﬁnite sta te dis-
+crete example shown in Figure 1. Here we depict initial state s with
+green ﬁlled circles ( X0 = {1,3,5}) while unsafe states are shown
+with red ﬁlled circles ( X/u1D462= {2,4}). It is easy to see that starting
+
+
+===== PAGE 2 =====
+HSCC ’24, May 14–16, 2024, Hong Kong, Hong Kong Vishnu Murali, Ashutosh Trivedi, and Majid Zamani
+0
+1 2 3 4 5
+Figure 1: Illustrative example demonstrating the simplici ty
+of closure certiﬁcates over barrier certiﬁcates
+from the initial states, the system never visits any unsafe s tates.
+We show that while there is no polynomial barrier certiﬁcate of de-
+gree 2 that demonstrates the safety of the system, there is a linear
+closure certiﬁcate that does so. We note that this example ca n be
+modiﬁed to show the absence of barrier certiﬁcate for any ﬁxe d
+degree.
+Let us suppose that there exists a polynomial barrier certiﬁ cate
+B of degree 2 that acts as a proof of safety. We need B( /u1D465) ≤ 0 for
+every state /u1D465∈ X 0, and B( /u1D465) > 0 for every state /u1D465∈ X /u1D462. Apply-
+ing intermediate value theorem, the function B needs to change
+signs in at least 3 points and must therefore have at least 3 ro ots.
+This supports our claim that there is no barrier certiﬁcate t hat is
+a polynomial of degree 2. On the other hand, the linear functi on
+T : X × X → Rdeﬁned as T (/u1D465,/u1D466.alt) = −/u1D466.altis a closure certiﬁcate for
+this system. While we defer the details to later sections, fr om (1), it
+follows that this function corresponds to the transition in variant
+/u1D447= {( 1,0),(3,0),(5,0),(0,0)}, and has no intersection with the
+set X0 × X/u1D462. This ensures the safety of the system. We have chosen
+a ﬁnite-state example for illustrative purposes. This pape r deals
+with continuous state spaces, and our case studies (cf. Sect ion 6)
+will demonstrate similar advantages in continuous state sp aces.
+While barrier certiﬁcates can be employed to verify other, m ore
+complex objectives (e.g., liveness or general linear-time properties),
+their applications in such settings are often conservative [1, 15, 16].
+We adapt closure certiﬁcates to validate or refute general l inear-
+time properties. As an example, consider the so-called “per sistence”
+property, where one wishes to verify that a system visits som e re-
+gion (denoted as X/u1D449 /u1D439) only ﬁnitely often, or alternatively, it even-
+tually stays within some region (the complement of X/u1D449 /u1D439). We ex-
+tend closure certiﬁcate conditions (Section3.2) with a “po tential”-
+like argument. In particular, we require that for every init ial state
+/u1D4650 and every pair of states /u1D466.altand /u1D466.alt′ in the set X/u1D449 /u1D439, if the system can
+reach from /u1D466.altto /u1D466.alt′, then the potential between (/u1D4650,/u1D466.alt′) is less than
+the potential between (/u1D4650,/u1D466.alt) by a certain ﬁxed amount. This, in
+turn, implies that for every execution starting from an init ial state,
+the region X/u1D449 /u1D439can only be visited ﬁnitely often. This approach
+can be extended to general linear-time objectives (Section 3.3) by
+employing the classical automata-theoretic approach that reduces
+LTL veriﬁcation to visiting certain states only ﬁnitely oft en.
+Contributions. The contributions of the paper are listed next.
+(1) This paper proposes a novel notion of closure certiﬁcate s
+that act as a functional analog to transition invariants.
+(2) We present SOS programming as well as SMT characteri-
+zations to search for a closure certiﬁcates within a given
+template (function class).
+(3) We show that even when traditional barrier certiﬁcates o f
+a some template fail to ensure safety, one can ﬁnd closure
+certiﬁcates of the same template.
+(4) We demonstrate how to use closure certiﬁcates to verify d y-
+namical systems against LTL speciﬁcations described by /u1D714-
+automata with our case studies.
+(5) We show how closure certiﬁcates subsume existing barrie r
+certiﬁcate based approaches to verify continuous-space dy -
+namical systems against LTL speciﬁcations.
+Related works. Prajna and Jadbabaie proposed the notion of bar-
+rier certiﬁcates [27] as a discretization-free approach to give guar-
+antees of safety or reachability [29] for dynamical and hybr id sys-
+tems. The results in [37] presented a state triplet approach that
+uses barrier certiﬁcates to verify linear temporal logic pr operties
+speciﬁed by /u1D714-automata. This approach has since been used in
+the the veriﬁcation and synthesis of stochastic and interco nnected
+continuous-space systems against linear temporal logic pr operties [1,
+2, 15, 16]. Unfortunately, the above approach is conservati ve in the
+sense that it treats the nondeterministic Büchi automaton c orre-
+sponding to the negation of the LTL speciﬁcation as a ﬁnite au -
+tomaton and then searches for barrier certiﬁcates to disall ow the
+transitions along accepting paths to show the accepting sta te is not
+visited. Thus, even if a system satisﬁes the property but vis its the
+accepting state, then one cannot make use of the above approa ches
+to verify the system. We show (cf. Section 5) that our approac h sub-
+sumes this current approach. Podelski and Rybalchenko [25] , pro-
+posed a notion of transition invariants and demonstrated th eir use
+in verifying the liveness properties of programs as well as i n veri-
+fying programs against /u1D714-regular properties. Transition invariants
+have also been used in [26] to give guarantees of stability fo r hy-
+brid systems. Here, they make use of a reachability analysis tool to
+determine the overapproximation of reachable states and th en es-
+tablish a Lyapunov guarantee on the transition invariant to ensure
+the stability of the system. The results in [32] consider a no tion of
+relational abstraction that is similar to transition invar iants to give
+guarantees for safety.
+While this paper focuses on abstraction-free approaches to ver-
+ify LTL properties speciﬁed as /u1D714-automata, we note that abstraction-
+based techniques have been used in the veriﬁcation and synth e-
+sis of continuous-space dynamical systems against LTL prop erties
+such as the results in [14, 18, 21, 30]. These results rely on b uilding
+a ﬁnite state abstraction and then making use of model checki ng
+and synthesis techniques [3, 35].
+2 PRELIMINARIES
+We use N and R to denote the set of natural numbers and reals.
+For /u1D44E∈ R, we use R≥/u1D44Eand R> /u1D44Eto denote the intervals [/u1D44E,∞) and
+(/u1D44E,∞), respectively, and similarly, for any natural number /u1D45B∈ N,
+we use N≥/u1D45Bto denote the set of natural numbers greater than or
+equal to /u1D45B. Given a set /u1D434, sets /u1D434∗ and /u1D434/u1D714denote the set of ﬁnite and
+countably inﬁnite sequences of elements in /u1D434, while |/u1D434| denotes
+the cardinality of the set. If /u1D434⊆ /u1D435, and the set /u1D435can be inferred
+from the context, we denote the complement /u1D435\/u1D434simply as
+/u1D434. We
+
+
+===== PAGE 3 =====
+Closure Certificates HSCC ’24, May 14–16, 2024, Hong Kong, Ho ng Kong
+call a function /u1D453: /u1D434→ Rbounded if there exists /u1D459,/u1D462∈ R, such that
+/u1D459≤ /u1D453(/u1D44E) ≤ /u1D462for every /u1D44E∈ /u1D434.
+Given a relation /u1D445⊆ /u1D434×/u1D435, and an element /u1D44E∈ /u1D434, we use /u1D445(/u1D44E) to
+denote the set {/u1D44F| ( /u1D44E,/u1D44F) ∈ /u1D445}. We use the notation (/u1D44E1,/u1D44E2,...,/u1D44E/u1D45B) ∈
+/u1D434∗ for ﬁnite length sequences and ⟨/u1D44E0,/u1D44E1,..., ⟩ ∈ /u1D434/u1D714for /u1D714-sequences.
+Let Inf(/u1D460) be the set of inﬁnitely often occurring elements in the se-
+quence /u1D460= ⟨/u1D44E0,/u1D44E1,..., ⟩. Given an inﬁnite sequence /u1D460= ⟨/u1D44E0,/u1D44E1,..., ⟩,
+and two natural numbers /u1D456,/u1D457∈ N where /u1D456≤ /u1D457, we use /u1D460[/u1D456,/u1D457] to in-
+dicate the ﬁnite sequence (/u1D44E/u1D456,/u1D44E/u1D456+1,...,/u1D44E/u1D457), and /u1D460[/u1D456,∞) to indicate
+the inﬁnite sequence ⟨/u1D44E/u1D456,/u1D44E/u1D456+1,... ⟩. Finally, we use /u1D460[/u1D456] to denote
+the /u1D456th element in the sequence /u1D460, i.e., given an inﬁnite sequence
+/u1D460= ⟨/u1D44E0,/u1D44E1,... ⟩, we have /u1D460[/u1D456] = /u1D44E/u1D456for any /u1D456∈ N.
+2.1 Discrete-time Dynamical System
+A (discrete-time dynamical) system /u1D516is a tuple (X,X0,/u1D453), where
+X (possibly inﬁnite) denotes the state set, X0 ⊆ /u1D44Bdenotes a set of
+initial states, and /u1D453⊆ X × X is the state transition relation. The
+state evolution of the system is given as the following:
+/u1D516: /u1D465(/u1D461+ 1) ∈ /u1D453(/u1D465(/u1D461)). (2)
+If for every /u1D465∈ X , we have |/u1D453(/u1D465)| = 1, then we consider the tran-
+sition relation /u1D453to be a state transition function that uniquely de-
+termines the next state. Abusing notation, we use /u1D453for both a set-
+valued map when it is a relation, and a transition function wh en it
+is a function. Throughout the paper, we assume that state set s of
+the systems under consideration are compact.
+A state sequence is an inﬁnite sequence ⟨/u1D4650,/u1D4651,..., ⟩ ∈ X /u1D714where
+/u1D4650 ∈ X 0, and /u1D465/u1D456+1 ∈ /u1D453(/u1D465/u1D456), for all /u1D456∈ N. We associate a labelling
+function L : X → Σ which maps each state of the system to a let-
+ter in a ﬁnite alphabet Σ. This naturally generalizes to mapping a
+state sequence of the system ⟨/u1D4650,/u1D4651,..., ⟩ ∈ X /u1D714to a trace or word
+/u1D464= ⟨L(/u1D4650),L(/u1D4651),..., ⟩ ∈ Σ/u1D714. For notational convenience, given
+a state /u1D465∈ X , we use /u1D465′ to indicate a state in /u1D453(/u1D465). Let /u1D447/u1D445(/u1D516,L)
+denote the set of all traces of /u1D516under the labeling map L.
+2.2 Speciﬁcations
+We are interested in deductive veriﬁcation of linear-time p roper-
+ties over discrete-time dynamical systems. We study increa singly
+complex speciﬁcations from safety, and persistence, to LTL and /u1D714-
+regular speciﬁcations.
+Safety. We say that a system is safe with respect to a set of unsafe
+states X/u1D462⊆ X if for any state sequence ⟨/u1D4650,/u1D4651,..., ⟩ we have /u1D465/u1D456∉
+X/u1D462for all /u1D456∈ N. An important technique to verify the safety of the
+system is to synthesize barrier certiﬁcates [27].
+D/e.sc/f.sc/i.sc/n.sc/i.sc/t.sc/i.sc/o.sc/n.sc 2.1 (B/a.sc/r.sc/r.sc/i.sc/e.sc/r.sc C/e.sc/r.sc/t.sc/i.sc/f.sc/i.sc/c.sc/a.sc/t.sc/e.sc).A function B : X → R
+is a barrier certiﬁcate for /u1D516 =(X,X0,/u1D453) with respect to a set of
+unsafe states X/u1D462if:
+B( /u1D465) ≤ 0 for all /u1D465∈ X0 (3)
+B( /u1D465) > 0 for all /u1D465∈ X/u1D462 (4)
+(B( /u1D465) ≤ 0) =⇒ (B( /u1D465′) ≤ 0) for all /u1D465∈ X , and /u1D465′ ∈ /u1D453(/u1D465) (5)
+T/h.sc/e.sc/o.sc/r.sc/e.sc/m.sc 1 (B/a.sc/r.sc/r.sc/i.sc/e.sc/r.sc /c.sc/e.sc/r.sc/t.sc/i.sc/f.sc/i.sc/c.sc/a.sc/t.sc/e.sc/s.sc /i.sc/m.sc/p.sc/l.sc/y.sc /s.sc/a.sc/f.sc/e.sc/t.sc/y.sc [27]).For a
+system /u1D516with unsafe states X/u1D462, the existence of a barrier certiﬁcate
+B implies its safety.
+Persistence (refuting recurrence). We say that a system visits
+a region X/u1D449 /u1D439⊆ X only ﬁnitely often if for any state sequence
+⟨/u1D4650,/u1D4651,..., ⟩ there exists some /u1D456∈ N, such that for all /u1D457≥ /u1D456, /u1D457∈ N,
+we have /u1D465/u1D457∉ X/u1D449 /u1D439. Observe that if a system is safe with respect
+to a set of unsafe states X/u1D462, then it satisﬁes the persistence objec-
+tive. Thus one can make use of barrier certiﬁcates as a sound ( not
+complete) way to ensure persistence. Another approach to en sure
+persistence is to ﬁx the value of /u1D456to some constant value, and then
+search for a barrier certiﬁcate over the system and an augmen ted
+value. Such approaches are common in bounded veriﬁcation an d
+synthesis approaches as in [8, 33] for ﬁnite state systems.
+Linear Temporal Logic (LTL). Formulae in LTL [24] are deﬁned
+with respect to a set of ﬁnite atomic propositions /u1D434/u1D443that are rel-
+evant to our system. Let Σ = 2/u1D434/u1D443denote the powerset of atomic
+propositions. A trace /u1D464= ⟨/u1D4640,/u1D4641,..., ⟩ ∈ Σ/u1D714 is an inﬁnite se-
+quence of sets of atomic propositions. The syntax of LTL can b e
+given via the following grammar:
+/u1D719:= ⊤ | /u1D44E| ¬ /u1D719| X/u1D719| /u1D719U/u1D719,
+where ⊤ indicates true, /u1D44E∈ /u1D434/u1D443denotes an atomic proposition, sym-
+bols ∧, ¬ denote the logical AND and NOT operators respectively.
+The temporal operators next, and until are denoted by X, and U re-
+spectively. The above operators are suﬃcient to derive the l ogical
+OR (∨) and implication ( =⇒ ), and the temporal operators release
+(R), eventually ( F) and always ( G) respectively.
+We inductively deﬁne the semantics of an LTL formula with re-
+spect to trace /u1D464as follows:
+/u1D464|= /u1D44E if /u1D44E∈ /u1D464[0] (6)
+/u1D464|= /u1D7191 ∧ /u1D7192 if /u1D464|= /u1D7191 and /u1D464|= /u1D7192 (7)
+/u1D464|= ¬/u1D719 if /u1D464̸|= /u1D719 (8)
+/u1D464|= X/u1D719 if /u1D464[1,∞) | = /u1D719 (9)
+/u1D464|= /u1D7191U/u1D7192 if there exists /u1D456∈ Nsuch that /u1D464[0,/u1D456] | = /u1D7191
+and /u1D464[/u1D456+ 1,∞) | = /u1D7192 (10)
+To reason about whether a system satisﬁes a property speciﬁe d in
+LTL, we associate a labelling function L : X → Σ which maps
+each state of the system to a letter in the ﬁnite alphabet Σ. This
+naturally generalizes to mapping a state sequence of the sys tem
+⟨/u1D4650,/u1D4651,..., ⟩ ∈ X /u1D714 to a trace /u1D464= ⟨L(/u1D4650),L(/u1D4651),..., ⟩ ∈ Σ/u1D714. Let
+/u1D447/u1D445(/u1D516,L) denote the set of all traces of /u1D516under the labeling map
+L. Then the system /u1D516satisﬁes an LTL property /u1D719under labeling
+map L if for all /u1D464∈ /u1D447/u1D445(/u1D516,L), we have /u1D464|= /u1D719. We denote this as
+/u1D516|=L /u1D719and infer the labeling map from context. As LTL subsume
+safety and persistence, one can formulate these as LTL formu lae.
+Nondeterminstic Büchi Automata. A nondeterminstic Büchi au-
+tomaton (NBA) A is a tuple (Σ,/u1D444,/u1D4440,/u1D6FF,/u1D434/u1D450/u1D450), where:
+• Σ is the alphabet,
+• /u1D444a ﬁnite set of states,
+• /u1D4440 ⊆ /u1D444an initial set of states,
+• /u1D6FF⊆ /u1D444× Σ × /u1D444the transition relation, and
+• /u1D434/u1D450/u1D450⊆ /u1D444denotes a set of accepting states.
+A run of the automaton A = (Σ,/u1D444,/u1D45E0,/u1D6FF,/u1D434/u1D450/u1D450) over a trace /u1D464=
+⟨/u1D70E0,/u1D70E1,/u1D70E2 ..., ⟩ ∈ Σ/u1D714, is an inﬁnite sequence of states character-
+ized as /u1D70C= ⟨/u1D45E0,/u1D45E1,/u1D45E2,..., ⟩ ∈ /u1D444/u1D714with /u1D45E0 ∈ /u1D4440 and /u1D45E/u1D456+1 ∈ /u1D6FF(/u1D45E/u1D456,/u1D70E/u1D456).
+
+
+===== PAGE 4 =====
+HSCC ’24, May 14–16, 2024, Hong Kong, Hong Kong Vishnu Murali, Ashutosh Trivedi, and Majid Zamani
+An NBA A is said to accept a trace /u1D464, if there exists a run /u1D70Cover
+/u1D464where Inf(/u1D70C) ∩ /u1D434/u1D450/u1D450≠ ∅.
+It is well known [36] that given an LTL formula /u1D719over a set of
+atomic propositions /u1D434/u1D443, one can construct an NBA A such that
+/u1D464∈ /u1D43F(A) iﬀ /u1D464|= /u1D719. An automata-theoretic technique to deter-
+mine whether /u1D516|=L /u1D719is to ﬁrst ﬁnd the NBA A that represents
+¬/u1D719, and then ensure that /u1D516̸|=L ¬/u1D719by showing that no trace of the
+system is accepted by the NBA A. While converting an LTL for-
+mula to an NBA is exponential in the size of the formula, negat ing
+an LTL formula has a complexity that is linear in its size.
+3 CLOSURE CERTIFICATES
+Podelski and Rybalchenko [25] introduced the notion of tran sition
+invariants as an over-approximation of the transitive clos ure of
+the transition relation, restricted to the set of reachable states. If
+the transition invariant restricted to pairs of accepting s tates is dis-
+junctively well-founded, then they showed that no executio n can
+visit these accepting states inﬁnitely often, refuting the /u1D714-regular
+speciﬁcation. In this section, we introduce closure certiﬁ cates (CC)
+as a functional analog of transition invariants .
+Recall that barrier certiﬁcates are functional analogs to i nduc-
+tive state invariants in the following way: all the initial s tates are
+within the zero level set of the barrier certiﬁcate, and, giv en any
+state that is within the zero level set, its successor accord ing to the
+transition relation is also in the zero level set. Our deﬁnit ion of
+closure certiﬁcates are a functional analog to inductive transition
+invaraints. We study their use in the veriﬁcation of safety, persis-
+tence (refuting recurrence), and LTL speciﬁcations.
+3.1 Closure Certiﬁcates for Safety
+We ﬁrst deﬁne closure certiﬁcates for safety.
+D/e.sc/f.sc/i.sc/n.sc/i.sc/t.sc/i.sc/o.sc/n.sc 3.1 (C/l.sc/o.sc/s.sc/u.sc/r.sc/e.sc C/e.sc/r.sc/t.sc/i.sc/f.sc/i.sc/c.sc/a.sc/t.sc/e.sc /f.sc/o.sc/r.sc S/a.sc/f.sc/e.sc/t.sc/y.sc).Consider
+a system /u1D516 =(X,X0,/u1D453). A function T : X × X → R is a Closure
+Certiﬁcate (CC) for a set of unsafe states X/u1D462if there exists a value
+/u1D709∈ R> 0 such that for all states /u1D465,/u1D466.alt∈ X , /u1D465′ ∈ /u1D453(/u1D465), and states
+/u1D4650 ∈ X0 and /u1D465/u1D462∈ X/u1D462, we have:
+(T (/u1D465,/u1D465′) ≥ 0) (11)
+(T (/u1D465′,/u1D466.alt) ≥ 0) =⇒ (T (/u1D465,/u1D466.alt) ≥ 0) , and (12)
+(T (/u1D4650,/u1D465/u1D462) ≤ − /u1D709) . (13)
+The existence of a closure certiﬁcate implies the safety of t he
+system /u1D516 =(X,X0,/u1D453) as shown next.
+T/h.sc/e.sc/o.sc/r.sc/e.sc/m.sc 2 (C/l.sc/o.sc/s.sc/u.sc/r.sc/e.sc C/e.sc/r.sc/t.sc/i.sc/f.sc/i.sc/c.sc/a.sc/t.sc/e.sc /i.sc/m.sc/p.sc/l.sc/y.sc S/a.sc/f.sc/e.sc/t.sc/y.sc).Consider a
+system /u1D516. The existence of a function T : X × X → Rthat satisﬁes
+conditions (11)-(13) implies its safety.
+P/r.sc/o.sc/o.sc/f.sc.Let us assume that there exists a trace of the system
+⟨/u1D4650,...,/u1D465/u1D462,... ⟩ that reaches an unsafe state /u1D465/u1D462∈ X /u1D462from some
+initial state /u1D4650. From condition (11), we have T (/u1D465/u1D456,/u1D465/u1D456+1) ≥ 0 for all
+/u1D456∈ N, and from condition (12) and induction, we have T (/u1D4650,/u1D465/u1D456) ≥
+0 for all /u1D456∈ N. Thus we must have T (/u1D4650,/u1D465/u1D462) ≥ 0 as /u1D465/u1D457= /u1D465/u1D462for
+some /u1D457∈ N. According to condition (13), T (/u1D4650,/u1D465/u1D462) ≤ − /u1D709, where
+/u1D709∈ R> 0, which is in contradiction to the previous inequality. □
+Observe that closure certiﬁcates are deﬁned over pairs of st ates
+of the system rather than just over the states of the system. H ence,
+searching for a closure certiﬁcate suﬀers computationally more
+than a search for a barrier certiﬁcate. On the other hand, for a cer-
+tain template of functions (e.g., linear or quadratic), one might be
+able to ﬁnd closure certiﬁcates, even when barrier certiﬁca tes of
+the same template do not exist. In particular, we have the fol low-
+ing result:
+T/h.sc/e.sc/o.sc/r.sc/e.sc/m.sc 3 (S/i.sc/m.sc/p.sc/l.sc/i.sc/c.sc/i.sc/t.sc/y.sc /o.sc/f.sc C/l.sc/o.sc/s.sc/u.sc/r.sc/e.sc C/e.sc/r.sc/t.sc/i.sc/f.sc/i.sc/c.sc/a.sc/t.sc/e.sc/s.sc).For any nat-
+ural number /u1D451∈ N, there exists a system /u1D516with unsafe set of states
+X/u1D462that cannot be shown to be safe by a polynomial barrier certiﬁ cate
+of degree /u1D451but can be shown to be safe by a linear closure certiﬁcate.
+P/r.sc/o.sc/o.sc/f.sc.Consider a system /u1D516 =(X,X0,/u1D453), with X = [0,(2/u1D451+2)]
+as the state set, X0 = {1,3,..., (2/u1D451+ 1)} as the initial set of states,
+and a constant transition relation /u1D453(/u1D465) = {0} for every state /u1D465∈ X .
+Let the set of unsafe states be X/u1D462= {2,4,..., (2/u1D451+ 2)}. We observe
+that the system is trivially safe.
+Let us suppose there exists a polynomial barrier certiﬁcate B :
+X → R of degree /u1D451that acts as a proof of safety. From condi-
+tions (3) and (4), we have B( /u1D465) ≤ 0 for every state /u1D465∈ X 0, and
+B( /u1D465) > 0 for every state /u1D465∈ X/u1D462. Applying intermediate value the-
+orem, the function B needs to change signs in at least (/u1D451+1) points
+and must therefore have at least (/u1D451+ 1) roots. This contradicts our
+assumption that B is a polynomial of degree /u1D451.
+Consider the function T : X × X → Rdeﬁned as T (/u1D465,/u1D466.alt) = −/u1D466.alt.
+Observe that 0 ∈ /u1D453(/u1D465) for all /u1D465∈ X , and that T (/u1D465,/u1D466.alt) ≥ 0 only
+when /u1D466.alt≤ 0. This implies conditions (11) and (12) are satisﬁed.
+Further for every state /u1D465/u1D462∈ /u1D44B/u1D462and every state /u1D4650 ∈ /u1D44B0, we have
+T (/u1D4650,/u1D465/u1D462) ≤ − 2. Thus condition (13) also holds. We conclude that
+the function T is a closure certiﬁcate and acts as a proof that the
+system is safe. □
+We should note that while the proof of the above Theorem re-
+lied on showing that no barrier certiﬁcate exists for a ﬁnite state
+system, one can employ similar techniques for a continuous s pace
+example. Consider the system /u1D516 =(X,X0,/u1D453), where X = R de-
+notes the state set, X0 = {0,1
+4 ,... 1
+2/u1D451+2 } indicates the initial set of
+states, and /u1D453(/u1D465) = {/u1D465+ 1} denotes the transition relation for ev-
+ery state /u1D465∈ X . Let the set of unsafe states be X/u1D462= { 1
+2 ,..., 1
+2/u1D451+3 },
+then there exists no polynomial function of degree /u1D451that acts as
+a barrier certiﬁcate for the above function. However the fun ction
+T (/u1D465,/u1D466.alt) = /u1D466.alt− /u1D465− 1 acts as a closure certiﬁcate that ensures the
+system starting from the initial state does not reach the uns afe set
+of states. An illustration of this example for degree 2 can be found
+in Appendix A.
+Previously, we discussed how one can use closure certiﬁcate s
+even when barrier certiﬁcates fail. We now show that if a syst em
+can be guaranteed to be safe via barrier certiﬁcates, then it can be
+guaranteed via closure certiﬁcates as well.
+T/h.sc/e.sc/o.sc/r.sc/e.sc/m.sc 4 (E/x.sc/p.sc/r.sc/e.sc/s.sc/s.sc/i.sc/v.sc/e.sc/n.sc/e.sc/s.sc/s.sc).Consider a system /u1D516 =(X,X0,/u1D453),
+with unsafe set of states X/u1D462. Given a barrier certiﬁcate B : X → R
+(Deﬁnition 2.1), one can compute a closure certiﬁcate T : X×X → R.
+P/r.sc/o.sc/o.sc/f.sc.Let /u1D6FE∈ R> 0. We deﬁne the function T : X × X → Ras:
+T (/u1D465,/u1D466.alt) =
+{
+0 if B( /u1D465) > 0 or B(/u1D466.alt) ≤ 0,
+−/u1D6FEotherwise.
+
+
+===== PAGE 5 =====
+Closure Certificates HSCC ’24, May 14–16, 2024, Hong Kong, Ho ng Kong
+We now show that T is a CC with /u1D709= /u1D6FE. Let us suppose that
+T (/u1D465,/u1D465′) < 0 for some /u1D465∈ X . For this to be true, we must have
+B( /u1D465) ≤ 0, and B( /u1D465′) > 0, however, this contradicts condition (5)
+and so T must satisfy condition (11). Second, suppose T (/u1D465′,/u1D466.alt) ≥ 0,
+and T (/u1D465,/u1D466.alt) < 0. Then B( /u1D465) ≤ 0, B(/u1D466.alt) > 0, and one of B( /u1D465′) > 0
+or B(/u1D466.alt) ≤ 0. Since both B(/u1D466.alt) ≤ 0 and B(/u1D466.alt) > 0 cannot be true,
+we must have B( /u1D465) ≤ 0, and B( /u1D465′) > 0, which again contradicts
+condition (5), and so condition (12) must hold. Finally, con sider
+T (/u1D4650,/u1D465/u1D462). From conditions (3) and (4), we have B( /u1D4650) ≤ 0, and
+B( /u1D465/u1D462) > 0, and, hence, by deﬁnition T (/u1D4650,/u1D465/u1D462) = −/u1D709satisﬁes con-
+dition (13). □
+3.2 Closure Certiﬁcates for Persistence
+Similar to how closure certiﬁcates are used to guarantee saf ety,
+one may use closure certiﬁcates to show a region is visited ﬁn itely
+often. This relies on showing that the closure certiﬁcate is well-
+founded, similar to the condition used in [26].
+D/e.sc/f.sc/i.sc/n.sc/i.sc/t.sc/i.sc/o.sc/n.sc 3.2 (C/l.sc/o.sc/s.sc/u.sc/r.sc/e.sc C/e.sc/r.sc/t.sc/i.sc/f.sc/i.sc/c.sc/a.sc/t.sc/e.sc/s.sc /f.sc/o.sc/r.sc P/e.sc/r.sc/s.sc/i.sc/s.sc/t.sc/e.sc/n.sc/c.sc/e.sc).Con-
+sider a system /u1D516 =(X,X0,/u1D453). A bounded function T : X×X → Ris
+a Closure Certiﬁcate (CC) for /u1D516with set of states X/u1D449 /u1D439⊆ X , that must
+be visited ﬁnitely often if there exists a value /u1D709∈ R> 0 such that for
+all states /u1D465,/u1D466.alt∈ X , /u1D465′ ∈ /u1D453(/u1D465), /u1D4650 ∈ X 0, and all states /u1D466.alt′,/u1D466.alt′′ ∈ X/u1D449 /u1D439
+we have:
+(T (/u1D465,/u1D465′) ≥ 0) , (14)
+(T (/u1D465′,/u1D466.alt) ≥ 0) =⇒ (T (/u1D465,/u1D466.alt) ≥ 0) and (15)
+(T (/u1D4650,/u1D466.alt′) ≥ 0) ∧ (T (/u1D466.alt′,/u1D466.alt′′) ≥ 0) =⇒
+(T (/u1D4650,/u1D466.alt′′) ≤ T ( /u1D4650,/u1D466.alt′) − /u1D709) . (16)
+T/h.sc/e.sc/o.sc/r.sc/e.sc/m.sc 5 (C/l.sc/o.sc/s.sc/u.sc/r.sc/e.sc C/e.sc/r.sc/t.sc/i.sc/f.sc/i.sc/c.sc/a.sc/t.sc/e.sc/s.sc /i.sc/m.sc/p.sc/l.sc/y.sc P/e.sc/r.sc/s.sc/i.sc/s.sc/t.sc/e.sc/n.sc/c.sc/e.sc).Con-
+sider a system /u1D516. The existence of a function T : X × X → R that
+satisﬁes conditions (14)-(16) implies that the traces of the system visit
+the set X/u1D449 /u1D439ﬁnitely often.
+P/r.sc/o.sc/o.sc/f.sc.Let us suppose that there is some trajectory ⟨/u1D4650,/u1D4651,..., ⟩
+of the system that starts from state /u1D4650 ∈ X 0 and visits X/u1D449 /u1D439in-
+ﬁnitely often. Let the inﬁnite sequence ⟨/u1D466.alt0,/u1D466.alt1,..., ⟩ denote the
+states that are visited in X/u1D449 /u1D439in that order, i.e., the trajectory is
+⟨/u1D4650,...,/u1D466.alt0,...,/u1D466.alt1,... ⟩. From conditions (14) and (15), we have T (/u1D4650,/u1D466.alt/u1D456) ≥
+0 and T (/u1D466.alt/u1D456,/u1D466.alt/u1D457) ≥ 0 for all indices /u1D457> /u1D456, /u1D456,/u1D457∈ N. As we assume
+the function T to be bounded, there exists some T ∗ ∈ R, such
+that T (/u1D465,/u1D466.alt) ≤ T ∗ for every pair of states /u1D465,/u1D466.alt∈ X . Note that
+T (/u1D4650,/u1D466.alt0) ≤ /u1D447∗. From condition (16), and induction, we have
+T (/u1D4650,/u1D466.alt/u1D456) ≤ T ( /u1D4650,/u1D466.alt0) − /u1D456/u1D709≤ /u1D447∗ − /u1D456/u1D709.
+As this is true for all /u1D456∈ N, and we have /u1D709∈ R> 0, there must exist
+some /u1D457∈ N such that T (/u1D4650,/u1D466.alt/u1D457) < 0. This is a contradiction. □
+3.3 Closure Certiﬁcates for LTL Speciﬁcations
+To verify whether the system satisﬁes a desired LTL formula /u1D719, we
+ﬁrst construct the NBA A = (/u1D444,/u1D4440,/u1D6FF,/u1D444/u1D434/u1D450/u1D450) that represents the
+complement of the speciﬁcation ¬/u1D719. Observe that the state set of
+the NBA is ﬁnite, and therefore we can denote the set /u1D444as the
+set {0,1,..., |/u1D444| − 1}. We then construct the product /u1D516⊗ A =
+(X′,X′
+0,/u1D453′) of the system /u1D516 =(X,X0,/u1D453) with the NBA A, where:
+• X ′ = X × { 0,..., |/u1D444| − 1} indicates the state set
+• X ′
+0 = X′
+0 × {/u1D45E0 | /u1D45E0 ∈ /u1D4440} indicate the initial set of states.
+• the state transition relation /u1D453′ is deﬁned as :
+/u1D453′ ((/u1D465,/u1D45E/u1D456)) =
+{
+(/u1D465′,/u1D45E/u1D457) | /u1D45E/u1D457∈ /u1D6FF(/u1D45E/u1D456,L(/u1D465)), and /u1D465′ ∈ /u1D453(/u1D465)
+}
+.
+To verify whether a given system satisﬁes a desired LTL prop-
+erty, we make use of a closure certiﬁcate on the product /u1D516⊗ A .
+D/e.sc/f.sc/i.sc/n.sc/i.sc/t.sc/i.sc/o.sc/n.sc 3.3 (C/l.sc/o.sc/s.sc/u.sc/r.sc/e.sc C/e.sc/r.sc/t.sc/i.sc/f.sc/i.sc/c.sc/a.sc/t.sc/e.sc /f.sc/o.sc/r.sc LTL).Consider a
+system /u1D516 =(X,X0,/u1D453) and NBA A = (/u1D444,/u1D4440,/u1D6FF,/u1D434/u1D450/u1D450) represent-
+ing the complement of an LTL formula /u1D719. A bounded function T :
+X × /u1D444× X × /u1D444→ Ris a closure certiﬁcate for /u1D516and NBA A if there
+exists a value /u1D709∈ R> 0 such that for all states /u1D465,/u1D466.alt∈ X , /u1D465′ ∈ /u1D453(/u1D465)
+and states /u1D456,/u1D457∈ /u1D444, and /u1D456′ ∈ /u1D6FF(/u1D456,L(/u1D465)), we have:
+(
+T ((/u1D465,/u1D456),(/u1D465′,/u1D456′)) ≥ 0
+)
+(17)
+(
+T ((/u1D465′,/u1D456′),(/u1D466.alt,/u1D457)) ≥ 0
+)
+=⇒
+(
+T ((/u1D465,/u1D456),(/u1D466.alt,/u1D457)) ≥ 0
+)
+(18)
+and for all states /u1D4650 ∈ X0, /u1D460∈ /u1D4440, and ℓ,ℓ′ ∈ /u1D434/u1D450/u1D450, we have:
+(
+T ((/u1D4650,/u1D460),(/u1D466.alt,ℓ)) ≥ 0
+)
+∧
+(
+T (( /u1D466.alt,ℓ),(/u1D466.alt′,ℓ′)) ≥ 0
+)
+=⇒
+(
+T ((/u1D4650,/u1D460),(/u1D466.alt′,ℓ′)) ≤ T ((/u1D4650,/u1D460),(/u1D466.alt,ℓ)) − /u1D709
+)
+. (19)
+Now, we provide the next result of the paper on the veriﬁcatio n
+of LTL speciﬁcations using closure certiﬁcates on /u1D516⊗ A .
+T/h.sc/e.sc/o.sc/r.sc/e.sc/m.sc 6 (C/l.sc/o.sc/s.sc/u.sc/r.sc/e.sc C/e.sc/r.sc/t.sc/i.sc/f.sc/i.sc/c.sc/a.sc/t.sc/e.sc/s.sc /v.sc/e.sc/r.sc/i.sc/f.sc/y.sc LTL).Consider a
+system /u1D516and an LTL formula /u1D719. Let NBA A represent the comple-
+ment of the speciﬁcation, i.e, ¬/u1D719. The existence of a closure certiﬁcate
+satisfying conditions (17)-(19) implies that /u1D516|=L /u1D719.
+P/r.sc/o.sc/o.sc/f.sc.Observe that a CC T satisfying conditions (17) to (19)
+is a CC for the product of /u1D516and A. From Theorem 5, we observe
+that the product system visits accepting states ﬁnitely oft en and so
+we infer that no trace of the system is in the language of the NB A
+A. The proof is now complete. □
+4 SYNTHESIZING CLOSURE CERTIFICATES
+This section presents two approaches to synthesize closure cer-
+tiﬁcates when the dynamical systems under study have state s ets
+which are subsets of R/u1D45B, i.e., X ⊆ R/u1D45B, and the transition func-
+tion /u1D453is a polynomial. The ﬁrst approach we consider is using a
+counterexample guided approach via Satisﬁability Modulo T heory
+(SMT) solvers [4], while the second makes use of standard sum -of-
+squares (SOS) [23] approaches to ﬁnd closure certiﬁcates si milar to
+barrier certiﬁcates. In the following sections we describe the rele-
+vant conditions for persistence and verifying /u1D714-regular objectives.
+The conditions for safety can be recovered in a straightforw ard
+manner and are thus ommitted from the following discussion.
+4.1 SMT-based Approach
+Counterexample-guided Inductive Synthesis (CEGIS) [34] h as seen
+signiﬁcant use in the synthesis of barrier certiﬁcates. We t hus con-
+sider conditions to provide a CEGIS approach to ﬁnd closure c ertiﬁ-
+cates. To ﬁnd a CC as in Deﬁnition 3.2, we ﬁrst ﬁx the template o f
+the CC to be a linear combination of user-deﬁned basis functi ons:
+T (/u1D465,/u1D466.alt) =
+/u1D467/summationdisplay.1
+/u1D45A=1
+/u1D450/u1D45A/u1D45D/u1D45A(/u1D465,/u1D466.alt),
+
+
+===== PAGE 6 =====
+HSCC ’24, May 14–16, 2024, Hong Kong, Hong Kong Vishnu Murali, Ashutosh Trivedi, and Majid Zamani
+where functions /u1D45D/u1D45Aare user-deﬁned analytical basis functions over
+the state variables /u1D465and /u1D466.altand /u1D4501,...,/u1D450/u1D467are the coeﬃcients. As an
+example, we can consider /u1D4501,...,/u1D450/u1D467to be real values, and T (/u1D465,/u1D466.alt) to
+be a polynomial. In such a case, the functions /u1D45D1,...,/u1D45D/u1D45Aare mono-
+mials over /u1D465and /u1D466.alt. Note that if the values of /u1D465,/u1D466.alt∈ X are ﬁxed,
+then the only decision variables in T (/u1D465,/u1D466.alt) are the coeﬃcients /u1D450/u1D45A,
+/u1D45A∈ { 1,...,/u1D467}.
+We sample 2 /u1D441points from the state set X of the system to cre-
+ate the sets /u1D4461 = {/u1D4651,...,/u1D465/u1D441}, and /u1D4462 = {/u1D466.alt1,...,/u1D466.alt/u1D441}, and sam-
+ple 3 /u1D441points from X0, X/u1D449 /u1D439, and X/u1D449 /u1D439, respectively, to create sets
+/u1D4463 = {/u1D4650,1,...,/u1D4650,/u1D441}, and /u1D4464 = {/u1D4671,...,/u1D4672/u1D441}, respectively. We then
+encode the constraints of the closure certiﬁcate for every p air of
+points as an SMT-query over the theory of linear real arithme tic
+(LRA) [7] using z3 [22] as follows:
+/logicalanddisplay.1
+/u1D465∈/u1D4461
+(
+T (/u1D465,/u1D465′) ≥ 0
+)
+, (20)
+/logicalanddisplay.1
+/u1D465∈/u1D4461,/u1D466.alt∈/u1D4462
+((T (/u1D465′,/u1D466.alt) ≥ 0) =⇒ (T (/u1D465,/u1D466.alt) ≥ 0) )
+, and (21)
+/logicalanddisplay.1
+/u1D4650 ∈/u1D4463,/u1D467,/u1D467′ ∈/u1D4464
+((T (/u1D4650,/u1D467) ≥ 0) ∧ (T (/u1D467,/u1D467′) ≥ 0) (22)
+=⇒ (T (/u1D4650,/u1D467′) ≤ T ( /u1D4650,/u1D467) − /u1D709) )
+, (23)
+where /u1D465′ = /u1D453(/u1D465/u1D4581 ) indicates the next state from /u1D465/u1D4581 following the
+transition function. We lastly add a constraint of /u1D709being larger
+than some small positive value and then ﬁnd values /u1D4501,...,/u1D450/u1D467for
+the coeﬃcients and substitute them as a candidate CC T (/u1D465,/u1D466.alt).
+To determine if this candidate is in fact a CC, we now try to
+ﬁnd elements /u1D465,/u1D466.alt,/u1D4650,/u1D467,/u1D467′ ∈ X such that one of the conditions (14)-
+(16) does not hold. We do this by encoding the negation of thes e
+conditions as an SMT query. If such a counterexample is found ,
+we add them to the respective set and repeat the process. If no
+counterexample is found, then we conclude that this is a CC.
+Instead of using an SMT solver to ﬁnd a candidate CC, we can in-
+stead run our CEGIS loop quicker by strengthening condition s (15)-
+(16) as inequalities of the form:
+/u1D70F1T (/u1D465′,/u1D466.alt) ≤ T ( /u1D465,/u1D466.alt), (24)
+T (/u1D4650,/u1D466.alt)− /u1D709−T ( /u1D4650,/u1D466.alt′) ≥ /u1D70F2T (/u1D4650,/u1D466.alt)+/u1D70F3T (/u1D466.alt,/u1D466.alt′), (25)
+for all states /u1D4650 ∈ X 0, and /u1D466.alt,/u1D466.alt′ ∈ X /u1D449 /u1D439. where /u1D70F1,/u1D70F2,/u1D70F3 ∈ R≥0
+are ﬁxed nonnegative values. The satisfaction of condition s (24)
+and (25) implies the satisfaction of conditions (15) and (16 ), and
+the search for a candidate CC can be cast as a linear program in -
+stead. This allows one to use a linear programming solver (su ch as
+Gurobi [12]) to ﬁnd a candidate CC instead. We then ﬁnd a coun-
+terexample via SMT queries similar to the earlier approach, and
+then add the counterexample to our linear program, and searc h
+for a candidate CC again. While conditions (24) and (25) are m ore
+conservative, the search for a candidate is much quicker.
+We adopt a similar approach to ﬁnd a CC for the synchronized
+product as in Deﬁnition 3.3, that acts as a proof that the trac es
+of the system satisfy an LTL property whose negation is speci ﬁed
+by the language of an NBA A = (Σ,/u1D444,/u1D4440,/u1D6FF,/u1D434/u1D450/u1D450). In this setting,
+we assume our closure certiﬁcates to be piecewise with respe ct
+to pairs of states of NBA A. Each piecewise component is then
+considered to be a linear-combination of some user-deﬁned b asis
+functions. For every pair of states /u1D456,/u1D457∈ /u1D444, we denote the corre-
+sponding piecewise component as T/u1D456,/u1D457. We deﬁne each piecewise
+component as:
+T/u1D456,/u1D457(/u1D465,/u1D466.alt) =
+/u1D467/summationdisplay.1
+/u1D45A=1
+/u1D450/u1D45A./u1D456./u1D457/u1D45D/u1D45A,/u1D456,/u1D457(/u1D465,/u1D466.alt),
+where the functions /u1D45D/u1D45A,/u1D456,/u1D457are user-deﬁned basis functions over the
+states /u1D465,/u1D466.alt∈ X , and /u1D450/u1D45A,/u1D456,/u1D457are the coeﬃcients. We then encode the
+constraints as the following conjunctions for every state /u1D465∈ /u1D4461,
+/u1D466.alt∈ /u1D4462, /u1D4650 ∈ /u1D4463 and /u1D467,/u1D467′ ∈ /u1D4462 as well as every state /u1D456,/u1D457∈ /u1D444such
+that /u1D456′ ∈ /u1D6FF(/u1D456,L(/u1D465)), and states /u1D460∈ /u1D4440 and ℓ,ℓ′ ∈ /u1D434/u1D450/u1D450:
+/logicalanddisplay.1
+/u1D465∈/u1D4461
+(
+T/u1D456,/u1D456′ (/u1D465,/u1D465′) ≥ 0
+)
+, (26)
+/logicalanddisplay.1
+/u1D465∈/u1D4461,/u1D466.alt∈/u1D4462
+((T/u1D456′,/u1D457(/u1D465,/u1D466.alt) ≥ 0) =⇒ (T/u1D456,/u1D457(/u1D465,/u1D466.alt) ≥ 0) )
+, and (27)
+/logicalanddisplay.1
+/u1D4650 ∈/u1D4463,/u1D467,/u1D467′ ∈/u1D4462
+((T/u1D460,ℓ(/u1D4650,/u1D467) ≥ 0) ∧ (Tℓ,ℓ ′ (/u1D466.alt,/u1D467′) ≥ 0)
+=⇒ (T/u1D460,ℓ′ (/u1D4650,/u1D467′) ≤ T /u1D460,ℓ(/u1D4650,/u1D467) − /u1D709) )
+. (28)
+In general there is no guarantee of termination when using a C EGIS
+approach for uncountable state sets. However, one may stren gthen
+the conditions as speciﬁed in [19] to guarantee termination of the
+CEGIS loop. Instead of using a CEGIS approach, one may also en -
+code the conditions in an SMT solver over the nonlinear theor y of
+reals [9] such as dReal [10] or z3 [17] to search for CCs. While all
+the above approaches are NP-hard [5, 10, 17], we ﬁnd the CEGIS
+approach to work better in practice compared to searching fo r a
+solution in the nonlinear theory of reals.
+Note that barrier certiﬁcates face many of the same challeng es
+when using a CEGIS approach. Computationally, however, clo sure
+certiﬁcates take more time in practice as these are deﬁned ov er
+pairs of states rather than over a single state, and so suﬀer m ore
+when the dimension of the state set increases. We should add t hat
+we have not considered the complexity for ﬁnding the NBA rep-
+resenting the complement of the speciﬁcation, but rather as sume
+this NBA to be given. While the complexity of NBA complementa -
+tion is EXPTIME [31], it takes linear time to complement an LT L
+formula. However converting an LTL formula to an NBA has ex-
+ponential complexiy in the size of the formula [36].
+4.2 Sum-of-Squares based Approach
+The technique of using semideﬁnite programming [23] and cas t-
+ing the search for a standard barrier certiﬁcates [27] as SOS poly-
+nomials is particularly important due to the simpler comple xity
+of computation when compared to CEGIS approaches. We show
+how one may adopt a SOS approach to ﬁnd closure certiﬁcates.
+To do so, we ﬁrst note that a set /u1D434⊆ R/u1D45Bis semi-algebraic if it
+can be deﬁned with the help of a vector of polynomial inequali ties
+ℎ(/u1D465) as /u1D434= {/u1D465| ℎ(/u1D465) ≥ 0}, where the inequalities is interpreted
+component-wise.
+To adopt a SOS approach to ﬁnd CCs as in Deﬁnition 3.2, we
+consider the sets X, X0, and X/u1D449 /u1D439to be semi-algebraic sets deﬁned
+with the help of vectors of polynomial inequalities /u1D454/u1D434, /u1D4540, and
+/u1D454/u1D449 /u1D439, respectively. As these sets are semi-algebraic, the sets X × X
+
+
+===== PAGE 7 =====
+Closure Certificates HSCC ’24, May 14–16, 2024, Hong Kong, Ho ng Kong
+and X0 × X/u1D449 /u1D439× X/u1D449 /u1D439are semi-algebraic as well. Let their corre-
+sponding vectors be /u1D454/u1D435and /u1D454/u1D436, respectively. Furthermore, we as-
+sume that the user-deﬁned basis functions /u1D45D/u1D45Aare monomials and
+again strengthen the implications in conditions (15)-(16) to condi-
+tions (24)-(25). Then the search for a CC as in Deﬁnition 3.2 r educes
+to showing that the following polynomials are sum-of-squar es:
+T (/u1D465,/u1D465′) − /u1D706/u1D447
+/u1D434(/u1D465)/u1D454/u1D434(/u1D465), (29)
+T (/u1D465,/u1D466.alt) − /u1D70F1T (/u1D465′,/u1D466.alt) − /u1D706/u1D447
+/u1D435(/u1D465,/u1D466.alt)/u1D454/u1D435(/u1D465,/u1D466.alt), and (30)
+T (/u1D465,/u1D466.alt′) − /u1D709− /u1D70F2T (/u1D465,/u1D466.alt)
+− /u1D70F3T (/u1D466.alt,/u1D466.alt′) − /u1D706/u1D447
+/u1D436(/u1D465,/u1D466.alt,/u1D466.alt′)/u1D454/u1D436(/u1D465,/u1D466.alt,/u1D466.alt′), (31)
+where /u1D465′ = /u1D453(/u1D465), the multipliers /u1D706/u1D434, /u1D706/u1D435, /u1D706/u1D436, are sum-of-squares
+over the state variable /u1D465, the state variables /u1D465,/u1D466.alt, and the state vari-
+ables /u1D465,/u1D466.alt,/u1D466.alt′ over the sets X, X×X, and X0×X/u1D449 /u1D439×X/u1D449 /u1D439respectively,
+and /u1D709, /u1D70F1, /u1D70F2, and /u1D70F3 ∈ R> 0 are positive values.
+L/e.sc/m.sc/m.sc/a.sc 7.Assume the sets X, X0, and X/u1D449 /u1D439are semi-algebraic,
+and there exists a sum-of-squares polynomial T (/u1D465,/u1D466.alt) satisfying con-
+ditions (29)-(31). Then the function T (/u1D465,/u1D466.alt) is a CC satisfying condi-
+tions (14)-(16).
+Since there are ﬁnitely many letters /u1D70E∈ Σ, without loss of gen-
+erality, one can partition the set X into ﬁnitely many partitions
+X/u1D70E1 ,..., X/u1D70E/u1D45D, where for all /u1D465∈ X /u1D70E/u1D45A, we have L(/u1D465) = /u1D70E/u1D45A. Given
+an element /u1D70E/u1D45A∈ Σ, we can uniquely characterize the relation
+/u1D6FF/u1D70E/u1D456as (/u1D45E′
+/u1D456,/u1D45E/u1D456) ∈ /u1D6FF/u1D70E/u1D456if and only if /u1D45E′
+/u1D456∈ /u1D6FF(/u1D45E/u1D456,/u1D70E/u1D456). Assume that
+the sets X, X0, and X/u1D70E/u1D45A, for all /u1D70E/u1D45A, are semi-algebraic and char-
+acterized by polynomial vectors of inequalities /u1D454(/u1D465), /u1D4540 (/u1D465), and
+/u1D454/u1D70E/u1D45A,/u1D434(/u1D465), respectively. Furthermore, we consider polynomial vec-
+tors of inequalities /u1D454(/u1D70E/u1D45A),/u1D435(/u1D465,/u1D466.alt) over the product space X ×X , and
+/u1D454(/u1D70E/u1D45A,/u1D436) (/u1D465,/u1D466.alt,/u1D466.alt′) over X0 × X × X , respectively. Let the state transi-
+tion function /u1D453: X → X be a polynomial function. Now, one can
+reduce the search for a CC to showing that the following polyn o-
+mials are SOS for all states /u1D465,/u1D466.alt,/u1D466.alt′ ∈ X , /u1D465′ = /u1D453(/u1D465), and /u1D4650 ∈ X 0,
+and states /u1D456,/u1D457∈ /u1D444, /u1D460∈ /u1D4440, and ℓ,ℓ′ ∈ /u1D434/u1D450/u1D450, and letters /u1D70E/u1D45A∈ Σ, such
+that /u1D456′ ∈ /u1D6FF/u1D70E/u1D45A(/u1D456):
+T/u1D456′,/u1D456(/u1D465,/u1D465′) − /u1D706/u1D447
+/u1D70E/u1D45A,/u1D434(/u1D465)/u1D454/u1D70E/u1D45A,/u1D434(/u1D465), (32)
+T/u1D456′,/u1D457(/u1D465,/u1D466.alt) − /u1D70F1T/u1D456,/u1D457(/u1D465′,/u1D466.alt)
+− /u1D706/u1D447
+/u1D70E/u1D45A,/u1D435(/u1D465,/u1D466.alt)/u1D454/u1D70E/u1D45A,/u1D435(/u1D465,/u1D466.alt), and (33)
+T/u1D460,ℓ′ (/u1D4650,/u1D466.alt′) − /u1D709− /u1D70F2T/u1D460,ℓ(/u1D4650,/u1D466.alt) − /u1D70F3Tℓ,ℓ ′ (/u1D466.alt,/u1D466.alt′)
+− /u1D706/u1D447
+/u1D70E/u1D45A,/u1D436(/u1D4650,/u1D466.alt,/u1D466.alt′)/u1D454/u1D70E/u1D45A,/u1D436(/u1D4650,/u1D466.alt,/u1D466.alt′), (34)
+are sum-of-squares, where /u1D706/u1D447
+/u1D70E/u1D456,/u1D434, /u1D706/u1D447
+/u1D70E/u1D456,/u1D435, and /u1D706/u1D447
+/u1D70E/u1D456,/u1D436are sum-of-squares
+polynomials over their respective regions and /u1D70F1,/u1D70F2,/u1D70F3,/u1D709∈ R> 0 are
+positive values.
+L/e.sc/m.sc/m.sc/a.sc 8.Assume the sets X, X0, X/u1D449 /u1D439, and X/u1D70E/u1D456for all /u1D70E/u1D456are semi-
+algebraic, and there exists sum-of-squares polynomials T/u1D456,/u1D457(/u1D465,/u1D466.alt) sat-
+isfying conditions (32)-(34) for every /u1D456,/u1D457∈ /u1D444. Then the function
+T ((/u1D465,/u1D456),(/u1D466.alt,/u1D457)) deﬁned piecewise as T/u1D456,/u1D457(/u1D465,/u1D466.alt) for all /u1D456,/u1D457∈ /u1D444is a
+CC for the product satisfying conditions (17)-(19).
+To determine whether the above equations are SOS, one can
+make use of solvers such as [28]. The complexity of determini ng
+whether the above equations are SOS is /u1D442((2/u1D45B+/u1D451
+/u1D451
+) × (2/u1D45B+/u1D451
+/u1D451
+)) , when
+searching for CCs for safety or ensuring ﬁnite visits, where /u1D45Bis the
+dimension of the state set, and 2 /u1D451is the degree of the polynomial.
+The complexity of verifying LTL speciﬁcations is 1 polynomial in
+/u1D442(2|/u1D719|2 × (2/u1D45B+2/u1D451
+/u1D451
+) × (2/u1D45B+2/u1D451
+/u1D451
+)) , where |/u1D719| indicates the size of the LTL
+formula. This is because the closure certiﬁcate is a functio n of pairs
+of the state set of the system and there are at most |/u1D444|2 many pairs
+of transitions in an automaton. The number of states of the NB A
+is /u1D442(2|/u1D719| ) , where |/u1D719| is the size of the formula. On the other hand,
+the complexity of determining whether the equations for bar rier
+certiﬁcates are SOS is polynomial in /u1D442((/u1D45B+/u1D451
+/u1D451
+) × (/u1D45B+/u1D451
+/u1D451
+)) [27]. If the
+dimension of the system is ﬁxed, then the complexity is polyn omial
+in the degree 2 /u1D451but exponential in the size of the formula /u1D719. The
+key issue when using an SOS approach, however, is that there m ay
+be polynomials that satisfy the above constraints but are no t SOS.
+Furthermore, one cannot directly encode the implication in SOS,
+and, hence, suﬀers from the conservatism of having to satisf y a
+stronger condition.
+5 SUBSUMING EXISTING APPROACHES
+We show that our approach generalizes the existing class of t ech-
+niques using state triplet introduced in [37] for the veriﬁc ation
+of continuous-space systems against linear temporal logic prop-
+erties. The state triplet technique has been used for the ver iﬁca-
+tion and synthesis for stochastic systems [15, 16], for netw orks of
+systems [1, 2], and in motion-planning for nonlinear system s [13].
+Here, the transition map is a function, and the state set is a s ub-
+set of R/u1D45B. First, we present the details of the state triplet approach
+brieﬂy, in Section 5.1. Then in Section 5.2, we show how one ca n
+use closure certiﬁcates to guarantee satisfaction of LTL pr operties
+when the state triplet approach provides a guarantee as well .
+5.1 The State Triplet Approach
+Consider a system /u1D516 =(X,X0,/u1D453), where X ⊆ R/u1D45B, and /u1D453is a state
+transition function. Consider a NBA A = (Σ,/u1D444,/u1D4440,/u1D6FF,/u1D434/u1D450/u1D450) that
+represents the complement of the desired LTL formula /u1D719, and a
+labeling function L : X → Σ. The key idea of the state triplet ap-
+proach is to ﬁnd barrier certiﬁcates between edges of the aut oma-
+ton to disallow the system from visiting an accepting state. This
+ensures that /u1D516̸|=L ¬/u1D719, and so we have /u1D516|=L /u1D719.
+The steps of the approach are as follows:
+(1) Consider all the simple paths in the NBA that start from an
+initial state and reach an accepting state.
+(2) Break these paths into a sequence of state triplets (/u1D45E/u1D45A,/u1D45E′/u1D45A,/u1D45E′′/u1D45A)
+(or edge pairs (/u1D452/u1D45A,/u1D452′/u1D45A)).
+(3) Search for a barrier certiﬁcate to “cut” at least one trip let
+from each path.
+(4) If we can cut at least one triplet along each path, we can co n-
+clude that /u1D516|=L /u1D719, and if not this approach is inconclusive.
+To help illustrate this approach consider a system /u1D516 =(X,X0,/u1D453),
+and a ﬁnite alphabet Σ = {/u1D44E0,/u1D44E1}; the labeling map L naturally
+partition the set X into two sets X/u1D44E1 and X/u1D44E2 . Let the NBA A =
+(Σ,/u1D444,/u1D4440,/u1D6FF,/u1D434/u1D450/u1D450) in Figure 2 represent the complement of an LTL
+speciﬁcation of interest, where Σ = {/u1D44E0,/u1D44E1}, /u1D444= {/u1D45E0,/u1D45E1,/u1D45E2,/u1D45E3},
+/u1D4440 = {/u1D45E0}, /u1D434/u1D450/u1D450= {/u1D45E3}, and /u1D6FFis speciﬁed by the edges in the
+1Determining whether a polynomial in /u1D45Bvariables and degree /u1D451are SOS can be re-
+duced to a semideﬁnite program in /u1D442((/u1D45B+/u1D451
+/u1D451
+) × (/u1D45B+/u1D451
+/u1D451
+))
+variables [23].
+
+
+===== PAGE 8 =====
+HSCC ’24, May 14–16, 2024, Hong Kong, Hong Kong Vishnu Murali, Ashutosh Trivedi, and Majid Zamani
+/u1D45E0 /u1D45E1 /u1D45E2 /u1D45E3
+/u1D44E1
+/u1D44E0
+/u1D44E0 /u1D44E0
+/u1D44E1
+/u1D44E0,/u1D44E1
+Figure 2: Example NBA A which represents the complement
+of a safety to illustrate the state triplet approach.
+graph. This NBA accepts those words which start with a /u1D44E1 and
+have at least two /u1D44E0’s in them. It represents the LTL formula /u1D719=
+/u1D44E1 ∧XF(/u1D44E0 ∧F/u1D44E0). There is one simple path starting from the initial
+state /u1D45E0 that reaches the accepting state /u1D45E3. This path corresponds
+to the sequence of states (/u1D45E0,/u1D45E1,/u1D45E2,/u1D45E3) and can be broken into
+two triplets (/u1D45E0,/u1D45E1,/u1D45E2) and (/u1D45E1,/u1D45E2,/u1D45E3). The ﬁrst state triplet corre-
+sponds to the edge pair ((/u1D45E0,/u1D45E1),(/u1D45E1,/u1D45E2)) which are labeled by the
+pair of letters (/u1D44F,/u1D44E), and the second to the edge pair ((/u1D45E1,/u1D45E2),(/u1D45E2,/u1D45E3))
+which are labeled by the pair of letters (/u1D44E0,/u1D44E0).
+To cut the transitions along the ﬁrst state triplet (/u1D45E0,/u1D45E1,/u1D45E2), we
+try to ﬁnd a barrier certiﬁcate, where the initial set of stat es are
+all the states with the label /u1D44E1 (corresponding to the edge (/u1D45E0,/u1D45E1)),
+i.e. all the states of the system in X/u1D44E1 . The unsafe states are all the
+states with a label of /u1D44E0 (corresponding to the edge (/u1D45E1,/u1D45E2)), i.e.
+all the states in the set X/u1D44E0 . The existence of a barrier certiﬁcate,
+proves that no trace of the system can visit a state with label /u1D44E0,
+after visiting a state with label /u1D44E1, and so cannot correspond to
+the run (/u1D45E0,/u1D45E1,/u1D45E2) in the automaton. This cuts the path from the
+initial state /u1D45E0 to the accepting state /u1D45E3 of the automaton and shows
+that no trace of the system can take this corresponding path i n the
+NBA. As there are no other simple paths to the accepting state ,
+we conclude that no trace of the system is in the language of th e
+NBA. If we fail to ﬁnd a barrier certiﬁcate for the ﬁrst triple t, we
+then search for a barrier certiﬁcate in the next triplet (/u1D45E1,/u1D45E2,/u1D45E3).
+As the edges of the states in the triplet have the same label /u1D44E0, we
+cannot ﬁnd a barrier certiﬁcate where the initial set and uns afe set
+are both X/u1D44E0 . If we fail to ﬁnd a barrier certiﬁcate for both triplets,
+then our approach is inconclusive.
+As the state triplet approach proves that no trace of the syst em
+can reach the accepting state, one expects that it can be leve raged
+in a similar fashion to bounded model checking. Ideally unro lling
+the automaton for /u1D458-steps would allow one to verify that no trace
+of the system visits the accepting state more than /u1D458times. Unfor-
+tunately, this is not true, and the state triplet approach do es not
+beneﬁt when one unrolls more than once.
+L/e.sc/m.sc/m.sc/a.sc 9.Consider a NBA A = (Σ,/u1D444,/u1D4440,/u1D6FF,/u1D434/u1D450/u1D450), whose simple
+paths from the initial states /u1D4440 to the accepting states /u1D434/u1D450/u1D450have been
+divided into /u1D458state triplets (/u1D45E/u1D45A,/u1D45E′/u1D45A,/u1D45E′′/u1D45A) for all 1 ≤ /u1D45A≤ /u1D458, such that
+/u1D45E′/u1D45A∈ /u1D6FF(/u1D45E,/u1D44E/u1D45A) and /u1D45E′′/u1D45A∈ /u1D6FF(/u1D45E,/u1D44F/u1D45A), for some /u1D44E/u1D45A,/u1D44F/u1D45A∈ Σ. Unrolling
+the automaton more than once does not lead to ﬁnding a new trip let
+with labels that have not been considered before.
+We present the proof of Lemma 9 in Appendix B.
+Now, with an example, we demonstrate why unrolling the au-
+tomaton once might help in ﬁnding state triplets. Consider t he
+NBA A = (Σ,/u1D444,/u1D4440,/u1D6FF,/u1D434/u1D450/u1D450) in Figure 3a, with Σ = {/u1D44E,/u1D44F,/u1D450,/u1D451},
+/u1D444= {/u1D45E0,/u1D45E1,/u1D45E2,/u1D45E3}, /u1D434/u1D450/u1D450= {/u1D45E2}, and the transition relation speci-
+ﬁed by the edges in the graph. We unroll this automaton to get t he
+/u1D45E0 /u1D45E1 /u1D45E2 /u1D45E3/u1D44E /u1D44F
+/u1D450
+/u1D44F
+/u1D44F,/u1D451
+/u1D44E
+(a)
+/u1D45E0 /u1D45E1 /u1D45E2 /u1D45E3
+/u1D45E′
+2
+/u1D45E′
+3
+/u1D44E /u1D44F
+/u1D450
+/u1D44F
+/u1D44F,/u1D451
+/u1D44E
+/u1D44E
+/u1D44F
+/u1D450
+(b)
+Figure 3: Example NBA A (Figure 3a) and its unrolling (Fig-
+ure 3b) from Section 5.1.
+automaton A′ in Figure 3b. Unrolling the automaton once allows
+us to consider the triplet (/u1D45E2,/u1D45E′
+3,/u1D45E′
+2) whose edge labels correspond
+to the pair of letters (/u1D450,/u1D44F). Observe that no state triplet in the orig-
+inal NBA corresponds to this pair of letters. Thus even if one was
+not able to ﬁnd a barrier certiﬁcate for a state triplet in NBA A (for
+the state triplet (/u1D45E0,/u1D45E1,/u1D45E2)), one may still ﬁnd a barrier certiﬁcate
+for a state triplet in NBA A′ (the state triplet (/u1D45E2,/u1D45E′
+3,/u1D45E′
+2)). Hence,
+no trace of the system can visit the accepting state more than once.
+We observe that unrolling once does have an impact since we
+can now consider those state triplets along the simple cycle s of
+the NBA. Unfortunately, unrolling twice does not help. Thus , one
+is unable to verify those traces of a system which reach and cy cle
+on accepting states more than twice, even if they visit accep ting
+states ﬁnitely often.
+The state triplet approach is conservative in the following di-
+rection: independently of the state runs in the automaton and of the
+initial states of the system /u1D516, one is required to break the edge pairs
+of every simple path regardless of what states of the automat on may
+be encountered before or after .
+5.2 CC Subsumes State Triplet Approach
+We now show that our approach generalizes the earlier state t riplet
+one. Consider a NBA A = (Σ,/u1D444,/u1D4440,/u1D6FF,/u1D434/u1D450/u1D450), and let us assume that
+there exist /u1D458barrier certiﬁcates B1,B2 ..., B/u1D458associated with state
+triplets (/u1D45E/u1D45A,/u1D45E′/u1D45A,/u1D45E′′/u1D45A), (or edge pairs (/u1D452/u1D45A,/u1D452′/u1D45A)) for each 1 ≤ /u1D45A≤ /u1D458,
+that act as a proof that every trace of the system is in /u1D43F(A) . Fur-
+thermore, let (/u1D44E/u1D45A,/u1D44F/u1D45A) be the pairs of letters associated with these
+triplets. We divide the states of the NBA A into two sets /u1D444/u1D459, and
+/u1D444/u1D45F. A state /u1D45E∈ /u1D444is in the set /u1D444/u1D459if It is not the middle element of
+a state triplet and there is a path from /u1D45Eto the middle element of
+some state triplet. A state /u1D45E∈ /u1D444is in the set /u1D444/u1D45Fif there is a path
+from the middle element of every state triplet to /u1D45E. The only states
+that are in neither of the sets are middle elements of the trip lets.
+
+
+===== PAGE 9 =====
+Closure Certificates HSCC ’24, May 14–16, 2024, Hong Kong, Ho ng Kong
+As the state triplet approach “cuts” the transitions of the N BA, we
+observe that no trace of the system starting from a state in /u1D444/u1D459can
+reach a state in /u1D444/u1D45F. Furthermore, we note that every state /u1D460∈ /u1D4440 is
+in the set /u1D444/u1D459, and every state ℓ ∈ /u1D434/u1D450/u1D450is in the set /u1D444/u1D45F. We now show
+how one may use closure certiﬁcates to provide guarantees of sat-
+isfaction for LTL speciﬁcations when the state triplet appr oach can
+guarantee the satisfaction of the same speciﬁcation.
+T/h.sc/e.sc/o.sc/r.sc/e.sc/m.sc 10.Consider a System /u1D516 =(X,X0,/u1D453), labeling map
+L : X → Σ, and NBA A = (Σ,/u1D444,/u1D4440,/u1D6FF,/u1D444/u1D434/u1D450/u1D450) representing the
+complement of a desired LTL formula /u1D719. Suppose that there exists
+barrier certiﬁcates B1,..., B/u1D458that show /u1D516|=L /u1D719via the state triplet
+approach. Then there exists a closure certiﬁcate T that also acts as a
+proof that /u1D516|=L /u1D719.
+P/r.sc/o.sc/o.sc/f.sc (/s.sc/k.sc/e.sc/t.sc/c.sc/h.sc).We construct a closure certiﬁcate T : X × /u1D444×
+X × /u1D444→ R such that, for /u1D465,/u1D466.alt∈ X , and /u1D456,/u1D457∈ /u1D444, we have that
+T (/u1D465,/u1D456,/u1D466.alt,/u1D457) ≥ 0, if:
+• /u1D456∈ /u1D444/u1D45F;
+• /u1D456∈ /u1D444/u1D459and /u1D457∈ /u1D444/u1D459;
+• /u1D456is the middle element of triplet /u1D45A, and B/u1D45A(/u1D465) ≤ 0, /u1D457∈ /u1D444/u1D459
+and B/u1D45A(/u1D466.alt) ≤ 0;
+• /u1D456is the middle element of triplet /u1D45A, and B/u1D45A(/u1D465) > 0; or
+• /u1D456∈ /u1D444/u1D459, /u1D457is the middle element of some triplet /u1D45A, and B/u1D45A(/u1D466.alt) ≤
+0.
+Moreover, T (/u1D465,/u1D456,/u1D466.alt,/u1D457) < 0, otherwise. This certiﬁcate clearly guar-
+antees that no trace of the system can reach the accepting sta tes.
+A detailed proof is given in Appendix C. □
+6 CASE STUDIES
+We experimentally demonstrate the utility of closure certi ﬁcates
+on Kuramoto oscillators and a two-room temperature model. I n the
+ﬁrst example, we consider the problem of safety veriﬁcation . Here,
+we show that we can verify the safety a 1 dimensional Kuramoto
+oscillator via a linear closure certiﬁcate when a linear bar rier cer-
+tiﬁcate cannot do the same. We then verify the safety of a 2 dim en-
+sional Kuramoto oscillator by converting the safety object ive to an
+LTL speciﬁcation. We then search for a closure certiﬁcate ov er the
+product of the system and the NBA representing the complemen t
+of the speciﬁcation. In the second example, we consider the p rob-
+lem of verifying the persistence of a two-room temperature m odel.
+To do so, we convert the objective to an LTL speciﬁcation, aft er
+which we search for a closure certiﬁcate over the product of t he
+system and the NBA.
+6.1 Kuramoto Oscillator
+Kuramoto model [11] has been used widely to describe chemica l
+and biological oscillators, with applications in neurosci ence and
+modern power system analysis. As a ﬁrst case study, we consid er
+a system /u1D516 =(X,X0,/u1D453) to model a Kuramoto oscillator whose
+dynamics are taken from [2], where X = [0,2/u1D70B] indicates the state
+set, X0 = [ 4/u1D70B
+9 ,5/u1D70B
+9 ] the initial set of states, and X/u1D462= [ 7/u1D70B
+9 ,8/u1D70B
+9 ]
+denotes the unsafe set of states. The transition function /u1D453is deﬁned
+as:
+/u1D453(/u1D465) = /u1D465+ /u1D70FΩ + /u1D461/u1D460/u1D43Esin(−/u1D465) − 0.532/u1D4652 + 1.69,
+/u1D45E0 /u1D45E1
+{}
+{/u1D44E}
+{},{/u1D44E}
+Figure 4: A (nondeterministic) Büchi automaton A repre-
+senting the LTL formula F/u1D44E.
+where /u1D465∈ X indicates the phase of the oscillator, /u1D461/u1D460= 0.1 is the
+sampling time, Ω = 0.01 is the natural frequency, and /u1D43E= 0.0006
+is the coupling strength.
+We then search for a linear closure certiﬁcate as in Deﬁntion 3.1
+to ensure the safety of the system. To do so, we strengthen the
+implication in condition (12) to condition (24), with /u1D70F1 = 1, and
+sample 50 points from the initial, unsafe, and entire state s et. We
+then solve a linear program to ﬁnd a candidate closure certiﬁ cate.
+As z3 [22] cannot handle the function sin (−/u1D465), we instead use the
+solver dReal [10] to ﬁnd counterexamples. We add these count erex-
+amples to the set of samples and repeat the procedure until we
+ﬁnd no counterexamples. We ﬁnd the closure certiﬁcate T (/u1D465,/u1D466.alt) =
+10 − 4.094/u1D466.altthat acts as a proof of safety. The time taken for our
+CEGIS loop to terminate is around 10 minutes on a machine run-
+ning MacOS 11.2 (Intel i9-9980HK with 64 GB of RAM). We should
+note that the linear program encoding the barrier certiﬁcat e con-
+ditions is infeasible when we consider a linear barrier cert iﬁcate
+rather than a CC.
+We now cast the problem of safety veriﬁcation as a problem of
+verifying a system against the LTL formula G¬/u1D44E, over the set of
+atomic propositions /u1D434/u1D443= {/u1D44E}, where a state is marked with la-
+bel {/u1D44E} if it is unsafe. The complement of this speciﬁcation is F/u1D44E,
+and the NBA A representing this is described in Figure 4. We
+consider the system /u1D516 =(X,X0,/u1D453) to be a two-dimensional Ku-
+ramoto oscillator, where X = [0,8/u1D70B
+9 ] × [ 0,8/u1D70B
+9 ] denotes the state
+set. X0 = [0,/u1D70B
+9 ] × [ 0,/u1D70B
+9 ] denotes the initial set of states and the
+transition function /u1D453is deﬁned as:
+/u1D453(/u1D4651,/u1D4652) =
+[ /u1D4651
+/u1D4652
+]
++
+[ /u1D70FΩ + 1.69
+/u1D70FΩ + 1.69
+]
++ /u1D43E/u1D461/u1D460
+[ /u1D460/u1D456/u1D45B(/u1D4652 − /u1D4651)
+/u1D460/u1D456/u1D45B(/u1D4651 − /u1D4652)
+]
+− 0.532/u1D70F
+[ /u1D4652
+1
+/u1D4652
+2
+]
+,
+where (/u1D4651,/u1D4652) ∈ X indicates the phase of the oscillators, and the
+remaining constants have the same values as the one dimensio nal
+case. We consider the alphabet Σ = {{},{/u1D44E}}, and the labeling
+function L as L(/u1D4651,/u1D4652) = {/u1D44E} if either /u1D4651 ∈ [ 15/u1D70B
+18 ,8/u1D70B
+9 ] or /u1D4652 ∈
+[ 15/u1D70B
+18 ,8/u1D70B
+9 ]. All the other states are assigned a label of the empty set
+{}. We consider the template of the piecewise components of the
+closure certiﬁcate to be:
+T/u1D456,/u1D457
+((/u1D4651,/u1D4652),(/u1D466.alt1,/u1D466.alt2)) = /u1D4500,/u1D456,/u1D457+/u1D4501,/u1D456,/u1D457/u1D466.alt1I0 (/u1D4651,/u1D4652)+/u1D4502,/u1D456,/u1D457/u1D466.alt2I0 (/u1D4651,/u1D4652)
++ /u1D4503,/u1D456,/u1D457/u1D466.alt1I/u1D44E(/u1D4651,/u1D4652) + /u1D4504,/u1D456,/u1D457/u1D466.alt2I/u1D44E(/u1D4651,/u1D4652) + /u1D4505,/u1D456,/u1D457/u1D466.alt1 + /u1D4506,/u1D456,/u1D457/u1D466.alt2, (35)
+for all states (/u1D4651,/u1D4652),(/u1D466.alt1,/u1D466.alt2) ∈ X and NBA states /u1D456,/u1D457∈ /u1D444, where
+the functions I0, and I/u1D44Eare indicator functions over the initial set
+of states, and states with label {/u1D44E} respectively. We then search for
+the piecewise components of the closure certiﬁcate via a cou nterexample-
+guided approach by collecting round 400 points from the syst em.
+
+
+===== PAGE 10 =====
+HSCC ’24, May 14–16, 2024, Hong Kong, Hong Kong Vishnu Murali, Ashutosh Trivedi, and Majid Zamani
+To do so, we encode the conditions as a linear program, and set the
+s-procedure coeﬃcients of /u1D70F1 = 1 for the conditions (24) and the
+values of /u1D70F2 = 1, and /u1D70F3 = 0 for conditions (25) to ﬁnd a candidate
+closure certiﬁcate. To speed up the search for counterexamp les, we
+randomly sample points and check if the conditions fail to ho ld. If
+so we have found a counterexample. If no such counterexample
+is found, we then formulate a query in dReal to search for a val id
+counterexample. We repeat this process until no counterexa mples
+are found. The coeﬃcients of the resulting closure certiﬁca te are
+displayed as a table in Appendix D.1. The time taken for this C EGIS
+loop to terminate is around 1 hour and 50 minutes on the refere nce
+machine. We ﬁnd the value of /u1D709to be 1.
+6.2 Two Room Temperature Model
+As a second case study, we consider our system /u1D516 =(X,X0,/u1D453) to
+be an interconnected two-room temperature model adapted fr om [1],
+where X = [20,34] × [ 20,34] ∈ R2 indicate the temperature of the
+two rooms, X0 = [21,24] × [ 21,24] indicate the initial set of states,
+and the transition function is deﬁned as:
+/u1D453(/u1D4651,/u1D4652) = /u1D434
+[ /u1D4651
+/u1D4652
+]
++ /u1D707/u1D447ℎ
+[ /u1D462(/u1D4651)
+/u1D462(/u1D4652)
+]
++ /u1D703
+[ /u1D447/u1D452
+/u1D447/u1D452
+]
+,
+where /u1D465/u1D456represents the temperature of room /u1D456, for all /u1D456∈ { 1,2},
+the matrix /u1D434is
+/u1D434:=
+[ 1 − 2/u1D6FC− /u1D703− /u1D707/u1D462(/u1D4651) /u1D6FC
+/u1D6FC 1 − 2/u1D6FC− /u1D703− /u1D707/u1D462(/u1D4652)
+]
+,
+where constants /u1D6FC= 0.004, /u1D703= 0.01, and /u1D707= 0.15 represent the
+conduction factors, and /u1D462(/u1D465) denotes the temperature controller,
+and is deﬁned as /u1D462(/u1D465/u1D456) = 0.59 − 0.011/u1D465/u1D456. The value /u1D447ℎ = 40C de-
+notes the heater temperature, and /u1D447/u1D452= 0C represents the ambient
+temperature. Let the LTL formula to be veriﬁed be /u1D44E0 =⇒ FG¬/u1D44E1.
+This property requires that a system that starts from a state with
+atomic proposition /u1D44E0 does not visit the states with atomic proposi-
+tion /u1D44E1 inﬁnitely often. We consider the atomic propositions /u1D434/u1D443=
+{/u1D44E0,/u1D44E1}, and the alphabet Σ = {{},{/u1D44E0},{/u1D44E1},{/u1D44E0,/u1D44E1}}. In this set-
+ting, we require that if a state sequence of the system starts from
+X0 then it must visit the region ([20,26] × X) ∪ (X × [ 20,26])
+ﬁnitely often. The complement of this speciﬁcation is /u1D44E0 ∧ GF/u1D44E1
+and the NBA A in Figure 5 denotes this complement. Here, we
+mark the states (/u1D4651,/u1D4652) ∈ X 0 with the atomic proposition /u1D44E0. We
+mark a state (/u1D4651,/u1D4652) ∈ X with atomic proposition /u1D44E1, if (/u1D4651,/u1D4652) ∈
+([20,26] ∪ X) × (X ∪ [ 20,26]). All other states are not marked
+with any atomic proposition. Observe that a state (/u1D4651,/u1D4652) may be
+marked with both atomic propositions /u1D44E0, and /u1D44E1, or neither. We
+deﬁne the labeling map as:
+L(/u1D4651,/u1D4652) =
+
+
+
+
+
+ 
+
+
+
+
+
+
+{/u1D44E0,/u1D44E1} if (/u1D4651,/u1D4652) is marked with both /u1D44E0,/u1D44E1
+{/u1D44E0} if (/u1D4651,/u1D4652) is marked with only /u1D44E0
+{/u1D44E1} if (/u1D4651,/u1D4652) is marked with only /u1D44E1
+{} otherwise,
+/u1D45E0
+/u1D45E3
+/u1D45E1
+/u1D45E2
+{/u1D44E0}
+{/u1D44E,/u1D450}
+{},{/u1D44E1}
+⊤
+{/u1D44E1},{/u1D44E0,/u1D44E1}
+{ }, { /u1D44E0}
+{/u1D44E1},{/u1D44E0,/u1D44E1}
+{ }, { /u1D44E0}
+Figure 5: A (nondeterministic) Büchi automaton A for the
+two-room temperature case study from Section 6. The au-
+tomata represents the LTL formula /u1D44E0 ∧ GF/u1D44E1. Here ⊤ indi-
+cates any letter in the alphabet.
+We consider the template of the piecewise components of the c lo-
+sure certiﬁcate to be speciﬁed as:
+T/u1D456,/u1D457
+((/u1D4651,/u1D4652),(/u1D466.alt1,/u1D466.alt2)) = /u1D4500,/u1D456,/u1D457+ /u1D4501,/u1D456,/u1D457/u1D4651 + /u1D4502,/u1D456,/u1D457/u1D4652 + /u1D4503,/u1D456,/u1D457/u1D466.alt1
++ /u1D4504,/u1D456,/u1D457/u1D466.alt2 + /u1D4505,/u1D456,/u1D457max(/u1D4651,/u1D4652) + /u1D4506,/u1D456,/u1D457max(/u1D466.alt1,/u1D466.alt2)
++ /u1D4507,/u1D456,/u1D457/u1D4652
+1 + /u1D4508,/u1D456,/u1D457/u1D4652
+2 + /u1D4509,/u1D456,/u1D457/u1D466.alt2
+1 + /u1D45010,/u1D456,/u1D457/u1D466.alt2
+2, (36)
+for all states (/u1D4651,/u1D4652), and (/u1D466.alt1,/u1D466.alt2) ∈ X and all states /u1D456,/u1D457of the NBA
+A in Figure 5. We then search for the piecewise components of th e
+closure certiﬁcate using a CEGIS approach. To speed up this, we
+ﬁrst solve the linear program with around 100 points, where w e
+set the values of /u1D70F1 = 1, /u1D70F2 = 0.4, and /u1D70F3 = 0.1. We then search for
+counterexamples by ﬁrst randomly sampling points, after wh ich
+we use z3 to ﬁnd counterexamples. The resulting coeﬃcients a re
+described in a table in Appendix D.2. The time taken to ﬁnd the
+closure certiﬁcate is around 1 .5 hours on the reference machine.
+Finally, we ﬁnd the value of /u1D709to be 0 .5 in this example.
+7 CONCLUSION
+We proposed a notion of so-called closure certiﬁcates that a ct as
+a function analog of transition invariants. Our notion of cl osure
+certiﬁcates provide an abstraction-free approach to verif y dynam-
+ical systems against /u1D714-regular properties. Our approach of using
+closure certiﬁcates to verify /u1D714-regular properties subsume existing
+approaches that use barrier certiﬁcate to verify /u1D714-regular proper-
+ties. As future work, we plan to investigate how one may use ap -
+proaches such as /u1D458-induction to allow for a larger class of func-
+tions to act as closure certiﬁcates. We also plan on investig ating
+data driven approaches to ﬁnd these closure certiﬁcates as w ell as
+investigate their use in synthesizing controllers.
+8 ACKNOWLEDGEMENTS
+The authors thank Mateo Perez and Sriram Sankaranarayanan f or
+valuable discussions as well as the anonymous reviewers for their
+constructive comments. This work was supported by NSF CAREE R
+
+
+===== PAGE 11 =====
+Closure Certificates HSCC ’24, May 14–16, 2024, Hong Kong, Ho ng Kong
+awards CCF-2146563, and CNS-2145184, and grants ECCS-2015 403,
+CNS-2039062, and CNS-2111688.
+REFERENCES
+[1] Mahathi Anand, Abolfazl Lavaei, and Majid Zamani. 2021. Compositional Syn-
+thesis of Control Barrier Certiﬁcates for Networks of Stoch astic Systems against
+/u1D45C/u1D45A/u1D452/u1D454/u1D44E-Regular Speciﬁcations. arXiv preprint arXiv:2103.02226 (2021).
+[2] Mahathi Anand, Abolfazl Lavaei, and Majid Zamani. 2022. From small-gain the-
+ory to compositional construction of barrier certiﬁcates f or large-scale stochas-
+tic systems. IEEE Trans. Automat. Control 67, 10 (2022).
+[3] Christel Baier and Joost-Pieter Katoen. 2008. Principles of model checking . MIT
+press.
+[4] Clark Barrett and Cesare Tinelli. 2018. Satisﬁability modulo theories . Springer.
+[5] George E Collins. 1975. Quantiﬁer elimination for real c losed ﬁelds by cylindri-
+cal algebraic decomposition. In Automata Theory and Formal Languages: 2nd GI
+Conference Kaiserslautern, May 20–23, 1975 . Springer, 134–183.
+[6] Byron Cook. 2009. Priciples of program termination. Engineering Methods and
+Tools for Software Safety and Security 22, 161 (2009), 125.
+[7] Bruno Dutertre and Leonardo de Moura. 2006. A fast linear -arithmetic solver for
+DPLL (T). In International Conference on Computer Aided Veriﬁcation . Springer,
+81–94.
+[8] Emmanuel Filiot, Naiyong Jin, and Jean-François Raskin . 2009. An antichain
+algorithm for LTL realizability. In International Conference on Computer Aided
+Veriﬁcation. Springer, 263–277.
+[9] Sicun Gao, Jeremy Avigad, and Edmund M. Clarke. 2012. /u1D6FF-complete deci-
+sion procedures for satisﬁability over the reals. In Automated Reasoning (Lecture
+Notes in Computer Science) . Springer, 286–300.
+[10] Sicun Gao, Soonho Kong, and Edmund M. Clarke. 2013. dRea l: An SMT solver for
+nonlinear theories over the reals. In Automated Deduction – CADE-24 (Lecture
+Notes in Computer Science) . Springer, 208–214.
+[11] Yufeng Guo, Dongrui Zhang, Zhuchun Li, Qi Wang, and Dare n Yu. 2021.
+Overviews on the applications of the Kuramoto model in moder n power system
+analysis. International Journal of Electrical Power & Energy Systems 129 (2021),
+106804.
+[12] Gurobi Optimization, LLC. 2021. Gurobi Optimizer Refe rence Manual.
+https://www.gurobi.com
+[13] Binghan He, Jaemin Lee, Ufuk Topcu, and Luis Sentis. 202 0. BP-RRT: Barrier
+pair synthesis for temporal logic motion planning. In 2020 59th IEEE Conference
+on Decision and Control (CDC) . IEEE, 1404–1409.
+[14] Thomas A Henzinger, Pei-Hsin Ho, and Howard Wong-Toi. 1 997. HyTech: A
+model checker for hybrid systems. In Computer Aided Veriﬁcation: 9th Interna-
+tional Conference, CAV’97 Haifa, Israel, June 22–25, 1997 Pr oceedings 9 . Springer,
+460–463.
+[15] Pushpak Jagtap, Sadegh Soudjani, and Majid Zamani. 201 8. Temporal logic ver-
+iﬁcation of stochastic systems using barrier certiﬁcates. In ATVA. 177–193.
+[16] Pushpak Jagtap, Sadegh Soudjani, and Majid Zamani. 202 0. Formal synthesis of
+stochastic systems via control barrier certiﬁcates. IEEE Trans. Automat. Control
+66, 7 (2020), 3097–3110.
+[17] Dejan Jovanović and Leonardo De Moura. 2013. Solving no n-linear arithmetic.
+ACM Communications in Computer Algebra 46, 3/4 (2013), 104–105.
+[18] Mahmoud Khaled and Majid Zamani. 2021. OmegaThreads: s ymbolic controller
+design for /u1D714-regular objectives. In Proceedings of the 24th International Confer-
+ence on Hybrid Systems: Computation and Control (Nashville, Tennessee) (HSCC
+’21). Association for Computing Machinery, New York, NY, USA, Ar ticle 25,
+7 pages. https://doi.org/10.1145/3447928.3456652
+[19] Soonho Kong, Armando Solar-Lezama, and Sicun Gao. 2018 . Delta-decision pro-
+cedures for exists-forall problems over the reals. In Computer Aided Veriﬁcation:
+30th International Conference, CAV 2018, Held as Part of the F ederated Logic Con-
+ference, FloC 2018, Oxford, UK, July 14-17, 2018, Proceeding s, Part II 30 . Springer,
+219–235.
+[20] Dexter C Kozen. 2006. Theory of computation . Vol. 121. Springer.
+[21] Morteza Lahijanian, Sean B Andersson, and Calin Belta. 2011. Temporal logic
+motion planning and control with probabilistic satisfacti on guarantees. IEEE
+Transactions on Robotics 28, 2 (2011), 396–409.
+[22] Leonardo de Moura and Nikolaj Bjørner. 2008. Z3: An eﬃci ent SMT solver. In
+International conference on Tools and Algorithms for the Co nstruction and Analysis
+of Systems . 337–340.
+[23] Pablo A. Parrilo. 2003. Semideﬁnite programming relax ations for semialgebraic
+problems. Mathematical Programming 96 (2003), 293–320.
+[24] Amir Pnueli. 1977. The temporal logic of programs. In 18th Annual Symposium
+on Foundations of Computer Science . IEEE, 46–57.
+[25] Andreas Podelski and Andrey Rybalchenko. 2004. Transi tion invariants. In Pro-
+ceedings of the 19th Annual IEEE Symposium on Logic in Comput er Science, 2004.
+IEEE, 32–41.
+[26] Andreas Podelski and Silke Wagner. 2006. Model checkin g of hybrid systems:
+From reachability towards stability. In International Workshop on Hybrid Systems:
+Computation and Control . Springer, 507–521.
+[27] Stephen Prajna and Ali Jadbabaie. 2004. Safety veriﬁca tion of hybrid systems
+using barrier certiﬁcates. In International Workshop on Hybrid Systems: Compu-
+tation and Control . Springer, 477–492.
+[28] Stephen Prajna, Antonis Papachristodoulou, and Pablo A Parrilo. 2002. Intro-
+ducing SOSTOOLS: A general purpose sum of squares programmi ng solver. In
+Proceedings of the 41st IEEE Conference on Decision and Contr ol, 2002. IEEE, 741–
+746.
+[29] Stephen Prajna and Anders Rantzer. 2007. Convex progra ms for temporal veriﬁ-
+cation of nonlinear dynamical systems. SIAM Journal on Control and Optimiza-
+tion (2007), 999–1021.
+[30] Matthias Rungger and Majid Zamani. 2016. SCOTS: A tool f or the synthesis of
+symbolic controllers. In Proceedings of the 19th international conference on hybrid
+systems: Computation and control . 99–104.
+[31] Shmuel Safra. 1988. On the complexity of /u1D714-automata. In Proc. 29th IEEE Symp.
+Found. of Comp. Sci . IEEE, 319–327.
+[32] Sriram Sankaranarayanan and Ashish Tiwari. 2011. Rela tional abstractions for
+continuous and hybrid systems. In International Conference on Computer Aided
+Veriﬁcation. Springer, 686–702.
+[33] Sven Schewe and Bernd Finkbeiner. 2007. Bounded synthe sis. In International
+symposium on automated technology for veriﬁcation and anal ysis. Springer, 474–
+488.
+[34] Armando Solar-Lezama. 2008. Program Synthesis by Sketching .
+[35] Paulo Tabuada. 2009. Veriﬁcation and Control of Hybrid Systems: A Symbolic
+Approach. Springer Science & Business Media.
+[36] Moshe Y Vardi. 2005. An automata-theoretic approach to linear temporal logic.
+Logics for concurrency: structure versus automata (2005), 238–266.
+[37] Tichakorn Wongpiromsarn, Ufuk Topcu, and Andrew Lampe rski. 2015. Au-
+tomata theory meets barrier certiﬁcates: Temporal logic ve riﬁcation of nonlinear
+systems. IEEE Trans. Automat. Control 61, 11 (2015), 3344–3355.
+
+
+===== PAGE 12 =====
+HSCC ’24, May 14–16, 2024, Hong Kong, Hong Kong Vishnu Murali, Ashutosh Trivedi, and Majid Zamani
+A CONTINUOUS SPACE EXAMPLE FOR
+THEOREM 3
+0
+1
+1
+32
+33
+32
+1
+16
+17
+16
+1
+8
+9
+8
+1
+4
+5
+4
+1
+2
+3
+2
+Figure 6: A continuous-space system which has no barrier
+certiﬁcate of degree 2 which indicates safety. The initial
+states are denoted in green, while the unsafe states are de-
+noted in red. The dynamics are given by /u1D453(/u1D465) = {/u1D465+1} for all
+states /u1D465∈ X , where X = R denotes the state space.
+Observe that the above example requires any barrier certiﬁc ate
+to be of a degree greater than 2 by the intermediate value theo rem.
+Consider the function T (/u1D465,/u1D466.alt) = /u1D466.alt− /u1D465− 1. This function satisﬁes
+condition (11) as T (/u1D465,/u1D465+ 1) ≥ 0 for any /u1D465∈ X . Second, if we have
+T (/u1D465+ 1,/u1D466.alt) ≥ 0, i.e., /u1D466.alt− ( /u1D465+ 1) − 1 ≥ 0, then we can conclude
+that (T ( /u1D465,/u1D466.alt) ≥ 0 and so condition (12) also holds. Finally for any
+initial state /u1D4650, and unsafe state /u1D465/u1D462, we have T (/u1D4650,/u1D465/u1D462) < 0, thus
+ensuring condition (13) holds.
+B PROOF OF LEMMA 9
+P/r.sc/o.sc/o.sc/f.sc.First let us unroll the simple cycles of the automaton
+A that start from an accepting state to construct an automaton
+A′ = (Σ,/u1D444′,/u1D4440,/u1D6FF′,/u1D444′
+/u1D434/u1D450/u1D450) such that /u1D43F(A′) = /u1D43F(A) . The states
+/u1D444′ of A′ contain all the states /u1D444of A as well as one new state /u1D456′
+for every state /u1D456∈ /u1D444that can be reached from an accepting state.
+Determining which states are reachable from an accepting st ate
+can be done in polynomial time [20] in the number of states of t he
+automaton. Intuitively, these new states are meant to deter mine
+the state runs of the system which have reached an accepting s tate
+and continue onward. The set of initial states is the same as A,
+while the set of accepting states consist of the states ℓ′, i.e., those
+accepting states that can be reached from an accepting state . The
+transitions /u1D6FF′ are the same as the transitions for A, except for those
+the transitions that leave an accepting state ℓ ∈ /u1D434/u1D450/u1D450and additional
+transitions added. The transitions added are due to two reas ons :
+(1) For every pair of states /u1D456,/u1D457∈ /u1D444that are reachable from an
+accepting state, and for any /u1D70E∈ Σ such that /u1D457∈ /u1D6FF(/u1D456,/u1D70E), we
+add a transition /u1D457′ ∈ /u1D6FF(/u1D456′,/u1D70E). This preserves all the transi-
+tions for the newly added states so they behave the same as
+before.
+(2) For every state /u1D456∈ /u1D444, and every accepting state ℓ ∈ /u1D434/u1D450/u1D450, and
+any letter /u1D70E∈ Σ such that /u1D457∈ /u1D6FF(ℓ,/u1D70E), we add a transition
+/u1D457′ ∈ /u1D6FF(ℓ,/u1D70E). For every edge that leaves the accepting state,
+we add an edge to move to the states of the form /u1D45E′ ∈ /u1D444′ \/u1D444.
+Observe that there are no transition from the states in /u1D444′ \/u1D444
+to the ones in /u1D444.
+Unrolling the automaton once, allows us to now consider the s tate
+triplets of the form (/u1D45E,/u1D45E′,/u1D45E′′), where either /u1D45E′ and /u1D45E′′ are in /u1D444′ \/u1D444
+or /u1D45E′,/u1D45E′ ∈ /u1D444and /u1D45E′′ ∈ /u1D444′ \ /u1D444.
+Unfortunately performing the same construction again does not
+add any new pair of letters to consider. Let us repeat the abov e con-
+struction on NBA A′ to construct the NBA A′′ = (Σ,/u1D444′′,/u1D4440,/u1D6FF,/u1D444′′
+/u1D453),
+and consider a state triplet (/u1D45E,/u1D45E′,/u1D45E′′) in A′′. First, if all the states
+/u1D45E,/u1D45E′, and /u1D45E′′ are in the set /u1D444′, then they were already a state triplet
+in the original NBA. We now consider the diﬀerent cases where a
+new state triplet (/u1D45E,/u1D45E′,/u1D45E′′) may be considered.
+(1) If all the states in the triplet are in /u1D444′′ or in /u1D444′, then there
+are no new edge pairs to consider (as there exist triplets
+(/u1D45E1,/u1D45E′
+1,/u1D45E′′
+1 ) in A′ that have the same labels and have already
+been considered).
+(2) The state /u1D45E′′ ∈ /u1D444′′ \ /u1D444is newly added while the states /u1D45E
+and /u1D45E′ are in /u1D444′. In this case there must be analogous state
+triplet (/u1D45E1,/u1D45E′
+1,/u1D45E′′
+1 ) such that /u1D45E′′
+1 ∈ /u1D444′ \ /u1D444, and the states
+/u1D45E1 and /u1D45E′
+1 were initially present in /u1D444which correspond to
+the same pair of letters. Thus, again there are no pairs to be
+considered.
+(3) The states /u1D45E′ and /u1D45E′′ are in the set /u1D444′′ \ /u1D444′ (they are newly
+added states) but /u1D45Eis not. In this case there exists an anal-
+ogous state triplet (/u1D45E1,/u1D45E′
+1,/u1D45E′′
+1 ), such that the state /u1D45E1 ∈ /u1D444
+and the states /u1D45E′
+1 and /u1D45E′′
+1 are in the set /u1D444′ \ /u1D444with the same
+label. Hence, this again does not add a new edge pair to be
+considered.
+No other cases need to be considered, as no state in /u1D444′′ \ /u1D444′ can
+reach a state in /u1D444′ by construction. As no new pairs of letters are
+considered when unrolling more than once, we observe that we
+cannot ﬁnd barrier certiﬁcates with a diﬀerent initial or un safe con-
+dition. □
+C PROOF OF SUBSUMPTION
+T/h.sc/e.sc/o.sc/r.sc/e.sc/m.sc 11 (S/u.sc/b.sc/s.sc/u.sc/m.sc/i.sc/n.sc/g.sc /t.sc/h.sc/e.sc /s.sc/t.sc/a.sc/t.sc/e.sc /t.sc/r.sc/i.sc/p.sc/l.sc/e.sc/t.sc /a.sc/p.sc/p.sc/r.sc/o.sc/a.sc/c.sc/h.sc).Con-
+sider a System /u1D516 =(X,X0,/u1D453), a labeling map L : X → Σ, and
+an NBA A′ = (Σ,/u1D444′,/u1D4440,/u1D6FF′,/u1D444′
+/u1D434/u1D450/u1D450) representing the complement of
+an /u1D714-regular speciﬁcation, and let barrier certiﬁcates B1,..., B/u1D45Abe
+used to show that /u1D447/u1D445(/u1D516,L) ∩ /u1D43F(A′) = ∅ via the state triplet ap-
+proach. Then there exists a closure certiﬁcate T that also acts as a
+proof that /u1D447/u1D445(/u1D516,L) ∩ /u1D43F(A′) = ∅.
+P/r.sc/o.sc/o.sc/f.sc.Fix /u1D709∈ R> 0 as a small positive value, then we deﬁne a
+closure certiﬁcate T : X × /u1D444× X × /u1D444→ Rbased on the following
+cases:
+(1) The automaton states are either in /u1D444/u1D459or /u1D444/u1D45F.
+(2) The ﬁrst automaton state is a middle element of some tripl et.
+(3) The second automaton state is the middle element of some
+triplet.
+We deﬁne T (/u1D465,/u1D456,/u1D466.alt,/u1D457) for each of the above cases as follows:
+(1) We deﬁne T (/u1D465,/u1D456,/u1D466.alt,/u1D457) = 0, if /u1D456and /u1D457are in the same set, i.e.
+both /u1D456and /u1D457are either in /u1D444/u1D459or /u1D444/u1D45F; or if the state /u1D456∈ /u1D444/u1D45F, and
+state /u1D457∈ /u1D444/u1D459and for every pair of states /u1D465,/u1D466.alt∈ X . We deﬁne
+T (/u1D465,/u1D456,/u1D466.alt,/u1D457) = −/u1D709if /u1D456∈ /u1D444/u1D459, and /u1D457∈ /u1D444/u1D45F. Intuitively, this
+
+
+===== PAGE 13 =====
+Closure Certificates HSCC ’24, May 14–16, 2024, Hong Kong, Ho ng Kong
+assumes that all states in /u1D444/u1D459are reachable from any state in
+either /u1D444/u1D45For /u1D444/u1D459, however no state in /u1D444/u1D45Fis reachable from
+some state in /u1D444/u1D459.
+(2) Let /u1D456= /u1D45E′/u1D45Abe a middle element of some triplet, then we
+deﬁne T (/u1D465,/u1D456,/u1D466.alt,/u1D457) depending on the value of B/u1D45A(/u1D465) and
+B/u1D45A(/u1D466.alt). For all states /u1D465∈ X , such that B/u1D45A(/u1D465) ≤ 0, we deﬁne
+T (/u1D465,/u1D456,/u1D466.alt,/u1D457) = 0 for all states /u1D466.alt∈ X such that B/u1D45A(/u1D466.alt) ≤ 0 and
+/u1D457∈ /u1D444/u1D459∪ { /u1D456}; and T (/u1D465,/u1D456,/u1D466.alt,/u1D457) = −/u1D709for all states /u1D457∈ /u1D444/u1D45Fand
+/u1D466.alt∈ X . Otherwise, we deﬁne T (/u1D465,/u1D456,/u1D466.alt,/u1D457) = 0 for all states
+/u1D466.alt∈ X , and /u1D457∈ /u1D444. Intuitively, this separates those states
+that can be reached from /u1D444/u1D459, and those states that are in /u1D444/u1D45F,
+while allowing the states in /u1D444/u1D45Fto reach the states in /u1D444/u1D459.
+(3) Finally, let /u1D457= /u1D45E′/u1D45Abe a middle element of some triplet, then
+we deﬁne T (/u1D465,/u1D456,/u1D466.alt,/u1D457) = 0 for all states /u1D465∈ X , /u1D456∈ /u1D444/u1D459, and
+every state /u1D466.alt∈ X such that B/u1D45A(/u1D466.alt) ≤ 0 and T (/u1D465,/u1D459,/u1D466.alt,/u1D457) =
+−/u1D709otherwise. Similarly, we deﬁne T (/u1D465,/u1D456,/u1D466.alt,/u1D457) = 0 for all
+states /u1D465∈ X , /u1D456∈ /u1D444/u1D45F, and every state /u1D466.alt∈ X . Intuitively,
+this enforces that starting from a state in /u1D444/u1D459, one does not
+reach a state where the barrier value is greater than 0, and
+the automaton state is the middle element of a triplet.
+We now show that T is a closure certiﬁcate. First, we observe
+that condition (19) trivially holds as all states /u1D45E/u1D460∈ /u1D4440 are in the
+set /u1D444/u1D459and all states ℓ ∈ /u1D434/u1D450/u1D450are in the set /u1D444/u1D45F, therefore by deﬁ-
+nition we must have T (/u1D465,/u1D460,/u1D466.alt,ℓ) = −/u1D709for all states /u1D465∈ X 0, and
+/u1D466.alt∈ X . Second, let us assume that condition (17) fails to hold,
+i.e. there exists a state /u1D456∈ /u1D444, and /u1D465∈ X , /u1D465′ = /u1D453(/u1D465) and /u1D456′ ∈
+/u1D6FF(/u1D456,L(/u1D465)), such that T (/u1D465,/u1D456,/u1D465′,/u1D456′) < 0. For this to be true we must
+have T (/u1D465,/u1D456,/u1D465′,/u1D456′) = −/u1D709. Clearly, /u1D456∈ /u1D444/u1D459and /u1D456′ ∈ /u1D444/u1D45Fcannot hold
+as the barrier certiﬁcates disallow reaching the states in /u1D444/u1D45Ffrom
+/u1D444/u1D459in one step of the transition without passing through the mid -
+dle element of some triplet. Thus either /u1D456or /u1D456′ must be the middle
+element of some triplet. If /u1D456is the middle element of some triplet,
+then we must have /u1D456′ ∈ /u1D444/u1D45F, and B/u1D45A(/u1D465) ≤ 0. As B/u1D45A(/u1D465) ≤ 0, we
+must have B/u1D45A(/u1D465′) ≤ 0 as well and so /u1D456′ cannot be the last element
+of the triplet. If /u1D456′ is another state in /u1D444/u1D45Fthat is to the right of ev-
+ery triplet, then it could not be reached from any state in /u1D444/u1D459and
+hence cannot be reached from any state that is reachable from /u1D456′
+and therefore /u1D456cannot be a middle element of some triplet. Lastly,
+if /u1D456′ is the middle element of some triplet, then it must be the case
+that B/u1D45A(/u1D466.alt) > 0, and following the last condition of the barrier
+no state in /u1D444/u1D459should be able to reach /u1D456′. Thus condition (18) must
+hold. Finally, assume that condition (19) fails to hold, the n there
+exists some state /u1D465∈ X , /u1D466.alt∈ X , and states /u1D456, /u1D457∈ /u1D444, such that for
+/u1D465′ = /u1D453(/u1D465), and /u1D456′ ∈ /u1D6FF(/u1D456,L(/u1D465)), and we have T ((/u1D465′,/u1D456′),(/u1D466.alt,/u1D457)) ≥ 0
+and T ((/u1D465,/u1D456),(/u1D466.alt,/u1D457)) = −/u1D709. For this to be true, one of the following
+must hold:
+(1) the state /u1D456is in /u1D444/u1D459, and the state /u1D457is in /u1D444/u1D45F. We know that
+T (( /u1D465′,/u1D456′),(/u1D466.alt,/u1D457)) ≥ 0, and so we may be able to reach state
+/u1D457from /u1D456′. We know /u1D456′ ∈ /u1D6FF(/u1D456,L(/u1D465)), by deﬁnition, and so
+we must have T ((/u1D465,/u1D456),(/u1D465′,/u1D456′)) ≥ 0, and as /u1D456is in /u1D444/u1D459, it
+must follow that state /u1D456′ is also either in /u1D45E/u1D459or the middle
+element of some triplet such that B/u1D45A(/u1D465′) ≤ 0 for some
+0 ≤ /u1D45A≤ /u1D458. From the previous conditions, it follows, that
+T ((/u1D465′,/u1D456′),(/u1D466.alt,/u1D457)) = −/u1D709.
+(2) The state /u1D456is the middle element of some triplet, such that
+B/u1D45A(/u1D465) ≤ 0 and either /u1D457is in /u1D444/u1D45For B/u1D456(/u1D466.alt) > 0. If /u1D457is in
+/u1D444/u1D45F, we observe that T (/u1D465′,/u1D456′,/u1D466.alt,/u1D457) ≥ 0, and so we must have
+B/u1D45A(/u1D465′) > 0 which cannot hold or /u1D456′ is in /u1D444/u1D45F. However, /u1D456′ ∈
+/u1D6FF(/u1D456,L(/u1D465)), and so similar to the previous case, this cannot
+be true.
+(3) Finally, the state /u1D457is the middle element of some triplet. If
+so, we must have /u1D456∈ /u1D444/u1D459, and B/u1D456(/u1D466.alt) > 0. We observe that
+the we must have T (/u1D465,/u1D456,/u1D465′,/u1D456′) ≥ 0 as the ﬁrst condition
+holds, and so /u1D456′ ∈ /u1D444/u1D459. If T (/u1D465′,/u1D456′,/u1D466.alt,/u1D457) ≥ 0, then it must be
+the case that B/u1D45A(/u1D466.alt) ≤ 0 by construction as /u1D456′ ∈ /u1D444/u1D459. This is
+a contradiction.
+□
+D CLOSURE CERTIFICATES
+We now state the values for the coeﬃcients in our two case stud ies.
+D.1 Closure Certiﬁcate for the
+two-dimensional Kuramoto Oscillator and
+NBA in Figure 4
+The coeﬃcients for the closure certiﬁcate T ((/u1D4651,/u1D4652,/u1D456),(/u1D466.alt1,/u1D466.alt2,/u1D457))
+are speciﬁed in the table below:
+/u1D456/u1D457 /u1D4500,/u1D456,/u1D457/u1D4501,/u1D456,/u1D457/u1D4502,/u1D456,/u1D457/u1D4503,/u1D456,/u1D457/u1D4504,/u1D456,/u1D457/u1D4505,/u1D456,/u1D457 /u1D4506,/u1D456,/u1D457
+/u1D45E0 /u1D45E0 10 10 10 10 10 10 10
+/u1D45E0 /u1D45E1 −0.5875 10 10 0 0 −8.2456 −10
+/u1D45E1 /u1D45E0 −10 10 10 10 10 −10 −10
+/u1D45E1 /u1D45E1 −1.4164 10 10 10 10 1.7536 −0.2975
+D.2 Closure Certiﬁcate for the Two room
+temperature example and NBA in Figure 5
+The coeﬃcients for the closure certiﬁcate T ((/u1D4651,/u1D4652,/u1D456),(/u1D466.alt1,/u1D466.alt2,/u1D457))
+are given in the tables below:
+/u1D456/u1D457/u1D4500,/u1D456,/u1D457/u1D4501,/u1D456,/u1D457/u1D4502,/u1D456,/u1D457/u1D4503,/u1D456,/u1D457/u1D4504,/u1D456,/u1D457/u1D4505,/u1D456,/u1D457
+/u1D45E0 /u1D45E0 10 10 10 10 10 10
+/u1D45E0 /u1D45E1 10 10 10 10 10 10
+/u1D45E0 /u1D45E2 10 10 10 10 10 10
+/u1D45E0 /u1D45E3 10 10 10 10 10 10
+/u1D45E1 /u1D45E0 −10 −10 −10 −10 −10 −0.497
+/u1D45E1 /u1D45E1 −10 −10 −10 −10 −10 −0.497
+/u1D45E1 /u1D45E2 −10 −10 −10 −10 −10 −0.497
+/u1D45E1 /u1D45E3 −10 −10 −10 −10 −10 −0.497
+/u1D45E2 /u1D45E0 −10 −10 −10 −10 −10 −1.47
+/u1D45E2 /u1D45E1 −10 −10 −10 −10 −10 −1.47
+/u1D45E2 /u1D45E2 −10 −10 −10 −10 −10 −1.47
+/u1D45E2 /u1D45E3 −10 −10 −10 −10 −10 −1.47
+/u1D45E3 /u1D45E0 −10 −10 −10 −10 −10 −0.387
+/u1D45E3 /u1D45E1 −10 −10 −10 −10 −10 −0.387
+/u1D45E3 /u1D45E2 −10 −10 −10 −10 −10 −0.387
+/u1D45E3 /u1D45E3 1 1 1 1 1 1
+
+
+===== PAGE 14 =====
+HSCC ’24, May 14–16, 2024, Hong Kong, Hong Kong Vishnu Murali, Ashutosh Trivedi, and Majid Zamani
+/u1D456/u1D457/u1D4506,/u1D456,/u1D457/u1D4507,/u1D456,/u1D457/u1D4508,/u1D456,/u1D457/u1D4509,/u1D456,/u1D457/u1D45010,/u1D456,/u1D457
+/u1D45E0 /u1D45E0 10 10 10 10 10
+/u1D45E0 /u1D45E1 10 10 10 10 10
+/u1D45E0 /u1D45E2 10 10 10 10 10
+/u1D45E0 /u1D45E3 10 10 10 10 10
+/u1D45E1 /u1D45E0 −10 0.179 −10 0.169 −10
+/u1D45E1 /u1D45E1 −10 0.179 −10 0.169 −10
+/u1D45E1 /u1D45E2 −10 0.179 −10 0.169 −10
+/u1D45E1 /u1D45E3 −10 0.179 −10 0.169 −10
+/u1D45E2 /u1D45E0 −10 0.194 −10 0.191 −10
+/u1D45E2 /u1D45E1 −10 0.194 −10 0.191 −10
+/u1D45E2 /u1D45E2 −10 0.194 −10 0.191 −10
+/u1D45E2 /u1D45E3 −10 0.194 −10 0.191 −10
+/u1D45E3 /u1D45E0 −10 0.177 −10 0.163 −10
+/u1D45E3 /u1D45E1 −10 0.177 −10 0.163 −10
+/u1D45E3 /u1D45E2 −10 0.177 −10 0.163 −10
+/u1D45E3 /u1D45E3 1 1 1 1 1

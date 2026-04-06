@@ -1,0 +1,315 @@
+\begin{thebibliography}{36}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\href}[2]{#2}
+\providecommand{\path}[1]{#1}
+\providecommand{\DOIprefix}{doi:}
+\providecommand{\ArXivprefix}{arXiv:}
+\providecommand{\URLprefix}{URL: }
+\providecommand{\Pubmedprefix}{pmid:}
+\providecommand{\doi}[1]{\href{http://dx.doi.org/#1}{\path{#1}}}
+\providecommand{\Pubmed}[1]{\href{pmid:#1}{\path{#1}}}
+\providecommand{\bibinfo}[2]{#2}
+\ifx\xfnm\relax \def\xfnm[#1]{\unskip,\space#1}\fi
+%Type = Article
+\bibitem[{Anand et~al.(2022)Anand, Lavaei and Zamani}]{anand2022small}
+\bibinfo{author}{Anand, M.}, \bibinfo{author}{Lavaei, A.},
+  \bibinfo{author}{Zamani, M.}, \bibinfo{year}{2022}.
+\newblock \bibinfo{title}{From small-gain theory to compositional construction
+  of barrier certificates for large-scale stochastic systems}.
+\newblock \bibinfo{journal}{IEEE Transactions on Automatic Control}
+  \bibinfo{volume}{67}, \bibinfo{pages}{5638--5645}.
+%Type = Article
+\bibitem[{Anand et~al.(2024)Anand, Lavaei and Zamani}]{anand2024compositional}
+\bibinfo{author}{Anand, M.}, \bibinfo{author}{Lavaei, A.},
+  \bibinfo{author}{Zamani, M.}, \bibinfo{year}{2024}.
+\newblock \bibinfo{title}{Compositional synthesis of control barrier
+  certificates for networks of stochastic systems against $\omega$-regular
+  specifications}.
+\newblock \bibinfo{journal}{Nonlinear Analysis: Hybrid Systems}
+  \bibinfo{volume}{51}, \bibinfo{pages}{101427}.
+%Type = Article
+\bibitem[{Baheti and Gill(2011)}]{baheti2011cyber}
+\bibinfo{author}{Baheti, R.}, \bibinfo{author}{Gill, H.}, \bibinfo{year}{2011}.
+\newblock \bibinfo{title}{Cyber-physical systems}.
+\newblock \bibinfo{journal}{The impact of control technology}
+  \bibinfo{volume}{12}, \bibinfo{pages}{161--166}.
+%Type = Book
+\bibitem[{Baier and Katoen(2008)}]{baier2008principles}
+\bibinfo{author}{Baier, C.}, \bibinfo{author}{Katoen, J.P.},
+  \bibinfo{year}{2008}.
+\newblock \bibinfo{title}{Principles of model checking}.
+\newblock \bibinfo{publisher}{MIT press}.
+%Type = Inproceedings
+\bibitem[{Chakarov and Sankaranarayanan(2013)}]{chakarov2013probabilistic}
+\bibinfo{author}{Chakarov, A.}, \bibinfo{author}{Sankaranarayanan, S.},
+  \bibinfo{year}{2013}.
+\newblock \bibinfo{title}{Probabilistic program analysis with martingales}, in:
+  \bibinfo{booktitle}{Computer Aided Verification: 25th International
+  Conference, CAV 2013, Saint Petersburg, Russia, July 13-19, 2013. Proceedings
+  25}, \bibinfo{organization}{Springer}. pp. \bibinfo{pages}{511--526}.
+%Type = Inproceedings
+\bibitem[{Chatterjee et~al.(2016)Chatterjee, Fu, Novotn{\`y} and
+  Hasheminezhad}]{chatterjee2016algorithmic}
+\bibinfo{author}{Chatterjee, K.}, \bibinfo{author}{Fu, H.},
+  \bibinfo{author}{Novotn{\`y}, P.}, \bibinfo{author}{Hasheminezhad, R.},
+  \bibinfo{year}{2016}.
+\newblock \bibinfo{title}{Algorithmic analysis of qualitative and quantitative
+  termination problems for affine probabilistic programs}, in:
+  \bibinfo{booktitle}{Proceedings of the 43rd Annual ACM SIGPLAN-SIGACT
+  Symposium on Principles of Programming Languages}, pp.
+  \bibinfo{pages}{327--342}.
+%Type = Inproceedings
+\bibitem[{Chatterjee et~al.(2024a)Chatterjee, Goharshady, Goharshady, Karrabi
+  and {\v{Z}}ikeli{\'c}}]{chatterjee2024sound}
+\bibinfo{author}{Chatterjee, K.}, \bibinfo{author}{Goharshady, A.},
+  \bibinfo{author}{Goharshady, E.}, \bibinfo{author}{Karrabi, M.},
+  \bibinfo{author}{{\v{Z}}ikeli{\'c}, {\DJ}.}, \bibinfo{year}{2024}a.
+\newblock \bibinfo{title}{Sound and complete witnesses for template-based
+  verification of ltl properties on polynomial programs}, in:
+  \bibinfo{booktitle}{International Symposium on Formal Methods},
+  \bibinfo{organization}{Springer}. pp. \bibinfo{pages}{600--619}.
+%Type = Article
+\bibitem[{Chatterjee et~al.(2024b)Chatterjee, Goharshady, Novotn{\`y} and
+  {\v{Z}}ikeli{\'c}}]{chatterjee2024equivalence}
+\bibinfo{author}{Chatterjee, K.}, \bibinfo{author}{Goharshady, E.K.},
+  \bibinfo{author}{Novotn{\`y}, P.}, \bibinfo{author}{{\v{Z}}ikeli{\'c},
+  {\DJ}.}, \bibinfo{year}{2024}b.
+\newblock \bibinfo{title}{Equivalence and similarity refutation for
+  probabilistic programs}.
+\newblock \bibinfo{journal}{Proceedings of the ACM on Programming Languages}
+  \bibinfo{volume}{8}, \bibinfo{pages}{2098--2122}.
+%Type = Article
+\bibitem[{Coogan et~al.(2015)Coogan, Gol, Arcak and Belta}]{coogan2015traffic}
+\bibinfo{author}{Coogan, S.}, \bibinfo{author}{Gol, E.A.},
+  \bibinfo{author}{Arcak, M.}, \bibinfo{author}{Belta, C.},
+  \bibinfo{year}{2015}.
+\newblock \bibinfo{title}{Traffic network control from temporal logic
+  specifications}.
+\newblock \bibinfo{journal}{IEEE Transactions on Control of Network Systems}
+  \bibinfo{volume}{3}, \bibinfo{pages}{162--172}.
+%Type = Inproceedings
+\bibitem[{De~Moura and Bj{\o}rner(2008)}]{de2008z3}
+\bibinfo{author}{De~Moura, L.}, \bibinfo{author}{Bj{\o}rner, N.},
+  \bibinfo{year}{2008}.
+\newblock \bibinfo{title}{Z3: An efficient smt solver}, in:
+  \bibinfo{booktitle}{International conference on Tools and Algorithms for the
+  Construction and Analysis of Systems}, \bibinfo{organization}{Springer}. pp.
+  \bibinfo{pages}{337--340}.
+%Type = Article
+\bibitem[{Ding et~al.(2014)Ding, Smith, Belta and Rus}]{ding2014optimal}
+\bibinfo{author}{Ding, X.}, \bibinfo{author}{Smith, S.L.},
+  \bibinfo{author}{Belta, C.}, \bibinfo{author}{Rus, D.}, \bibinfo{year}{2014}.
+\newblock \bibinfo{title}{Optimal control of markov decision processes with
+  linear temporal logic constraints}.
+\newblock \bibinfo{journal}{IEEE Transactions on Automatic Control}
+  \bibinfo{volume}{59}, \bibinfo{pages}{1244--1257}.
+%Type = Article
+\bibitem[{Fainekos et~al.(2009)Fainekos, Girard, Kress-Gazit and
+  Pappas}]{fainekos2009temporal}
+\bibinfo{author}{Fainekos, G.E.}, \bibinfo{author}{Girard, A.},
+  \bibinfo{author}{Kress-Gazit, H.}, \bibinfo{author}{Pappas, G.J.},
+  \bibinfo{year}{2009}.
+\newblock \bibinfo{title}{Temporal logic motion planning for dynamic robots}.
+\newblock \bibinfo{journal}{Automatica} \bibinfo{volume}{45},
+  \bibinfo{pages}{343--352}.
+%Type = Inproceedings
+\bibitem[{Gao et~al.(2013)Gao, Kong and Clarke}]{gao2013dreal}
+\bibinfo{author}{Gao, S.}, \bibinfo{author}{Kong, S.}, \bibinfo{author}{Clarke,
+  E.M.}, \bibinfo{year}{2013}.
+\newblock \bibinfo{title}{dreal: An smt solver for nonlinear theories over the
+  reals}, in: \bibinfo{booktitle}{International conference on automated
+  deduction}, \bibinfo{organization}{Springer}. pp. \bibinfo{pages}{208--214}.
+%Type = Inproceedings
+\bibitem[{Giacobbe et~al.(2025)Giacobbe, Kroening, Pal and
+  Tautschnig}]{giacobbe2025let}
+\bibinfo{author}{Giacobbe, M.}, \bibinfo{author}{Kroening, D.},
+  \bibinfo{author}{Pal, A.}, \bibinfo{author}{Tautschnig, M.},
+  \bibinfo{year}{2025}.
+\newblock \bibinfo{title}{Let a neural network be your invariant}, in:
+  \bibinfo{booktitle}{The Thirty-ninth Annual Conference on Neural Information
+  Processing Systems}.
+%Type = Article
+\bibitem[{Hahn et~al.(2020)Hahn, Perez, Schewe, Somenzi, Trivedi and
+  Wojtczak}]{hahn2020reward}
+\bibinfo{author}{Hahn, E.M.}, \bibinfo{author}{Perez, M.},
+  \bibinfo{author}{Schewe, S.}, \bibinfo{author}{Somenzi, F.},
+  \bibinfo{author}{Trivedi, A.}, \bibinfo{author}{Wojtczak, D.},
+  \bibinfo{year}{2020}.
+\newblock \bibinfo{title}{Reward shaping for reinforcement learning with
+  omega-regular objectives}.
+\newblock \bibinfo{journal}{arXiv preprint arXiv:2001.05977} .
+%Type = Inproceedings
+\bibitem[{Henzinger et~al.(1997)Henzinger, Ho and
+  Wong-Toi}]{henzinger1997hytech}
+\bibinfo{author}{Henzinger, T.A.}, \bibinfo{author}{Ho, P.H.},
+  \bibinfo{author}{Wong-Toi, H.}, \bibinfo{year}{1997}.
+\newblock \bibinfo{title}{Hytech: A model checker for hybrid systems}, in:
+  \bibinfo{booktitle}{International conference on computer aided verification},
+  \bibinfo{organization}{Springer}. pp. \bibinfo{pages}{460--463}.
+%Type = Article
+\bibitem[{Hosseini et~al.(2025)Hosseini, Lomuscio and
+  Paoletti}]{hosseini2025ltl}
+\bibinfo{author}{Hosseini, M.}, \bibinfo{author}{Lomuscio, A.},
+  \bibinfo{author}{Paoletti, N.}, \bibinfo{year}{2025}.
+\newblock \bibinfo{title}{Ltl verification of memoryful neural agents}.
+\newblock \bibinfo{journal}{arXiv preprint arXiv:2503.02512} .
+%Type = Inproceedings
+\bibitem[{Khaled and Zamani(2021)}]{khaled2021omegathreads}
+\bibinfo{author}{Khaled, M.}, \bibinfo{author}{Zamani, M.},
+  \bibinfo{year}{2021}.
+\newblock \bibinfo{title}{Omegathreads: symbolic controller design for
+  $\omega$-regular objectives}, in: \bibinfo{booktitle}{Proceedings of the 24th
+  International Conference on Hybrid Systems: Computation and Control}, pp.
+  \bibinfo{pages}{1--7}.
+%Type = Article
+\bibitem[{Kress-Gazit et~al.(2009)Kress-Gazit, Fainekos and
+  Pappas}]{kress2009temporal}
+\bibinfo{author}{Kress-Gazit, H.}, \bibinfo{author}{Fainekos, G.E.},
+  \bibinfo{author}{Pappas, G.J.}, \bibinfo{year}{2009}.
+\newblock \bibinfo{title}{Temporal-logic-based reactive mission and motion
+  planning}.
+\newblock \bibinfo{journal}{IEEE transactions on robotics}
+  \bibinfo{volume}{25}, \bibinfo{pages}{1370--1381}.
+%Type = Article
+\bibitem[{Lahijanian et~al.(2011)Lahijanian, Andersson and
+  Belta}]{lahijanian2011temporal}
+\bibinfo{author}{Lahijanian, M.}, \bibinfo{author}{Andersson, S.B.},
+  \bibinfo{author}{Belta, C.}, \bibinfo{year}{2011}.
+\newblock \bibinfo{title}{Temporal logic motion planning and control with
+  probabilistic satisfaction guarantees}.
+\newblock \bibinfo{journal}{IEEE Transactions on Robotics}
+  \bibinfo{volume}{28}, \bibinfo{pages}{396--409}.
+%Type = Article
+\bibitem[{Leahy et~al.(2019)Leahy, Cristofalo, Vasile, Jones, Montijano,
+  Schwager and Belta}]{leahy2019control}
+\bibinfo{author}{Leahy, K.}, \bibinfo{author}{Cristofalo, E.},
+  \bibinfo{author}{Vasile, C.I.}, \bibinfo{author}{Jones, A.},
+  \bibinfo{author}{Montijano, E.}, \bibinfo{author}{Schwager, M.},
+  \bibinfo{author}{Belta, C.}, \bibinfo{year}{2019}.
+\newblock \bibinfo{title}{Control in belief space with temporal logic
+  specifications using vision-based localization}.
+\newblock \bibinfo{journal}{The International Journal of Robotics Research}
+  \bibinfo{volume}{38}, \bibinfo{pages}{702--722}.
+%Type = Inproceedings
+\bibitem[{Murali et~al.(2025)Murali, Oumer and Zamani}]{murali2025control}
+\bibinfo{author}{Murali, V.}, \bibinfo{author}{Oumer, M.A.},
+  \bibinfo{author}{Zamani, M.}, \bibinfo{year}{2025}.
+\newblock \bibinfo{title}{Control closure certificates}, in:
+  \bibinfo{booktitle}{International Symposium on Automated Technology for
+  Verification and Analysis}, \bibinfo{organization}{Springer}. pp.
+  \bibinfo{pages}{387--407}.
+%Type = Inproceedings
+\bibitem[{Murali et~al.(2024)Murali, Trivedi and Zamani}]{murali2024closure}
+\bibinfo{author}{Murali, V.}, \bibinfo{author}{Trivedi, A.},
+  \bibinfo{author}{Zamani, M.}, \bibinfo{year}{2024}.
+\newblock \bibinfo{title}{Closure certificates}, in:
+  \bibinfo{booktitle}{Proceedings of the 27th ACM International Conference on
+  Hybrid Systems: Computation and Control}, pp. \bibinfo{pages}{1--11}.
+%Type = Inproceedings
+\bibitem[{Nadali et~al.(2024)Nadali, Murali, Trivedi and
+  Zamani}]{nadali2024neural}
+\bibinfo{author}{Nadali, A.}, \bibinfo{author}{Murali, V.},
+  \bibinfo{author}{Trivedi, A.}, \bibinfo{author}{Zamani, M.},
+  \bibinfo{year}{2024}.
+\newblock \bibinfo{title}{Neural closure certificates}, in:
+  \bibinfo{booktitle}{Proceedings of the AAAI Conference on Artificial
+  Intelligence}, pp. \bibinfo{pages}{21446--21453}.
+%Type = Inproceedings
+\bibitem[{Pnueli(1977)}]{pnueli1977temporal}
+\bibinfo{author}{Pnueli, A.}, \bibinfo{year}{1977}.
+\newblock \bibinfo{title}{The temporal logic of programs}, in:
+  \bibinfo{booktitle}{18th annual symposium on foundations of computer science
+  (sfcs 1977)}, \bibinfo{organization}{ieee}. pp. \bibinfo{pages}{46--57}.
+%Type = Inproceedings
+\bibitem[{Podelski and Rybalchenko(2004)}]{podelski2004transition}
+\bibinfo{author}{Podelski, A.}, \bibinfo{author}{Rybalchenko, A.},
+  \bibinfo{year}{2004}.
+\newblock \bibinfo{title}{Transition invariants}, in:
+  \bibinfo{booktitle}{Proceedings of the 19th Annual IEEE Symposium on Logic in
+  Computer Science, 2004.}, \bibinfo{organization}{IEEE}. pp.
+  \bibinfo{pages}{32--41}.
+%Type = Inproceedings
+\bibitem[{Prajna and Jadbabaie(2004)}]{prajna2004safety}
+\bibinfo{author}{Prajna, S.}, \bibinfo{author}{Jadbabaie, A.},
+  \bibinfo{year}{2004}.
+\newblock \bibinfo{title}{Safety verification of hybrid systems using barrier
+  certificates}, in: \bibinfo{booktitle}{International workshop on hybrid
+  systems: Computation and control}, \bibinfo{organization}{Springer}. pp.
+  \bibinfo{pages}{477--492}.
+%Type = Inproceedings
+\bibitem[{Rajkumar et~al.(2010)Rajkumar, Lee, Sha and
+  Stankovic}]{rajkumar2010cyber}
+\bibinfo{author}{Rajkumar, R.}, \bibinfo{author}{Lee, I.},
+  \bibinfo{author}{Sha, L.}, \bibinfo{author}{Stankovic, J.},
+  \bibinfo{year}{2010}.
+\newblock \bibinfo{title}{Cyber-physical systems: the next computing
+  revolution}, in: \bibinfo{booktitle}{Proceedings of the 47th design
+  automation conference}, pp. \bibinfo{pages}{731--736}.
+%Type = Inproceedings
+\bibitem[{Rungger and Zamani(2016)}]{rungger2016scots}
+\bibinfo{author}{Rungger, M.}, \bibinfo{author}{Zamani, M.},
+  \bibinfo{year}{2016}.
+\newblock \bibinfo{title}{Scots: A tool for the synthesis of symbolic
+  controllers}, in: \bibinfo{booktitle}{Proceedings of the 19th international
+  conference on hybrid systems: Computation and control}, pp.
+  \bibinfo{pages}{99--104}.
+%Type = Book
+\bibitem[{Solar-Lezama(2008)}]{solar2008program}
+\bibinfo{author}{Solar-Lezama, A.}, \bibinfo{year}{2008}.
+\newblock \bibinfo{title}{Program synthesis by sketching}.
+\newblock \bibinfo{publisher}{University of California, Berkeley}.
+%Type = Book
+\bibitem[{Tabuada(2009)}]{tabuada2009verification}
+\bibinfo{author}{Tabuada, P.}, \bibinfo{year}{2009}.
+\newblock \bibinfo{title}{Verification and control of hybrid systems: a
+  symbolic approach}.
+\newblock \bibinfo{publisher}{Springer Science \& Business Media}.
+%Type = Inproceedings
+\bibitem[{Vasile et~al.(2016)Vasile, Leahy, Cristofalo, Jones, Schwager and
+  Belta}]{vasile2016control}
+\bibinfo{author}{Vasile, C.I.}, \bibinfo{author}{Leahy, K.},
+  \bibinfo{author}{Cristofalo, E.}, \bibinfo{author}{Jones, A.},
+  \bibinfo{author}{Schwager, M.}, \bibinfo{author}{Belta, C.},
+  \bibinfo{year}{2016}.
+\newblock \bibinfo{title}{Control in belief space with temporal logic
+  specifications}, in: \bibinfo{booktitle}{2016 IEEE 55th Conference on
+  Decision and Control (CDC)}, \bibinfo{organization}{IEEE}. pp.
+  \bibinfo{pages}{7419--7424}.
+%Type = Inproceedings
+\bibitem[{Wang et~al.()Wang, Bai, Zhi, Zhang and Ong}]{wang2025verifying}
+\bibinfo{author}{Wang, P.}, \bibinfo{author}{Bai, J.}, \bibinfo{author}{Zhi,
+  D.}, \bibinfo{author}{Zhang, M.}, \bibinfo{author}{Ong, L.}, .
+\newblock \bibinfo{title}{Verifying omega-regular properties of neural
+  network-controlled systems via proof certificates}, in:
+  \bibinfo{booktitle}{ICLR 2025 Workshop: VerifAI: AI Verification in the
+  Wild}.
+%Type = Article
+\bibitem[{Wongpiromsarn et~al.(2016)Wongpiromsarn, Topcu and
+  Lamperski}]{wongpiromsarn2015automata}
+\bibinfo{author}{Wongpiromsarn, T.}, \bibinfo{author}{Topcu, U.},
+  \bibinfo{author}{Lamperski, A.}, \bibinfo{year}{2016}.
+\newblock \bibinfo{title}{Automata theory meets barrier certificates: Temporal
+  logic verification of nonlinear systems}.
+\newblock \bibinfo{journal}{IEEE Transactions on Automatic Control}
+  \bibinfo{volume}{61}, \bibinfo{pages}{3344--3355}.
+%Type = Inproceedings
+\bibitem[{Wongpiromsarn et~al.(2009)Wongpiromsarn, Topcu and
+  Murray}]{wongpiromsarn2009receding}
+\bibinfo{author}{Wongpiromsarn, T.}, \bibinfo{author}{Topcu, U.},
+  \bibinfo{author}{Murray, R.M.}, \bibinfo{year}{2009}.
+\newblock \bibinfo{title}{Receding horizon temporal logic planning for
+  dynamical systems}, in: \bibinfo{booktitle}{Proceedings of the 48h IEEE
+  Conference on Decision and Control (CDC) held jointly with 2009 28th Chinese
+  Control Conference}, \bibinfo{organization}{IEEE}. pp.
+  \bibinfo{pages}{5997--6004}.
+%Type = Inproceedings
+\bibitem[{Zhao et~al.(2020)Zhao, Zeng, Chen and Liu}]{zhao2020synthesizing}
+\bibinfo{author}{Zhao, H.}, \bibinfo{author}{Zeng, X.}, \bibinfo{author}{Chen,
+  T.}, \bibinfo{author}{Liu, Z.}, \bibinfo{year}{2020}.
+\newblock \bibinfo{title}{Synthesizing barrier certificates using neural
+  networks}, in: \bibinfo{booktitle}{Proceedings of the 23rd international
+  conference on hybrid systems: Computation and control}, pp.
+  \bibinfo{pages}{1--11}.
+
+\end{thebibliography}
