@@ -1,4 +1,6 @@
 import math
+import json
+import argparse
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -7,6 +9,7 @@ import random
 import time
 import numpy as np
 import sympy as sp
+from pathlib import Path
 
 """
 Case: Temperature Control System with 2 Rooms
@@ -464,6 +467,10 @@ def synthesize_persistence_certificate():
     return B_net, cc_flag
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="ex3 NNT synthesis")
+    parser.add_argument("--out", type=str, default="res_nnt_ex3.json", help="output JSON path")
+    args = parser.parse_args()
+
     start_time = time.time()
     B_net, success = synthesize_persistence_certificate()
     end_time = time.time()
@@ -511,4 +518,19 @@ if __name__ == "__main__":
         torch.save(checkpoint, checkpoint_path)
         print(f"✓  {checkpoint_path}")
 
-    print(f"\n: {end_time - start_time:.4f} ")
+    elapsed = end_time - start_time
+    print(f"\nElapsed time: {elapsed:.4f} s")
+
+    result = {
+        "success": bool(success),
+        "elapsed_sec": float(elapsed),
+        "epsilon": float(B_net.get_epsilon()) if B_net is not None else None,
+        "hidden_dim": int(B_net.fc1.out_features) if B_net is not None else None,
+        "model_state_path": "persistence_barrier_model_2layer.pth" if success else None,
+        "checkpoint_path": "persistence_barrier_checkpoint_2layer.pth" if success else None,
+    }
+    out_path = Path(args.out)
+    if not out_path.is_absolute():
+        out_path = Path(__file__).resolve().parent / out_path
+    out_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    print(f"Saved result to: {out_path}")

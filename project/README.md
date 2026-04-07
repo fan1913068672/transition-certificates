@@ -44,13 +44,13 @@ Run from `project/` root.
 ### ex1
 
 ```bash
-python src/ex1/PT/main.py
+python src/ex1/PT/main.py --out res_pt_ex1.json
 python src/ex1/PT/test.py
 
 python src/ex1/NNT/main.py
 python src/ex1/NNT/test.py
 
-python src/ex1/CC/main.py
+python src/ex1/CC/main.py --out res_cc_ex1.json
 
 python src/ex1/NCC/main.py
 # example with explicit NCC params:
@@ -60,7 +60,7 @@ python src/ex1/NCC/main.py
 ### ex2
 
 ```bash
-python src/ex2/PT/main.py
+python src/ex2/PT/main.py --out res_pt_ex2.json
 
 python src/ex2/NNT/main.py
 python src/ex2/NNT/test.py
@@ -75,7 +75,7 @@ python src/ex2/NCC/main.py
 ### ex3
 
 ```bash
-python src/ex3/PT/main.py
+python src/ex3/PT/main.py --qi 1 --qj 1 --out res_pt_ex3.json
 python src/ex3/PT/test.py
 python src/ex3/PT/safety.py
 
@@ -89,3 +89,8 @@ python src/ex3/NCC/main.py --mode main
 # optional: python src/ex3/NCC/main.py --mode closure
 # NCC scripts output `certified` and `theorem_margin` in `res.txt`/`saved_models/model.json`.
 ```
+
+Result files:
+- PT/CC scripts now save a JSON result file by default (or to `--out` path).
+- NCC scripts output `res.txt` and `saved_models/model.json`.
+- NNT scripts save trained model checkpoints (`*.pth`).

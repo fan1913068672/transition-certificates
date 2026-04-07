@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "iterations": 0,
+  "max_iterations": 1000,
+  "coefficients": [
+    -1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    2.0,
+    0.0,
+    -0.4375
+  ],
+  "elapsed_sec": 1.759493112564087
+}

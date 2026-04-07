@@ -1,7 +1,10 @@
 import math
+import json
+import argparse
 import z3
 import dreal
 import time
+from pathlib import Path
 
 TS = 0.1
 OMEGA = 0.01
@@ -177,7 +180,7 @@ class CounterexampleChecker:
 
     def check_condition1(self):
         """1"""
-        print("1...")
+        print("Checking C1...")
 
         for i, L_x, i_prime in Automaton.get_transitions():
             solver = dreal.Context()
@@ -204,7 +207,7 @@ class CounterexampleChecker:
 
     def check_condition2(self):
         """2"""
-        print("2...")
+        print("Checking C2...")
 
         for i in [0, 1]:
             for j in [0, 1]:
@@ -249,7 +252,7 @@ class CounterexampleChecker:
 
     def check_condition3(self):
         """3"""
-        print("3...")
+        print("Checking C3...")
 
         solver = dreal.Context()
         solver.SetLogic(dreal.Logic.QF_NRA)
@@ -328,8 +331,8 @@ class CounterexampleChecker:
         print(f"  T_{s_val}{l_val}(x0, z)={T_sl:.6f}")
         print(f"  T_{l_val}{l_prime_val}(z, z')={T_ll:.6f}")
         print(f"  T_{s_val}{l_prime_val}(x0, z')={T_sl_prime:.6f}")
-        print(f"  ε={self.epsilon:.6f}")
-        print(f"  T_sl' + ε = {T_sl_prime + self.epsilon:.6f}")
+        print(f"  epsilon={self.epsilon:.6f}")
+        print(f"  T_sl' + epsilon = {T_sl_prime + self.epsilon:.6f}")
 
         return ('condition3', s_val, l_val, l_prime_val, x0_val, z_val, z_prime_val)
 
@@ -341,7 +344,7 @@ class ClosureCertificateSynthesizer:
 
     def synthesize(self):
         """"""
-        print("...")
+        print("Starting closure-certificate synthesis...")
 
         coeffs = [z3.Real(f'c{i:02d}') for i in range(20)]
         EPSILON = z3.Real('EPSILON')
@@ -362,7 +365,7 @@ class ClosureCertificateSynthesizer:
 
         for iter_count in range(self.max_iter):
             if solver.check() != z3.sat:
-                print("")
+                print("No feasible candidate remains.")
                 return None, None
 
             m = solver.model()
@@ -387,10 +390,10 @@ class ClosureCertificateSynthesizer:
                     break
 
             if not ce_found:
-                print(f"\n，: {iter_count}")
+                print(f"\nConverged at iteration {iter_count}.")
                 return coeffs_vals, epsilon_val
 
-        print(f" {self.max_iter}")
+        print(f"Reached max iterations: {self.max_iter}")
         return None, None
 
     def _add_initial_constraints(self, solver, coeffs, EPSILON,
@@ -398,7 +401,7 @@ class ClosureCertificateSynthesizer:
         """"""
         cert = ClosureCertificate(coeffs)
 
-        print("1...")
+        print("Adding initial sampled constraints for C1...")
         for x in X_samples:
             xp = f_m(x)
             for i in [0, 1]:
@@ -407,7 +410,7 @@ class ClosureCertificateSynthesizer:
                     T_val = cert.T(x, xp, i, i_prime)
                     solver.add(T_val >= 0)
 
-        print("2...")
+        print("Adding initial sampled constraints for C2...")
         for x in X_samples[:10]:
             xp = f_m(x)
             for y in Y_samples[:10]:
@@ -419,7 +422,7 @@ class ClosureCertificateSynthesizer:
                             conclusion = cert.T(x, y, i, j) >= 0
                             solver.add(z3.Implies(premise, conclusion))
 
-        print("3...")
+        print("Adding initial sampled constraints for C3...")
         s_val, l_val, l_prime_val = 1, 0, 0
 
         for x0 in X0_samples[:3]:
@@ -461,20 +464,33 @@ def main():
     coeffs, epsilon_val = synthesizer.synthesize()
 
     end_time = time.time()
-    print(f"\n: {end_time - start_time:.2f}")
+    elapsed = end_time - start_time
+    print(f"\nElapsed time: {elapsed:.2f}s")
 
     if coeffs is not None and epsilon_val is not None:
         print_results(coeffs, epsilon_val)
+        return {
+            "success": True,
+            "epsilon": float(epsilon_val),
+            "coefficients": [float(v) for v in coeffs],
+            "elapsed_sec": elapsed,
+        }
     else:
-        print("\n!")
+        print("\nSynthesis failed.")
+        return {
+            "success": False,
+            "epsilon": None,
+            "coefficients": None,
+            "elapsed_sec": elapsed,
+        }
 
 def print_results(coeffs, epsilon):
     """"""
     print("\n" + "="*60)
-    print("!")
+    print("SYNTHESIS RESULT")
     print("="*60)
 
-    print(f"\n ε = {epsilon:.6f}")
+    print(f"\n epsilon = {epsilon:.6f}")
 
     names = ["T_00", "T_01", "T_10", "T_11"]
     for i, name in enumerate(names):
@@ -493,26 +509,39 @@ def test_specific_points(coeffs, epsilon):
     cert = ClosureCertificate(coeffs)
 
     test_points = [
-        (0.1, 0.2, "X0-X0"),
-        (0.1, 2.5, "X0-X_other"),
-        (2.5, 0.1, "X_other-X0"),
-        (7.8, 7.9, "Xu-Xu"),
-        (2.5, 2.7, "X_other-X_other"),
+        (1.50, 1.60, "X0-X0"),
+        (1.50, 2.60, "X0-Xu"),
+        (2.60, 1.50, "Xu-X0"),
+        (2.60, 2.70, "Xu-Xu"),
+        (0.50, 1.00, "X_other-X_other"),
     ]
 
     print("\n" + "="*60)
-    print(":")
+    print("Certificate values on representative points")
     print("="*60)
 
     for x, y, desc in test_points:
-        print(f"\n (x={x:.3f}, y={y:.3f}, : {desc}):")
+        print(f"\nPoint pair (x={x:.3f}, y={y:.3f}), declared region={desc}:")
         for i in [0, 1]:
             for j in [0, 1]:
                 T_val = cert.T(x, y, i, j)
                 x_region = region_type(x)
                 y_region = region_type(y)
                 region_names = ["X0", "Xu", "X_other"]
-                print(f"  T_{i}{j} = {T_val:.6f}  (x∈{region_names[x_region]}, y∈{region_names[y_region]})")
+                print(f"  T_{i}{j} = {T_val:.6f}  (x?{region_names[x_region]}, y?{region_names[y_region]})")
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="ex1 closure-certificate synthesis")
+    parser.add_argument("--out", type=str, default="res_cc_ex1.json", help="output JSON path")
+    args = parser.parse_args()
+
+    try:
+        result = main()
+        out_path = Path(args.out)
+        if not out_path.is_absolute():
+            out_path = Path(__file__).resolve().parent / out_path
+        out_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
+        print(f"Saved result to: {out_path}")
+    except Exception as e:
+        print(f"[ERROR] ex1/CC failed: {e}")
+        raise

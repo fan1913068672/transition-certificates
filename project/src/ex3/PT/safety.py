@@ -130,7 +130,7 @@ def Not_Acc_Cond(x1p, x2p, qi, qj):
 
 def t2float(a, precision=14):
     s = a.as_decimal(precision)
-    if s[-1] == ':':
+    if s[-1] == '?':
         s = s[:-1]
     return float(s)
 

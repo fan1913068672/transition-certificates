@@ -1,102 +1,106 @@
-from z3 import *
+import argparse
+import json
 import time
+from pathlib import Path
 
-def InAcc(q):
-    """Check if the automaton state q is an accepting state"""
+from z3 import *
+
+"""
+ex3: two-room temperature model
+This script synthesizes a transition-persistence certificate for transition q1 -> q1.
+"""
+
+
+def in_acc(q):
     return q == 1
 
-def InQ0(q):
-    """Check if the automaton state q belongs to the initial states"""
-    return q in {0}
 
-def In_X_Cond(x1p, x2p):
-    return And(x1p >= 20, x1p <= 34, x2p >= 20, x2p <= 34)
+def in_q0(q):
+    return q == 0
 
-def In_X(x1, x2):
-    return x1 >= 20 and x1 <= 34 and x2 >= 20 and x2 <= 34
 
-def Q_Trans_Cond(x1p, x2p, qi, qj):
-    """
-    Ensure that a transition from qi to qj is possible according to (x1p, x2p)
-    """
+def in_x_cond(x1, x2):
+    return And(x1 >= 20, x1 <= 34, x2 >= 20, x2 <= 34)
+
+
+def in_x(x1, x2):
+    return 20 <= x1 <= 34 and 20 <= x2 <= 34
+
+
+def in_x0_cond(x1, x2):
+    return And(x1 >= 21, x1 <= 24, x2 >= 21, x2 <= 24)
+
+
+def in_x0(x1, x2):
+    return 21 <= x1 <= 24 and 21 <= x2 <= 24
+
+
+def q_trans_cond(x1, x2, qi, qj):
     if qi == 0 and qj == 1:
-        return In_X0_Cond(x1p, x2p)
+        return in_x0_cond(x1, x2)
     if qi == 0 and qj == 2:
-        return Not(In_X0_Cond(x1p, x2p))
-    if qi == 1 and qj == 1 or qi == 2 and qj ==2:
+        return Not(in_x0_cond(x1, x2))
+    if (qi == 1 and qj == 1) or (qi == 2 and qj == 2):
         return True
     return False
 
-def In_X0_Cond(x1p, x2p):
-    """(x1p, x2p) is the initial state"""
-    return And(x1p >= 21, x1p <= 24, x2p >= 21, x2p <= 24)
 
-def In_X0(x1, x2):
-    return x1 >= 21 and x1 <= 24 and x2 >=21 and x2 <=24
+def f_cond(x1, x2):
+    alpha, theta, te, th, mu = 0.004, 0.01, 0, 40, 0.15
 
-def f_cond(x1p, x2p):
-    alpha = 0.004
-    theta = 0.01
-    Te = 0
-    Th = 40
-    mu = 0.15
-    def u(x_curr):
-        return 0.59 - 0.011 * x_curr
-    x1_next = (1 - 2 * alpha - theta - mu * u(x1p)) * x1p + x2p * alpha + mu * Th * u(x1p) + theta * Te
-    x2_next = x1p * alpha + (1 - 2 * alpha - theta - mu * u(x2p)) * x2p + mu * Th * u(x2p) + theta * Te
-    return x1_next, x2_next
+    def u(x):
+        return 0.59 - 0.011 * x
+
+    x1n = (1 - 2 * alpha - theta - mu * u(x1)) * x1 + alpha * x2 + mu * th * u(x1) + theta * te
+    x2n = alpha * x1 + (1 - 2 * alpha - theta - mu * u(x2)) * x2 + mu * th * u(x2) + theta * te
+    return x1n, x2n
+
 
 def f(x1, x2):
-    alpha = 0.004
-    theta = 0.01
-    Te = 0
-    Th = 40
-    mu = 0.15
+    alpha, theta, te, th, mu = 0.004, 0.01, 0, 40, 0.15
 
-    def u(x_curr):
-        return 0.59 - 0.011 * x_curr
+    def u(x):
+        return 0.59 - 0.011 * x
 
-    x1_next = (1 - 2 * alpha - theta - mu * u(x1)) * x1 + x2 * alpha + mu * Th * u(x1) + theta * Te
-    x2_next = x1 * alpha + (1 - 2 * alpha - theta - mu * u(x2)) * x2 + mu * Th * u(x2) + theta * Te
-    return x1_next, x2_next
+    x1n = (1 - 2 * alpha - theta - mu * u(x1)) * x1 + alpha * x2 + mu * th * u(x1) + theta * te
+    x2n = alpha * x1 + (1 - 2 * alpha - theta - mu * u(x2)) * x2 + mu * th * u(x2) + theta * te
+    return x1n, x2n
 
-def L(x1_val, x2_val):
-    """ labelling function """
-    cond1 = x1_val >= 21 and x1_val <= 24 and x2_val >= 21 and x2_val <= 24
-    cond2 = x1_val >= 20 and x1_val <= 26 and x2_val >= 20 and x2_val <= 26
+
+def label_value(x1, x2):
+    cond1 = 21 <= x1 <= 24 and 21 <= x2 <= 24
+    cond2 = 20 <= x1 <= 26 and 20 <= x2 <= 26
     if cond1 and cond2:
-        return 3 #{a,b}
+        return 3
     if cond1 and not cond2:
-        return 2 #{a}
+        return 2
     if not cond1 and cond2:
-        return 1 #{b}
-    if not cond1 and not cond2:
-        return 0 #{}
+        return 1
+    return 0
 
-def B_Cond(x1p, x2p):
-    return And(x1p >= 20, x1p <= 26, x2p >= 20, x2p <= 26)
 
-def In_VF(x1_val, x2_val):
-    return x1_val >= 20 and x1_val <= 26 and x2_val >= 20 and x2_val <= 26
+def b_cond(x1, x2):
+    return And(x1 >= 20, x1 <= 26, x2 >= 20, x2 <= 26)
+
+
+def in_vf(x1, x2):
+    return 20 <= x1 <= 26 and 20 <= x2 <= 26
+
 
 def space_product(s1, s2):
     def conn(x1, x2):
         if type(x1) != list and type(x2) != list:
             return [x1, x2]
-        elif type(x1) == list and type(x2) != list:
+        if type(x1) == list and type(x2) != list:
             return x1 + [x2]
-        elif type(x1) != list and type(x2) == list:
+        if type(x1) != list and type(x2) == list:
             return [x1] + x2
-        else:
-            return x1 + x2
+        return x1 + x2
 
     if s1 == [] or s2 == []:
         return []
-    res = []
-    for x1 in s1:
-        for x2 in s2:
-            res.append(conn(x1, x2))
-    return res
+    return [conn(x1, x2) for x1 in s1 for x2 in s2]
+
 
 def state_space_product(s1, *args):
     res = space_product(s1, args[0])
@@ -104,10 +108,12 @@ def state_space_product(s1, *args):
         res = space_product(res, sp)
     return res
 
+
 def check_trans(x1, x2, qi, qj):
-    if L(x1, x2) >= 2 and qi == 0 and qj == 1:
+    lv = label_value(x1, x2)
+    if lv >= 2 and qi == 0 and qj == 1:
         return True
-    if L(x1, x2) < 2 and qi == 0 and qj == 2:
+    if lv < 2 and qi == 0 and qj == 2:
         return True
     if qi == 1 and qj == 1:
         return True
@@ -115,197 +121,243 @@ def check_trans(x1, x2, qi, qj):
         return True
     return False
 
+
 def step_sample(a, b, s):
     res = []
-    for i in range(a * int(1/s), b*int(1/s)+1):
+    for i in range(a * int(1 / s), b * int(1 / s) + 1):
         res.append(i * s)
     return res
-def Not_Acc_Cond(x1p, x2p, qi, qj):
+
+
+def not_acc_cond(x1, x2, qi, qj):
     if qi != 1 or qj != 1:
         return True
-    return Not(B_Cond(x1p, x2p))
+    return Not(b_cond(x1, x2))
 
-def t2float(a, precision=14):
-    s = a.as_decimal(precision)
-    if s[-1] == ':':
+
+def t2float(v, precision=14):
+    s = v.as_decimal(precision)
+    if s[-1] == '?':
         s = s[:-1]
     return float(s)
 
+
 def cegeis_synthesis(qi, qj):
-    print(f"Synthesize a transition persistent certificate for {qi} to {qj}")
-    cc_flag = False
-    c = [Real(f'c{i}') for i in range(0, 10)]
+    print(f"Synthesizing transition-persistence certificate for ({qi},{qj})...")
+    found = False
+    found_coeffs = None
+    found_eps = None
+
+    c = [Real(f'c{i}') for i in range(10)]
     epsilon = Real('epsilon')
     s = SolverFor("QF_NRA")
-    X1_samples = step_sample(20, 34, 1)
-    X2_samples = step_sample(20, 34, 1)
-    Samples = state_space_product(X1_samples, X2_samples)
-    X01_samples = step_sample(21, 24, 0.1)
-    X02_samples = step_sample(21, 24, 0.1)
-    X0_Samples = state_space_product(X01_samples, X02_samples)
-    def Bp(x1, x2):
-        res = c[0] + c[1] * If(In_X0_Cond(x1, x2), 1, 0) + c[2] * If(B_Cond(x1, x2), 1, 0) + c[3] * x1 * If(In_X0_Cond(x1, x2), 1, 0) + c[4] * x2 * If(In_X0_Cond(x1, x2), 1, 0) + c[5] * x1 * If(B_Cond(x1, x2), 1, 0) + c[6] * x2 * If(B_Cond(x1, x2), 1, 0) + c[7] * If(x1 > x2, x1, x2) + c[8] * x1 ** 2 + c[9] * x2 ** 2
-        return simplify(res)
-    for x1, x2 in X0_Samples:
+
+    x1_samples = step_sample(20, 34, 1)
+    x2_samples = step_sample(20, 34, 1)
+    samples = state_space_product(x1_samples, x2_samples)
+    x01_samples = step_sample(21, 24, 0.1)
+    x02_samples = step_sample(21, 24, 0.1)
+    x0_samples = state_space_product(x01_samples, x02_samples)
+
+    def bp(x1, x2):
+        return simplify(
+            c[0]
+            + c[1] * If(in_x0_cond(x1, x2), 1, 0)
+            + c[2] * If(b_cond(x1, x2), 1, 0)
+            + c[3] * x1 * If(in_x0_cond(x1, x2), 1, 0)
+            + c[4] * x2 * If(in_x0_cond(x1, x2), 1, 0)
+            + c[5] * x1 * If(b_cond(x1, x2), 1, 0)
+            + c[6] * x2 * If(b_cond(x1, x2), 1, 0)
+            + c[7] * If(x1 > x2, x1, x2)
+            + c[8] * x1 ** 2
+            + c[9] * x2 ** 2
+        )
+
+    for x1, x2 in x0_samples:
         if check_trans(x1, x2, qi, qj):
-            s.add(Bp(x1, x2) >= 0)
-    for x1, x2 in Samples:
+            s.add(bp(x1, x2) >= 0)
+
+    for x1, x2 in samples:
         if check_trans(x1, x2, qi, qj):
             x1n, x2n = f(x1, x2)
-            if In_X(x1n, x2n):
-                s.add(Implies(Bp(x1, x2) >= 0, Bp(x1n, x2n) >= 0))
-                if qi == 1 and qj == 1 and In_VF(x1,x2):
-                    s.add(Bp(x1, x2) >= Bp(x1n, x2n) + epsilon)
+            if in_x(x1n, x2n):
+                s.add(Implies(bp(x1, x2) >= 0, bp(x1n, x2n) >= 0))
+                if qi == 1 and qj == 1 and in_vf(x1, x2):
+                    s.add(bp(x1, x2) >= bp(x1n, x2n) + epsilon)
                 else:
-                    s.add(Bp(x1, x2) >= Bp(x1n, x2n))
+                    s.add(bp(x1, x2) >= bp(x1n, x2n))
     s.add(epsilon > 0)
 
     ce_solver = SolverFor("QF_NRA")
     x1_ce = Real('x1_ce')
     x2_ce = Real('x2_ce')
-    x1_ce_next, x2_ce_next = f_cond(x1_ce, x2_ce)
-    iter = 0
-    MAX_ITER = 1000
+    x1_next_ce, x2_next_ce = f_cond(x1_ce, x2_ce)
 
-    while s.check() == sat and iter <= MAX_ITER:
+    it = 0
+    max_iter = 1000
+
+    while s.check() == sat and it <= max_iter:
         ce_flag = False
-        candidate_model = s.model()
-        print(f"#{iter + 1} candidate solution:")
-        print(f"ε={t2float(candidate_model[epsilon])}")
+        m = s.model()
+        eps_val = t2float(m[epsilon])
+        print(f"\n#{it + 1} candidate:")
+        print(f"epsilon={eps_val}")
         for idx, item in enumerate(c):
-            print(f"c{idx}={t2float(candidate_model[item])}")
+            print(f"c{idx}={t2float(m[item])}")
 
-        def Bp_candidate(x1p, x2p):
-            c_candidate = [candidate_model[item] for item in c]
-            res = c_candidate[0] + c_candidate[1] * If(In_X0_Cond(x1p, x2p), 1, 0) + c_candidate[2] * If(B_Cond(x1p, x2p), 1, 0) + c_candidate[3] * x1p * If(In_X0_Cond(x1p, x2p), 1, 0) + c_candidate[4] * x2p * If(In_X0_Cond(x1p, x2p), 1, 0) + c_candidate[5] * x1p * If(B_Cond(x1p, x2p), 1, 0) + c_candidate[6] * x2p * If(B_Cond(x1p, x2p), 1, 0) + c_candidate[7] * If(x1p > x2p, x1p, x2p) + c_candidate[8] * x1p ** 2 + c_candidate[9] * x2p ** 2
-            return simplify(res)
+        def bp_c(x1p, x2p):
+            c_c = [m[item] for item in c]
+            return simplify(
+                c_c[0]
+                + c_c[1] * If(in_x0_cond(x1p, x2p), 1, 0)
+                + c_c[2] * If(b_cond(x1p, x2p), 1, 0)
+                + c_c[3] * x1p * If(in_x0_cond(x1p, x2p), 1, 0)
+                + c_c[4] * x2p * If(in_x0_cond(x1p, x2p), 1, 0)
+                + c_c[5] * x1p * If(b_cond(x1p, x2p), 1, 0)
+                + c_c[6] * x2p * If(b_cond(x1p, x2p), 1, 0)
+                + c_c[7] * If(x1p > x2p, x1p, x2p)
+                + c_c[8] * x1p ** 2
+                + c_c[9] * x2p ** 2
+            )
 
-        def Bp_candidate2(x1, x2):
-            c_candidate = [t2float(candidate_model[item]) for item in c]
-            res = c_candidate[0] + c_candidate[1] * In_X0(x1, x2) + c_candidate[2] * In_VF(x1, x2) + c_candidate[3] * x1 * In_X0(x1, x2) + c_candidate[4] * x2 * In_X0(x1, x2) + c_candidate[5] * x1 * In_VF(x1, x2) + c_candidate[6] * x2 * In_VF(x1, x2) + c_candidate[7] * max(x1, x2) + c_candidate[8] * x1 ** 2 + c_candidate[9] * x2 ** 2
-            return res
+        def bp_num(x1p, x2p):
+            c_c = [t2float(m[item]) for item in c]
+            return (
+                c_c[0]
+                + c_c[1] * in_x0(x1p, x2p)
+                + c_c[2] * in_vf(x1p, x2p)
+                + c_c[3] * x1p * in_x0(x1p, x2p)
+                + c_c[4] * x2p * in_x0(x1p, x2p)
+                + c_c[5] * x1p * in_vf(x1p, x2p)
+                + c_c[6] * x2p * in_vf(x1p, x2p)
+                + c_c[7] * max(x1p, x2p)
+                + c_c[8] * x1p ** 2
+                + c_c[9] * x2p ** 2
+            )
 
+        # (1) Initial non-negativity
         ce_solver.push()
-        ce_solver.add(
-            Q_Trans_Cond(x1_ce, x2_ce, qi, qj),
-            In_X0_Cond(x1_ce, x2_ce),
-            Bp_candidate(x1_ce, x2_ce) < 0)
+        ce_solver.add(q_trans_cond(x1_ce, x2_ce, qi, qj), in_x0_cond(x1_ce, x2_ce), bp_c(x1_ce, x2_ce) < 0)
         if ce_solver.check() == sat:
-            print("The non-negativity property of the certificate value at the initial state is not satisfied.")
+            print("Counterexample: initial non-negativity violated.")
             ce_flag = True
-            ce_model = ce_solver.model()
-            tmp_x1_ce_model, tmp_x2_ce_model = t2float(ce_model[x1_ce]), t2float(ce_model[x2_ce])
-            tmp_bp = Bp_candidate2(tmp_x1_ce_model, tmp_x2_ce_model)
-            print(f"x1_ce={tmp_x1_ce_model}, x2_ce={tmp_x2_ce_model}, Bp_c={tmp_bp}")
-            s.add(Bp(tmp_x1_ce_model, tmp_x2_ce_model) >= 0)
+            ce_m = ce_solver.model()
+            x1m, x2m = t2float(ce_m[x1_ce]), t2float(ce_m[x2_ce])
+            print(f"x1={x1m}, x2={x2m}, B={bp_num(x1m, x2m)}")
+            s.add(bp(x1m, x2m) >= 0)
         else:
-            print("The non-negativity property check for the certificate value at the initial state has passed.")
+            print("Initial non-negativity check passed.")
         ce_solver.pop()
 
+        # (2) Transition non-negativity preservation
         ce_solver.push()
         ce_solver.add(
-            Q_Trans_Cond(x1_ce, x2_ce, qi, qj),
-            In_X_Cond(x1_ce, x2_ce),
-            In_X_Cond(x1_ce_next, x2_ce_next),
-            Not_Acc_Cond(x1_ce, x2_ce, qi, qj),
-            Bp_candidate(x1_ce, x2_ce) >= 0,
-            Bp_candidate(x1_ce_next, x2_ce_next) < 0)
+            q_trans_cond(x1_ce, x2_ce, qi, qj),
+            in_x_cond(x1_ce, x2_ce),
+            in_x_cond(x1_next_ce, x2_next_ce),
+            not_acc_cond(x1_ce, x2_ce, qi, qj),
+            bp_c(x1_ce, x2_ce) >= 0,
+            bp_c(x1_next_ce, x2_next_ce) < 0,
+        )
         if ce_solver.check() == sat:
-            print("The non-negativity preservation property of the certificate value across transitions is not satisfied.")
+            print("Counterexample: transition non-negativity preservation violated.")
             ce_flag = True
-            ce_model = ce_solver.model()
-            tmp_x1_ce_model, tmp_x2_ce_model = t2float(ce_model[x1_ce]), t2float(ce_model[x2_ce])
-            tmp_x1_ce_model_next, tmp_x2_ce_model_next = f(tmp_x1_ce_model, tmp_x2_ce_model)
-            tmp_bp = Bp_candidate2(tmp_x1_ce_model, tmp_x2_ce_model)
-            tmp_bp2 = Bp_candidate2(tmp_x1_ce_model_next, tmp_x2_ce_model_next)
-            print(f"x1_ce={tmp_x1_ce_model}, x2_ce={tmp_x2_ce_model}, Bp_c={tmp_bp}, Bp_c'={tmp_bp2}")
-            s.add(Implies(Bp(tmp_x1_ce_model, tmp_x2_ce_model) >= 0, Bp(tmp_x1_ce_model_next, tmp_x2_ce_model_next) >= 0))
+            ce_m = ce_solver.model()
+            x1m, x2m = t2float(ce_m[x1_ce]), t2float(ce_m[x2_ce])
+            x1n, x2n = f(x1m, x2m)
+            print(f"({x1m}, {x2m}) -> ({x1n}, {x2n}), B={bp_num(x1m, x2m)}, B'={bp_num(x1n, x2n)}")
+            s.add(Implies(bp(x1m, x2m) >= 0, bp(x1n, x2n) >= 0))
         else:
-            print("The non-negativity preservation property check for the certificate value across transitions has passed.")
+            print("Transition non-negativity preservation check passed.")
+        ce_solver.pop()
 
+        # (3) Non-increasing on non-accepting transitions
         ce_solver.push()
         ce_solver.add(
-                Q_Trans_Cond(x1_ce, x2_ce, qi, qj),
-                In_X_Cond(x1_ce, x2_ce),
-                In_X_Cond(x1_ce_next, x2_ce_next),
-                Not_Acc_Cond(x1_ce, x2_ce, qi, qj),
-                Bp_candidate(x1_ce, x2_ce) < Bp_candidate(x1_ce_next, x2_ce_next))
+            q_trans_cond(x1_ce, x2_ce, qi, qj),
+            in_x_cond(x1_ce, x2_ce),
+            in_x_cond(x1_next_ce, x2_next_ce),
+            not_acc_cond(x1_ce, x2_ce, qi, qj),
+            bp_c(x1_ce, x2_ce) < bp_c(x1_next_ce, x2_next_ce),
+        )
         if ce_solver.check() == sat:
-            print("The non-increasing property of the certificate value across transitions is not satisfied.")
+            print("Counterexample: non-increasing property violated.")
             ce_flag = True
-            ce_model = ce_solver.model()
-            tmp_x1_ce_model, tmp_x2_ce_model = t2float(ce_model[x1_ce]), t2float(ce_model[x2_ce])
-            tmp_x1_ce_model_next,tmp_x2_ce_model_next =  f(tmp_x1_ce_model, tmp_x2_ce_model)
-            tmp_bp = Bp_candidate2(tmp_x1_ce_model, tmp_x2_ce_model)
-            tmp_bp2 = Bp_candidate2(tmp_x1_ce_model_next,tmp_x2_ce_model_next)
-            print(f"x1_ce={tmp_x1_ce_model}, x2_ce={tmp_x2_ce_model}, Bp_c={tmp_bp}, Bp_c'={tmp_bp2}")
-            s.add(Bp(tmp_x1_ce_model, tmp_x2_ce_model) >= Bp(tmp_x1_ce_model_next, tmp_x2_ce_model_next))
+            ce_m = ce_solver.model()
+            x1m, x2m = t2float(ce_m[x1_ce]), t2float(ce_m[x2_ce])
+            x1n, x2n = f(x1m, x2m)
+            print(f"({x1m}, {x2m}) -> ({x1n}, {x2n}), B={bp_num(x1m, x2m)}, B'={bp_num(x1n, x2n)}")
+            s.add(bp(x1m, x2m) >= bp(x1n, x2n))
         else:
-            print("The non-increasing property check for the certificate value across transitions has passed.")
+            print("Non-increasing check passed.")
         ce_solver.pop()
+
+        # (4) Strict decrease on accepting transitions
         ce_solver.push()
         ce_solver.add(
-            Q_Trans_Cond(x1_ce, x2_ce, qi, qj),
-            In_X_Cond(x1_ce, x2_ce),
-            In_X_Cond(x1_ce_next, x2_ce_next),
-            Not(Not_Acc_Cond(x1_ce, x2_ce, qi, qj)),
-            Bp_candidate(x1_ce, x2_ce) < Bp_candidate(x1_ce_next, x2_ce_next) + candidate_model[epsilon])
+            q_trans_cond(x1_ce, x2_ce, qi, qj),
+            in_x_cond(x1_ce, x2_ce),
+            in_x_cond(x1_next_ce, x2_next_ce),
+            Not(not_acc_cond(x1_ce, x2_ce, qi, qj)),
+            bp_c(x1_ce, x2_ce) < bp_c(x1_next_ce, x2_next_ce) + m[epsilon],
+        )
         if ce_solver.check() == sat:
-            print("The decreasing property of the certificate value across transitions is not satisfied.")
+            print("Counterexample: strict decrease property violated.")
             ce_flag = True
-            ce_model = ce_solver.model()
-            tmp_x1_ce_model, tmp_x2_ce_model = t2float(ce_model[x1_ce]), t2float(ce_model[x2_ce])
-            x1_ce_model_next, x2_ce_model_next = f(ce_model[x1_ce], ce_model[x2_ce])
-            tmp_x1_ce_model_next, tmp_x2_ce_model_next = f(tmp_x1_ce_model, tmp_x2_ce_model)
-            tmp_bp = Bp_candidate2(tmp_x1_ce_model, tmp_x2_ce_model)
-            tmp_bp2 = Bp_candidate2(tmp_x1_ce_model_next, tmp_x2_ce_model_next) + t2float(candidate_model[epsilon])
-            print(f"x1_ce={tmp_x1_ce_model}, x2_ce={tmp_x2_ce_model}\n"
-                  f"x1_cen={tmp_x1_ce_model_next}, x2_cen={tmp_x2_ce_model_next}\n"
-                  f"Bp_c={tmp_bp}, Bp_c'+e={tmp_bp2}, diff={tmp_bp-tmp_bp2}")
-            s.add(Bp(ce_model[x1_ce], ce_model[x2_ce]) >= Bp(x1_ce_model_next, x2_ce_model_next) + epsilon)
+            ce_m = ce_solver.model()
+            x1m, x2m = t2float(ce_m[x1_ce]), t2float(ce_m[x2_ce])
+            x1n, x2n = f(x1m, x2m)
+            print(f"({x1m}, {x2m}) -> ({x1n}, {x2n}), B={bp_num(x1m, x2m)}, B'+eps={bp_num(x1n, x2n) + eps_val}")
+            s.add(bp(ce_m[x1_ce], ce_m[x2_ce]) >= bp(*f_cond(ce_m[x1_ce], ce_m[x2_ce])) + epsilon)
         else:
-            print("The decreasing property check for the certificate value across transitions has passed.")
+            print("Strict decrease check passed.")
         ce_solver.pop()
+
         if not ce_flag:
-            cc_flag = True
-            print("Certificate found!")
+            found = True
+            found_coeffs = [t2float(m[item]) for item in c]
+            found_eps = eps_val
+            print("Certificate found.")
             break
-        iter = iter + 1
 
-    if iter > MAX_ITER:
-        print("Exceeded the maximum number of iterations.")
-    else:
-        if not cc_flag:
-            print("Unable to synthesize candidate certificate.")
+        it += 1
 
-start_time = time.time()
-cegeis_synthesis(1, 1)
-end_time = time.time()
-print(f"Time cost: {end_time - start_time}")
+    if it > max_iter:
+        print("Exceeded maximum iterations.")
+    elif not found:
+        print("Unable to synthesize candidate certificate.")
 
-"""
-Experimental Results on March 15, 2025:
+    return {
+        "success": found,
+        "iterations": it,
+        "max_iterations": max_iter,
+        "epsilon": found_eps,
+        "coefficients": found_coeffs,
+    }
 
-Certificate Template:
-B11(x1, x2) = c0 + c1 * In_X0(x1, x2) + c2 * In_VF(x1, x2) + c3 * x1 * In_X0(x1, x2) + c4 * x2 * In_X0(x1, x2) + c5 * x1 * In_VF(x1, x2) + c6 * x2 * In_VF(x1, x2) + c7 * max(x1, x2) + c8 * x1 ** 2 + c9 * x2 ** 2
-For synthesizing a persistent barrier certificate for (1, 1):
-#1 Candidate Solution:
-ε=0.25
-c0=0.0
-c1=0.0
-c2=27.0
-c3=0.0
-c4=0.0
-c5=-1.0
-c6=0.0
-c7=0.0
-c8=0.0
-c9=0.0
-Initial non-negativity check passed
-Transition non-negativity preservation property check passed
-Non-increasing check passed
-Non-negativity check passed
-Descent check passed
-Certificate found!
-Time cost: 8.771111249923706
-"""
+
+def main():
+    parser = argparse.ArgumentParser(description="ex3 PT synthesis")
+    parser.add_argument("--qi", type=int, default=1, help="source automaton state")
+    parser.add_argument("--qj", type=int, default=1, help="target automaton state")
+    parser.add_argument("--out", type=str, default="res_pt_ex3.json", help="output JSON path")
+    args = parser.parse_args()
+
+    start = time.time()
+    result = cegeis_synthesis(args.qi, args.qj)
+    result["elapsed_sec"] = time.time() - start
+    print(f"Time cost: {result['elapsed_sec']:.4f} seconds")
+
+    out_path = Path(args.out)
+    if not out_path.is_absolute():
+        out_path = Path(__file__).resolve().parent / out_path
+    out_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    print(f"Saved result to: {out_path}")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as e:
+        print(f"[ERROR] ex3/PT failed: {e}")
+        raise
