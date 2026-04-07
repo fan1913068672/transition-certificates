@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.pyo
+
+saved_models/
+res.txt
+*_res.txt
+*.log

@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+
+# local run artifacts
+res.txt
+res_cc_*.json
+saved_models/

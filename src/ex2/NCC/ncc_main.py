@@ -55,10 +55,17 @@ def grid(a, b, step):
 
 
 def train(epochs=2000, lr=1e-3, eta=0.01):
-    xs = grid(0.0, 8 * PI / 9, 0.2)
+    xs = grid(0.0, 8 * PI / 9, 0.05)
     pts = [(x1, x2) for x1 in xs for x2 in xs if in_x(x1, x2)]
     x0 = [(x1, x2) for x1, x2 in pts if in_x0(x1, x2)]
     xu = [(x1, x2) for x1, x2 in pts if in_xu(x1, x2)]
+    if not xu:
+        # fallback points in unsafe strips
+        xu = [
+            (5 * PI / 6, 0.0),
+            (0.0, 5 * PI / 6),
+            (8 * PI / 9, 8 * PI / 9),
+        ]
 
     net = Net(hidden=80)
     opt = optim.Adam(net.parameters(), lr=lr)
