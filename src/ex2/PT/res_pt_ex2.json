@@ -1,0 +1,26 @@
+{
+  "success": true,
+  "certificate_type": "transition_safety",
+  "target_q": 0,
+  "iterations": 0,
+  "max_iterations": 1000,
+  "grid_step": 0.1,
+  "dreal_precision": 0.0001,
+  "z3_timeout_ms": 0,
+  "coefficients": [
+    -1.0,
+    0.0,
+    0.0,
+    2.0,
+    -2.0,
+    0.0,
+    0.0
+  ],
+  "elapsed_sec": 1.7244622707366943,
+  "example": "ex2",
+  "method": "PT",
+  "solver": {
+    "synth": "z3",
+    "verify": "dreal"
+  }
+}

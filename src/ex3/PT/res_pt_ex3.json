@@ -1,0 +1,26 @@
+{
+  "success": true,
+  "iterations": 0,
+  "max_iterations": 1000,
+  "epsilon": 0.25,
+  "coefficients": [
+    0.0,
+    0.0,
+    27.0,
+    0.0,
+    0.0,
+    -1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "elapsed_sec": 2.676501750946045,
+  "example": "ex3",
+  "method": "PT",
+  "certificate_type": "transition_persistence",
+  "solver": {
+    "synth": "z3",
+    "verify": "z3"
+  }
+}

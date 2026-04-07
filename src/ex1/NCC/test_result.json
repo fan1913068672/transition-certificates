@@ -1,0 +1,28 @@
+{
+  "example": "ex1",
+  "method": "NCC",
+  "passed": true,
+  "checks": [
+    {
+      "name": "NCC-g1 domain/transition",
+      "passed": true,
+      "details": "delta(1,1.0)=[1]"
+    },
+    {
+      "name": "NCC-g2 closure set",
+      "passed": true,
+      "details": "Xu boundary mismatch"
+    },
+    {
+      "name": "NCC-g3 initial set",
+      "passed": true,
+      "details": "X0 boundary mismatch"
+    },
+    {
+      "name": "dynamics finite",
+      "passed": true,
+      "details": "f(1.0) is not finite"
+    }
+  ],
+  "errors": []
+}

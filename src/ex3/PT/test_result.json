@@ -1,0 +1,33 @@
+{
+  "example": "ex3",
+  "method": "PT",
+  "passed": true,
+  "checks": [
+    {
+      "name": "TP-C1 init nonneg (set)",
+      "passed": true,
+      "details": "X0 boundary mismatch"
+    },
+    {
+      "name": "TP-C2 non-accepting nonincrease (set)",
+      "passed": true,
+      "details": "VF boundary mismatch"
+    },
+    {
+      "name": "TP-C3 accepting strict decrease (guard)",
+      "passed": true,
+      "details": "check_trans returned False at representative point"
+    },
+    {
+      "name": "dynamics finite",
+      "passed": true,
+      "details": "f not finite"
+    },
+    {
+      "name": "in domain",
+      "passed": true,
+      "details": "next state out of X at representative point"
+    }
+  ],
+  "errors": []
+}

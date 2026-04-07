@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "iterations": 0,
+  "max_iterations": 1000,
+  "coefficients": [
+    -1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    2.0,
+    0.0,
+    -0.4375
+  ],
+  "elapsed_sec": 1.7593903541564941,
+  "example": "ex1",
+  "method": "PT",
+  "certificate_type": "transition_safety",
+  "solver": {
+    "synth": "z3",
+    "verify": "dreal"
+  }
+}
