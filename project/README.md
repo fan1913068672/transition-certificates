@@ -37,60 +37,87 @@ Each method directory now uses:
 Special case:
 - `src/ex3/PT/safety.py`: state-safety helper script for ex3 PT.
 
-## 3) Run commands
+## 3) Unified CLI arguments
+
+All `main.py` entrypoints accept a common argument surface:
+
+- `--out`
+- `--max-iter`
+- `--epochs`
+- `--lr`
+- `--grid-step`
+- `--dreal-precision`
+- `--z3-timeout-ms`
+- `--seed`
+- `--qi`
+- `--qj`
+
+Method-specific arguments still exist (for example `--mode` in `ex3/CC` and `ex3/NCC`,
+or `--eta --lambda1 --lambda2 --tol` in NCC).
+
+Some common arguments are intentionally ignored by methods that do not use them, to keep a consistent CLI.
+
+## 4) Run commands
 
 Run from `project/` root.
 
 ### ex1
 
 ```bash
-python src/ex1/PT/main.py --out res_pt_ex1.json
+python src/ex1/PT/main.py --out res_pt_ex1.json --max-iter 1000 --grid-step 0.01 --dreal-precision 1e-4 --z3-timeout-ms 0
 python src/ex1/PT/test.py
 
-python src/ex1/NNT/main.py
+python src/ex1/NNT/main.py --out res_nnt_ex1.json --max-iter 20 --epochs 1000 --lr 0.01
 python src/ex1/NNT/test.py
 
-python src/ex1/CC/main.py --out res_cc_ex1.json
+python src/ex1/CC/main.py --out res_cc_ex1.json --max-iter 1000
+python src/ex1/CC/test.py
 
-python src/ex1/NCC/main.py
+python src/ex1/NCC/main.py --out res_ncc_ex1.json --epochs 1500 --grid-step 0.01 --eta 0.01
+python src/ex1/NCC/test.py
 # example with explicit NCC params:
-# python src/ex1/NCC/main.py --epochs 1500 --xi 0.01 --eta 0.01
+# python src/ex1/NCC/main.py --epochs 1500 --grid-step 0.01 --eta 0.01 --lambda1 0.1 --lambda2 0.1
 ```
 
 ### ex2
 
 ```bash
-python src/ex2/PT/main.py --out res_pt_ex2.json
+python src/ex2/PT/main.py --out res_pt_ex2.json --max-iter 1000 --grid-step 0.1 --dreal-precision 1e-4 --z3-timeout-ms 0
+python src/ex2/PT/test.py
 
-python src/ex2/NNT/main.py
+python src/ex2/NNT/main.py --out res_nnt_ex2.json --max-iter 2000 --epochs 1000 --lr 0.01
 python src/ex2/NNT/test.py
 
-python src/ex2/CC/main.py
+python src/ex2/CC/main.py --out res_cc_ex2.json --max-iter 60
+python src/ex2/CC/test.py
 
-python src/ex2/NCC/main.py
+python src/ex2/NCC/main.py --out res_ncc_ex2.json --epochs 2000 --grid-step 0.01 --eta 0.01
+python src/ex2/NCC/test.py
 # example:
-# python src/ex2/NCC/main.py --epochs 2000 --xi 0.01 --eta 0.01
+# python src/ex2/NCC/main.py --epochs 2000 --grid-step 0.01 --eta 0.01 --lambda1 0.1 --lambda2 0.1
 ```
 
 ### ex3
 
 ```bash
-python src/ex3/PT/main.py --qi 1 --qj 1 --out res_pt_ex3.json
+python src/ex3/PT/main.py --qi 1 --qj 1 --out res_pt_ex3.json --max-iter 1000
 python src/ex3/PT/test.py
 python src/ex3/PT/safety.py
 
-python src/ex3/NNT/main.py
+python src/ex3/NNT/main.py --out res_nnt_ex3.json --max-iter 1000 --epochs 50 --lr 1e-4
 python src/ex3/NNT/test.py
 
-python src/ex3/CC/main.py --mode main
+python src/ex3/CC/main.py --mode main --out res_cc_ex3.json
+python src/ex3/CC/test.py
 # optional: python src/ex3/CC/main.py --mode closure
 
-python src/ex3/NCC/main.py --mode main
+python src/ex3/NCC/main.py --mode main --out res_ncc_ex3.json --epochs 2200 --grid-step 0.01 --eta 0.01
+python src/ex3/NCC/test.py --mode main
 # optional: python src/ex3/NCC/main.py --mode closure
-# NCC scripts output `certified` and `theorem_margin` in `res.txt`/`saved_models/model.json`.
+# NCC scripts also output `certified` and `theorem_margin` in `res.txt`/`saved_models/model.json`.
 ```
 
 Result files:
-- PT/CC scripts now save a JSON result file by default (or to `--out` path).
-- NCC scripts output `res.txt` and `saved_models/model.json`.
-- NNT scripts save trained model checkpoints (`*.pth`).
+- PT/CC/NCC/NNT scripts save a JSON result file to `--out`.
+- NCC scripts additionally output `res.txt` and `saved_models/model.json`.
+- NNT scripts additionally save trained model checkpoints (`*.pth`).

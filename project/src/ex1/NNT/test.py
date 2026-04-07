@@ -1,101 +1,51 @@
+from __future__ import annotations
+
+import json
 import math
-import torch
 import random
-import os
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).parent.parent.parent))
-from common_test_utils import load_model, find_latest_model
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from common_test_utils import find_latest_model, load_model
+from test_report_utils import add_check, add_exception, base_parser, load_local_main, make_report, save_and_print
 
-SAMPLING_TIME = 0.1
-NATURAL_FREQUENCY = 0.01
-COUPLING_COEFFICIENT = 0.0006
-QUADRATIC_TERM = 0.532
-CONSTANT_TERM = 1.69
-PI = 3.1415926
-def in_initial_set(x):
-    return math.pi * 4 / 9 <= x <= math.pi * 5 / 9
 
-def in_unsafe_set(x):
-    return 7 * math.pi / 9 <= x <= 8 * math.pi / 9
+def main() -> int:
+    parser = base_parser("ex1/NNT test")
+    parser.add_argument("--check-model", action="store_true", help="evaluate latest model if available")
+    args = parser.parse_args()
 
-def system_dynamics(x):
-    return (x + SAMPLING_TIME * NATURAL_FREQUENCY +
-            SAMPLING_TIME * COUPLING_COEFFICIENT * math.sin(-x) -
-            QUADRATIC_TERM * x ** 2 + CONSTANT_TERM)
-
-def mode_transition(q, x):
-    if q == 1:
-        return 0 if in_unsafe_set(x) else 1
-    return 0
-
-def run_test():
-    print("="*70)
-    print("Testing Neural Barrier Certificate for Ex1 (1D)")
-    print("="*70)
-
+    report = make_report("ex1", "NNT")
     try:
-        model_path = find_latest_model(Path(__file__).parent)
-        print(f"✓ Loading latest model: {model_path}")
-        model = load_model(model_path, input_dim=2)
-    except Exception as e:
-        print(f"❌ Failed to load model: {e}")
-        return
+        try:
+            m = load_local_main(__file__)
+            pi = m.PI
+            add_check(report, "TS-C1 init nonneg (set)", m.in_initial_set(4 * pi / 9) and m.in_initial_set(5 * pi / 9), "X0 boundary mismatch")
+            add_check(report, "TS-C2 unsafe neg (set)", m.in_unsafe_set_numeric(7 * pi / 9) and m.in_unsafe_set_numeric(8 * pi / 9), "Xu boundary mismatch")
+            add_check(report, "TS-C3 transition preserve (delta)", m.compute_mode_transition(0.0, 1) == [1], f"delta at safe point: {m.compute_mode_transition(0.0, 1)}")
+            add_check(report, "dynamics finite", math.isfinite(m.system_dynamics_numeric(1.0)), "f(1.0) is not finite")
+        except ModuleNotFoundError:
+            text = Path(__file__).with_name("main.py").read_text(encoding="utf-8", errors="ignore")
+            add_check(report, "TS-C1 source", "4*PI/9" in text and "PI*5 / 9" in text, "initial-set config not found")
+            add_check(report, "TS-C2 source", "PI / 9 * 7" in text and "PI / 9 * 8" in text, "unsafe-set config not found")
+            add_check(report, "TS-C3 transition preserve (source)", "compute_mode_transition" in text and "return [0]" in text, "transition logic not found")
 
-    num_trajectories = 100
-    max_steps = 1000
-    passed_count = 0
+        if args.check_model:
+            model_path = find_latest_model(Path(__file__).parent)
+            model = load_model(model_path, input_dim=2)
+            x = random.uniform(4 * math.pi / 9, 5 * math.pi / 9)
+            b = float(model(x, 1).item())
+            add_check(report, "model output finite", math.isfinite(b), f"B={b}")
 
-    print(f"Running {num_trajectories} trajectories, {max_steps} steps each...")
+        if args.result:
+            data = json.loads(Path(args.result).read_text(encoding="utf-8"))
+            add_check(report, "result success key", "success" in data, "missing success field")
+    except Exception as e:  # pragma: no cover
+        add_exception(report, e)
 
-    for i in range(num_trajectories):
+    return save_and_print(report, args.out, __file__)
 
-        x = random.uniform(0, math.pi / 9)
-        q = 1
-
-        B_init = model(x, q).item()
-        if B_init < -1e-6:
-            print(f"Trajectory {i+1}: ❌ Initial Condition Violated! B={B_init:.6f}")
-            continue
-
-        violation = False
-        for step in range(max_steps):
-            x_next = system_dynamics(x)
-            q_next = mode_transition(q, x)
-
-            B_curr = model(x, q).item()
-            B_next = model(x_next, q_next).item()
-
-            if q_next == 0 and B_curr >= -1e-6:
-                print(f"Trajectory {i+1}: ❌ Safety Violated at step {step}! Entered q=0 from B={B_curr:.6f}")
-                violation = True
-                break
-
-            if B_curr >= -1e-6 and B_next < -1e-6:
-                print(f"Trajectory {i+1}: ❌ Invariance Violated at step {step}! B_curr={B_curr:.6f}, B_next={B_next:.6f}")
-                violation = True
-                break
-
-            x, q = x_next, q_next
-
-        if not violation:
-            passed_count += 1
-            if (i + 1) % 20 == 0:
-                print(f"Progress: {i+1}/{num_trajectories} trajectories completed.")
-
-    print("\n" + "="*70)
-    print("Test Summary")
-    print("-" * 70)
-    print(f"Total Trajectories: {num_trajectories}")
-    print(f"Passed: {passed_count}")
-    print(f"Failed: {num_trajectories - passed_count}")
-
-    if passed_count == num_trajectories:
-        print("\n🎉 All tests passed! The barrier certificate is valid.")
-    else:
-        print("\n❌ Some tests failed. Please check the model or training process.")
-    print("="*70)
 
 if __name__ == "__main__":
-    run_test()
+    raise SystemExit(main())

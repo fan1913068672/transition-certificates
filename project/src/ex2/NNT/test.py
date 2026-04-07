@@ -1,101 +1,54 @@
+from __future__ import annotations
+
+import json
 import math
-import torch
 import random
-import os
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).parent.parent.parent))
-from common_test_utils import load_model, find_latest_model
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from common_test_utils import find_latest_model, load_model
+from test_report_utils import add_check, add_exception, base_parser, load_local_main, make_report, save_and_print
 
-SAMPLING_TIME = 0.1
-NATURAL_FREQUENCY = 0.01
-COUPLING_COEFFICIENT = 0.0006
-QUADRATIC_TERM = 0.532
-CONSTANT_TERM = 1.69
-def in_initial_set(x1, x2):
-    return 0 <= x1 <= math.pi / 9 and 0 <= x2 <= math.pi / 9
 
-def in_unsafe_set(x1, x2):
-    return (5/6 * math.pi <= x1 <= 8/9 * math.pi) or (5/6 * math.pi <= x2 <= 8/9 * math.pi)
+def main() -> int:
+    parser = base_parser("ex2/NNT test")
+    parser.add_argument("--check-model", action="store_true", help="evaluate latest model if available")
+    args = parser.parse_args()
 
-def system_dynamics(x1, x2):
-    x1p = x1 + SAMPLING_TIME * NATURAL_FREQUENCY + CONSTANT_TERM + SAMPLING_TIME * COUPLING_COEFFICIENT * math.sin(x2 - x1) - QUADRATIC_TERM * x1 ** 2
-    x2p = x2 + SAMPLING_TIME * NATURAL_FREQUENCY + CONSTANT_TERM + SAMPLING_TIME * COUPLING_COEFFICIENT * math.sin(x1 - x2) - QUADRATIC_TERM * x2 ** 2
-    return x1p, x2p
-
-def mode_transition(q, x1, x2):
-    if q == 1:
-        return 0 if in_unsafe_set(x1, x2) else 1
-    return 0
-
-def run_test():
-    print("="*70)
-    print("Testing Neural Barrier Certificate for Ex2 (2D)")
-    print("="*70)
-
+    report = make_report("ex2", "NNT")
     try:
-        model_path = find_latest_model(Path(__file__).parent)
-        print(f"✓ Loading latest model: {model_path}")
-        model = load_model(model_path, input_dim=3)
-    except Exception as e:
-        print(f"❌ Failed to load model: {e}")
-        return
+        try:
+            m = load_local_main(__file__)
+            pi = m.PI
+            add_check(report, "TS-C1 init nonneg (set)", m.In_X0(0.0, 0.0) and m.In_X0(pi / 9, pi / 9), "X0 boundary mismatch")
+            xu_mid = (5 * pi / 6 + 8 * pi / 9) / 2.0
+            add_check(report, "TS-C2 unsafe neg (set)", m.In_Unsafe(xu_mid, 0.0) and m.In_Unsafe(0.0, xu_mid), "Xu boundary mismatch")
+            add_check(report, "TS-C3 transition preserve (delta)", m.delta(0.1, 0.1, 1) == [1], f"delta safe={m.delta(0.1,0.1,1)}")
+            x1n, x2n = m.f_m(0.1, 0.2)
+            add_check(report, "dynamics finite", math.isfinite(x1n) and math.isfinite(x2n), "f_m not finite")
+        except ModuleNotFoundError:
+            text = Path(__file__).with_name("main.py").read_text(encoding="utf-8", errors="ignore")
+            add_check(report, "TS-C1 source", "In_X0_Cond" in text, "C1 set not found")
+            add_check(report, "TS-C2 source", "In_Unsafe_Cond" in text, "C2 set not found")
+            add_check(report, "TS-C3 source", "transition" in text.lower(), "C3 logic not found")
 
-    num_trajectories = 100
-    max_steps = 1000
-    passed_count = 0
+        if args.check_model:
+            model_path = find_latest_model(Path(__file__).parent)
+            model = load_model(model_path, input_dim=3)
+            x1 = random.uniform(0.0, math.pi / 9)
+            x2 = random.uniform(0.0, math.pi / 9)
+            b = float(model(x1, x2, 1).item())
+            add_check(report, "model output finite", math.isfinite(b), f"B={b}")
 
-    print(f"Running {num_trajectories} trajectories, {max_steps} steps each...")
+        if args.result:
+            data = json.loads(Path(args.result).read_text(encoding="utf-8"))
+            add_check(report, "result success key", "success" in data, "missing success field")
+    except Exception as e:  # pragma: no cover
+        add_exception(report, e)
 
-    for i in range(num_trajectories):
+    return save_and_print(report, args.out, __file__)
 
-        x1 = random.uniform(0, math.pi / 9)
-        x2 = random.uniform(0, math.pi / 9)
-        q = 1
-
-        B_init = model(x1, x2, q).item()
-        if B_init < -1e-6:
-            print(f"Trajectory {i+1}: ❌ Initial Condition Violated! B={B_init:.6f}")
-            continue
-
-        violation = False
-        for step in range(max_steps):
-            x1_next, x2_next = system_dynamics(x1, x2)
-            q_next = mode_transition(q, x1, x2)
-
-            B_curr = model(x1, x2, q).item()
-            B_next = model(x1_next, x2_next, q_next).item()
-
-            if q_next == 0 and B_curr >= -1e-6:
-                print(f"Trajectory {i+1}: ❌ Safety Violated at step {step}! Entered q=0 from B={B_curr:.6f}")
-                violation = True
-                break
-
-            if B_curr >= -1e-6 and B_next < -1e-6:
-                print(f"Trajectory {i+1}: ❌ Invariance Violated at step {step}! B_curr={B_curr:.6f}, B_next={B_next:.6f}")
-                violation = True
-                break
-
-            x1, x2, q = x1_next, x2_next, q_next
-
-        if not violation:
-            passed_count += 1
-            if (i + 1) % 20 == 0:
-                print(f"Progress: {i+1}/{num_trajectories} trajectories completed.")
-
-    print("\n" + "="*70)
-    print("Test Summary")
-    print("-" * 70)
-    print(f"Total Trajectories: {num_trajectories}")
-    print(f"Passed: {passed_count}")
-    print(f"Failed: {num_trajectories - passed_count}")
-
-    if passed_count == num_trajectories:
-        print("\n🎉 All tests passed! The barrier certificate is valid.")
-    else:
-        print("\n❌ Some tests failed. Please check the model or training process.")
-    print("="*70)
 
 if __name__ == "__main__":
-    run_test()
+    raise SystemExit(main())

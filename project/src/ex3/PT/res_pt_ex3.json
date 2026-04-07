@@ -15,5 +15,12 @@
     0.0,
     0.0
   ],
-  "elapsed_sec": 2.629194498062134
+  "elapsed_sec": 2.676501750946045,
+  "example": "ex3",
+  "method": "PT",
+  "certificate_type": "transition_persistence",
+  "solver": {
+    "synth": "z3",
+    "verify": "z3"
+  }
 }

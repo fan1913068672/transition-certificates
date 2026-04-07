@@ -1,0 +1,28 @@
+{
+  "example": "ex3",
+  "method": "NNT",
+  "passed": true,
+  "checks": [
+    {
+      "name": "TP-C1 init nonneg (set)",
+      "passed": true,
+      "details": "X0 boundary mismatch"
+    },
+    {
+      "name": "TP-C2 non-accepting nonincrease (set)",
+      "passed": true,
+      "details": "VF boundary mismatch"
+    },
+    {
+      "name": "TP-C3 accepting strict decrease (set)",
+      "passed": true,
+      "details": "VF region logic mismatch"
+    },
+    {
+      "name": "dynamics finite",
+      "passed": true,
+      "details": "f_m not finite"
+    }
+  ],
+  "errors": []
+}

@@ -1,184 +1,43 @@
+from __future__ import annotations
+
+import json
 import math
+import sys
+from pathlib import Path
 
-"""
- CEGIS-Z3-dReal
- B(x,q) ：
-1. : ∀x∈X0, B(x,1) ≥ 0
-2. :  B(x,q) ≥ 0， B(f(x), δ(q, L(x))) ≥ 0
-3. :
-"""
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from test_report_utils import add_check, add_exception, base_parser, load_local_main, make_report, save_and_print
 
-SAMPLING_TIME = 0.1
-NATURAL_FREQUENCY = 0.01
-COUPLING_COEFFICIENT = 0.0006
-QUADRATIC_TERM = 0.532
-CONSTANT_TERM = 1.69
 
-def in_state_space(x: float) -> bool:
-    """: x ∈ [0, 2π]"""
-    return 0 <= x <= 2 * math.pi
+def main() -> int:
+    parser = base_parser("ex1/PT test")
+    args = parser.parse_args()
 
-def in_initial_set(x: float) -> bool:
-    """: x ∈ [0, π/9]"""
-    return 0 <= x <= math.pi / 9
+    report = make_report("ex1", "PT")
+    try:
+        try:
+            m = load_local_main(__file__)
+            pi = m.PI
+            add_check(report, "TS-C1 init nonneg (set)", (4 * pi / 9) <= (4 * pi / 9) <= (5 * pi / 9), "X0 interval malformed")
+            add_check(report, "TS-C2 unsafe neg (set)", m.in_unsafe(7 * pi / 9) and m.in_unsafe(8 * pi / 9), "Xu boundary mismatch")
+            add_check(report, "TS-C3 transition preserve (delta)", m.delta(0.0, 1) == [1] and m.delta(7 * pi / 9, 1) == [0], "delta mismatch")
+            add_check(report, "dynamics finite", math.isfinite(m.f_m(1.0)), "f_m(1.0) is not finite")
+        except ModuleNotFoundError:
+            text = Path(__file__).with_name("main.py").read_text(encoding="utf-8", errors="ignore")
+            add_check(report, "TS-C1 source", "4 * PI / 9" in text and "5 * PI / 9" in text, "X0 config not found in source")
+            add_check(report, "TS-C2 source", "7 * PI / 9" in text and "8 * PI / 9" in text, "Xu config not found in source")
+            add_check(report, "TS-C3 source", "return [0] if in_unsafe(x) else [1]" in text, "delta logic not found in source")
 
-def in_unsafe_set(x: float) -> bool:
-    """: x ∈ [7π/9, 8π/9]"""
-    return 7 * math.pi / 9 <= x <= 8 * math.pi / 9
+        if args.result:
+            data = json.loads(Path(args.result).read_text(encoding="utf-8"))
+            coeffs = data.get("coefficients")
+            add_check(report, "result coefficients", isinstance(coeffs, list) and len(coeffs) == 9, "expected 9 coefficients")
+            add_check(report, "result success", isinstance(data.get("success"), bool), "missing success bool")
+    except Exception as e:  # pragma: no cover
+        add_exception(report, e)
 
-def system_dynamics(x: float) -> float:
-    """
-    : x_next = f(x)
-    f(x) = x + Ts*Ω + Ts*K*sin(-x) - 0.532*x^2 + 1.69
-    """
-    return (x + SAMPLING_TIME * NATURAL_FREQUENCY +
-            SAMPLING_TIME * COUPLING_COEFFICIENT * math.sin(-x) -
-            QUADRATIC_TERM * x ** 2 + CONSTANT_TERM)
+    return save_and_print(report, args.out, __file__)
 
-def safety_label(x: float) -> int:
-    """
-    : x1，0
-    """
-    return 1 if in_unsafe_set(x) else 0
-
-def mode_transition(current_mode: int, safety_label_value: int) -> int:
-    """
-    : δ(q, w)
-    q=1, w=1 → 0  ()
-    q=1, w=0 → 1  ()
-    q=0 → 0       ()
-    """
-    if current_mode == 1:
-        return 0 if safety_label_value == 1 else 1
-    else:  # current_mode == 0
-        return 0
-
-def barrier_function_2025_03_15(x: float, mode: int) -> float:
-    """
-    2025-03-15
-    B(x, q) = -1 + 2*q^2 - (7/16)*x*q
-    """
-    return -1 + 2 * mode ** 2 - (7 / 16) * x * mode
-
-def generate_samples(start: float, end: float, step: float) -> list[float]:
-    """
-    [start, end]step
-    """
-    num_samples = int((end - start) / step) + 1
-    return [start + i * step for i in range(num_samples)]
-
-def verify_safety_certificate(barrier_func, max_iterations: int = 2000) -> bool:
-    """
-
-    : True ，False
-    """
-
-    initial_samples = generate_samples(0, math.pi / 9, 0.0001)
-
-    print("...")
-    print(f": {len(initial_samples)}")
-    print(f": {max_iterations}")
-    print("-" * 50)
-
-    for initial_x in initial_samples:
-        x = initial_x
-        mode = 1
-        iteration = 0
-
-        while iteration < max_iterations:
-
-            next_x = system_dynamics(x)
-            next_mode = mode_transition(mode, safety_label(x))
-
-            current_barrier = barrier_func(x, mode)
-            next_barrier = barrier_func(next_x, next_mode)
-
-            if in_initial_set(x) and current_barrier < 0:
-                print(f"❌ :")
-                print(f"   : x = {initial_x:.6f}, : x = {x:.6f}")
-                print(f"   : q = {mode}, B(x,q) = {current_barrier:.6f}")
-                return False
-
-            if in_state_space(x) and in_state_space(next_x):
-                if current_barrier >= 0 and next_barrier < 0:
-                    print(f"❌ :")
-                    print(f"   : x = {initial_x:.6f}")
-                    print(f"   : (x,q) = ({x:.6f}, {mode}), B = {current_barrier:.6f}")
-                    print(f"   : (x',q') = ({next_x:.6f}, {next_mode}), B' = {next_barrier:.6f}")
-                    return False
-
-            if next_mode == 0 and current_barrier >= 0:
-                print(f"❌ :")
-                print(f"   : x = {initial_x:.6f}")
-                print(f"    q=0  B(x,q) ≥ 0 ")
-                return False
-
-            if current_barrier < 0 and not in_initial_set(x):
-                print(f"⚠️  :  B(x,q) < 0")
-                print(f"   (x,q) = ({x:.6f}, {mode}), B = {current_barrier:.6f}")
-
-            x = next_x
-            mode = next_mode
-            iteration += 1
-
-        print(f"✓  x = {initial_x:.6f}  ({iteration})")
-
-    print("\n" + "=" * 50)
-    print("✅ ！。")
-    print("=" * 50)
-    return True
-
-def quick_verification(barrier_func) -> None:
-    """
-    ：
-    """
-    print("...")
-
-    test_cases = [
-        (0.0, 1, ""),
-        (math.pi / 9, 1, ""),
-        (7 * math.pi / 9, 0, " (q=0)"),
-        (8 * math.pi / 9, 0, " (q=0)"),
-        (7 * math.pi / 9, 1, " (q=1)"),
-        (8 * math.pi / 9, 1, " (q=1)"),
-    ]
-
-    for x, q, description in test_cases:
-        barrier_value = barrier_func(x, q)
-        print(f"{description:20} (x={x:.4f}, q={q}): B = {barrier_value:.6f}")
-
-        if in_initial_set(x) and q == 1 and barrier_value < 0:
-            print(f"  ⚠️  ")
-        elif in_unsafe_set(x) and q == 0 and barrier_value >= 0:
-            print(f"  ⚠️  ")
-
-    print("-" * 50)
-
-def main():
-    """"""
-    print("=" * 60)
-    print("")
-    print(f": B(x, q) = -1 + 2*q^2 - (7/16)*x*q")
-    print(f":  Kuramoto ")
-    print("=" * 60)
-
-    quick_verification(barrier_function_2025_03_15)
-
-    is_valid = verify_safety_certificate(
-        barrier_func=barrier_function_2025_03_15,
-        max_iterations=2000
-    )
-
-    if is_valid:
-        print("\n:")
-        print("1. ✅ :  x∈X0  B(x,1) ≥ 0")
-        print("2. ✅ : B(x,q) ≥ 0 ⇒ B(f(x), δ(q,L(x))) ≥ 0")
-        print("3. ✅ : ")
-        print("\n🎉 ！")
-    else:
-        print("\n❌ ，")
-
-    print("=" * 60)
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

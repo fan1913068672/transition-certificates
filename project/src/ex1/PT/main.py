@@ -3,9 +3,13 @@ import json
 import math
 import time
 from pathlib import Path
+import sys
 
 import dreal
 import z3
+
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from run_output_utils import print_header, print_result
 
 """
 ex1: 1D Kuramoto-like system
@@ -25,7 +29,7 @@ def in_x_cond(x):
 
 
 def in_x0_cond(x):
-    return dreal.And(x >= 0, x <= PI / 9)
+    return dreal.And(x >= 4 * PI / 9, x <= 5 * PI / 9)
 
 
 def in_unsafe_cond(x):
@@ -95,19 +99,21 @@ def state_space_product(s1, *args):
     return res
 
 
-def reachability_10():
+def reachability_10(max_iter=1000, grid_step=0.01, dreal_precision=1e-4, z3_timeout_ms=0):
     print("Synthesizing transition-persistence certificate for ex1 (q1->q0)...")
     cc_flag = False
     found_coeffs = None
 
     c = [z3.Real(f'c{i}') for i in range(9)]
     s = z3.SolverFor("QF_NRA")
+    if z3_timeout_ms and z3_timeout_ms > 0:
+        s.set("timeout", z3_timeout_ms)
 
-    x_samples = step_sample(0, 2 * PI, 0.01)
+    x_samples = step_sample(0, 2 * PI, grid_step)
     q_samples = [0, 1]
     y_samples = state_space_product(x_samples, q_samples)
 
-    x0_samples = step_sample(0, PI / 9, 0.01)
+    x0_samples = step_sample(4 * PI / 9, 5 * PI / 9, grid_step)
     y0_samples = state_space_product(x0_samples, [1])
     yu_samples = state_space_product(x_samples, [0])
 
@@ -130,11 +136,10 @@ def reachability_10():
         for qp in delta(x, q):
             s.add(z3.Implies(bp_t(x, q) >= 0, bp_t(xp, qp) >= 0))
 
-    max_iter = 1000
     it = 0
 
     ce_solver = dreal.Context()
-    ce_solver.config.precision = 1e-4
+    ce_solver.config.precision = dreal_precision
     ce_solver.SetLogic(dreal.Logic.QF_NRA)
     x_ce = dreal.Variable('x_ce')
     ce_solver.DeclareVariable(x_ce, 0, 2 * PI)
@@ -267,18 +272,48 @@ def reachability_10():
 def main():
     parser = argparse.ArgumentParser(description="ex1 PT synthesis")
     parser.add_argument("--out", type=str, default="res_pt_ex1.json", help="output JSON path")
+    parser.add_argument("--max-iter", type=int, default=1000)
+    parser.add_argument("--grid-step", type=float, default=0.01)
+    parser.add_argument("--dreal-precision", type=float, default=1e-4)
+    parser.add_argument("--z3-timeout-ms", type=int, default=0)
+    parser.add_argument("--epochs", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--lr", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--seed", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--qi", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--qj", type=int, default=0, help="unused (kept for CLI consistency)")
     args = parser.parse_args()
 
+    print_header(
+        "ex1",
+        "PT",
+        "transition_safety",
+        {
+            "solver_synth": "z3",
+            "solver_verify": "dreal",
+            "max_iter": args.max_iter,
+            "grid_step": args.grid_step,
+            "dreal_precision": args.dreal_precision,
+            "z3_timeout_ms": args.z3_timeout_ms,
+        },
+    )
     start_time = time.time()
-    result = reachability_10()
+    result = reachability_10(
+        max_iter=args.max_iter,
+        grid_step=args.grid_step,
+        dreal_precision=args.dreal_precision,
+        z3_timeout_ms=args.z3_timeout_ms,
+    )
     result["elapsed_sec"] = time.time() - start_time
-    print(f"Elapsed time: {result['elapsed_sec']:.4f} s")
+    result["example"] = "ex1"
+    result["method"] = "PT"
+    result["certificate_type"] = "transition_safety"
+    result["solver"] = {"synth": "z3", "verify": "dreal"}
 
     out_path = Path(args.out)
     if not out_path.is_absolute():
         out_path = Path(__file__).resolve().parent / out_path
     out_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
-    print(f"Saved result to: {out_path}")
+    print_result(bool(result.get("success")), result.get("iterations"), result["elapsed_sec"], str(out_path))
 
 
 if __name__ == "__main__":

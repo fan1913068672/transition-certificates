@@ -1,0 +1,15 @@
+{
+  "example": "ex3",
+  "method": "NNT",
+  "certificate_type": "transition_persistence",
+  "success": true,
+  "elapsed_sec": 1461.9093821048737,
+  "epsilon": 0.01,
+  "hidden_dim": 3,
+  "solver": {
+    "synth": "adam",
+    "verify": "dreal"
+  },
+  "model_state_path": "persistence_barrier_model_2layer.pth",
+  "checkpoint_path": "persistence_barrier_checkpoint_2layer.pth"
+}

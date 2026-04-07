@@ -1,0 +1,28 @@
+{
+  "example": "ex1",
+  "method": "NNT",
+  "passed": true,
+  "checks": [
+    {
+      "name": "TS-C1 init nonneg (set)",
+      "passed": true,
+      "details": "X0 boundary mismatch"
+    },
+    {
+      "name": "TS-C2 unsafe neg (set)",
+      "passed": true,
+      "details": "Xu boundary mismatch"
+    },
+    {
+      "name": "TS-C3 transition preserve (delta)",
+      "passed": true,
+      "details": "delta at safe point: [1]"
+    },
+    {
+      "name": "dynamics finite",
+      "passed": true,
+      "details": "f(1.0) is not finite"
+    }
+  ],
+  "errors": []
+}

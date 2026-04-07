@@ -3,6 +3,11 @@ import json
 import random
 from pathlib import Path
 import z3
+import time
+import sys
+
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from run_output_utils import print_header, print_result
 
 def f(x1, x2):
     alpha, theta, mu, Th, Te = 0.004, 0.01, 0.15, 40.0, 0.0
@@ -79,6 +84,7 @@ def sample_points():
     return pts, x0, vf
 
 def solve(mode='main', out_file='res_cc_ex3.json'):
+    start = time.time()
     pts, x0_pts, vf_pts = sample_points()
 
     if mode == 'closure':
@@ -144,10 +150,32 @@ def solve(mode='main', out_file='res_cc_ex3.json'):
         out[f'T_{i}_{j}'] = vals
     Path(out_file).write_text(json.dumps(out, indent=2), encoding='utf-8')
     print('saved', out_file)
+    out["success"] = True
+    out["elapsed_sec"] = time.time() - start
+    out["iterations"] = 1
+    Path(out_file).write_text(json.dumps(out, indent=2), encoding='utf-8')
+    return out
 
 if __name__ == '__main__':
-    p = argparse.ArgumentParser()
+    p = argparse.ArgumentParser(description="ex3 closure-certificate synthesis")
     p.add_argument('--mode', choices=['main', 'closure'], default='main')
     p.add_argument('--out', default='res_cc_ex3.json')
+    p.add_argument("--max-iter", type=int, default=1, help="unused (kept for CLI consistency)")
+    p.add_argument("--epochs", type=int, default=0, help="unused (kept for CLI consistency)")
+    p.add_argument("--lr", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    p.add_argument("--grid-step", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    p.add_argument("--dreal-precision", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    p.add_argument("--z3-timeout-ms", type=int, default=0, help="unused (kept for CLI consistency)")
+    p.add_argument("--seed", type=int, default=0, help="unused (kept for CLI consistency)")
+    p.add_argument("--qi", type=int, default=0, help="unused (kept for CLI consistency)")
+    p.add_argument("--qj", type=int, default=0, help="unused (kept for CLI consistency)")
     args = p.parse_args()
-    solve(mode=args.mode, out_file=args.out)
+    out_path = Path(args.out)
+    if not out_path.is_absolute():
+        out_path = Path(__file__).resolve().parent / out_path
+    print_header("ex3", "CC", "closure_certificate", {"mode": args.mode, "solver_synth": "z3", "solver_verify": "z3"})
+    result = solve(mode=args.mode, out_file=str(out_path))
+    if result is None:
+        result = {"success": False, "elapsed_sec": 0.0}
+        out_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    print_result(bool(result.get("success")), result.get("iterations"), float(result.get("elapsed_sec", 0.0)), str(out_path))

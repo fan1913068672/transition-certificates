@@ -2,11 +2,16 @@ import argparse
 import json
 import math
 import random
+import time
 from pathlib import Path
+import sys
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
+
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from run_output_utils import print_header, print_result
 
 PI = 3.1415926
 
@@ -178,16 +183,35 @@ def train(epochs=1500, lr=1e-3, xi=0.01, eta=0.01, lam1=0.1, lam2=0.1, tol=1e-4)
 
     print('saved to saved_models/model.json')
     print(f'certified={certified}, theorem_margin={theorem_margin:.6f}, max_lprime={max_lprime:.6f}')
+    return payload
 
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser()
+    p.add_argument('--out', type=str, default='res_ncc_ex1.json')
+    p.add_argument('--max-iter', type=int, default=0, help='unused (kept for CLI consistency)')
     p.add_argument('--epochs', type=int, default=1500)
     p.add_argument('--lr', type=float, default=1e-3)
-    p.add_argument('--xi', type=float, default=0.01)
+    p.add_argument('--grid-step', '--xi', dest='xi', type=float, default=0.01)
+    p.add_argument('--dreal-precision', type=float, default=0.0, help='unused (kept for CLI consistency)')
+    p.add_argument('--z3-timeout-ms', type=int, default=0, help='unused (kept for CLI consistency)')
+    p.add_argument('--seed', type=int, default=0, help='unused (kept for CLI consistency)')
+    p.add_argument('--qi', type=int, default=0, help='unused (kept for CLI consistency)')
+    p.add_argument('--qj', type=int, default=0, help='unused (kept for CLI consistency)')
     p.add_argument('--eta', type=float, default=0.01)
     p.add_argument('--lambda1', type=float, default=0.1)
     p.add_argument('--lambda2', type=float, default=0.1)
     p.add_argument('--tol', type=float, default=1e-4)
     args = p.parse_args()
-    train(epochs=args.epochs, lr=args.lr, xi=args.xi, eta=args.eta, lam1=args.lambda1, lam2=args.lambda2, tol=args.tol)
+    print_header("ex1", "NCC", "neural_closure_certificate", {"epochs": args.epochs, "lr": args.lr, "xi": args.xi})
+    t0 = time.time()
+    payload = train(epochs=args.epochs, lr=args.lr, xi=args.xi, eta=args.eta, lam1=args.lambda1, lam2=args.lambda2, tol=args.tol)
+    elapsed = time.time() - t0
+    out_path = Path(args.out)
+    if not out_path.is_absolute():
+        out_path = Path(__file__).resolve().parent / out_path
+    payload["example"] = "ex1"
+    payload["method"] = "NCC"
+    payload["elapsed_sec"] = elapsed
+    out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    print_result(bool(payload.get("certified")), 1, elapsed, str(out_path))

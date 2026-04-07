@@ -1,3 +1,4 @@
+import argparse
 import math
 import torch
 import torch.nn as nn
@@ -8,6 +9,11 @@ import json
 import os
 from datetime import datetime
 import numpy as np
+from pathlib import Path
+import sys
+
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from run_output_utils import print_header, print_result
 
 """
 Case: Two-dimensional Coupled Kuramoto Oscillators
@@ -425,7 +431,7 @@ def verify_with_dreal(B_net):
 
     return (not ce_flag, counterexamples)
 
-def synthesize_barrier_certificate(save_dir="saved_models"):
+def synthesize_barrier_certificate(save_dir="saved_models", max_iterations=2000, train_epochs=1000, train_lr=0.01):
     """
     Main CEGIS loop for synthesizing barrier certificate
     """
@@ -463,12 +469,11 @@ def synthesize_barrier_certificate(save_dir="saved_models"):
         for qp in qp_list:
             training_data['transition'].append((x1, x2, q, x1p, x2p, qp))
 
-    MAX_ITER = 2000
     iter = 0
     cc_flag = False
 
     # CEGIS Loop
-    while iter < MAX_ITER:
+    while iter < max_iterations:
         print(f"\n{'='*70}")
         print(f"CEGIS Iteration #{iter}")
         print(f"{'='*70}")
@@ -478,7 +483,7 @@ def synthesize_barrier_certificate(save_dir="saved_models"):
 
         # Step 1: Train candidate barrier certificate
         print("\nStep 1: Training neural network...")
-        train_candidate(B_net, training_data, epochs=1000, lr=0.01)
+        train_candidate(B_net, training_data, epochs=train_epochs, lr=train_lr)
 
         # Step 2: Verify with dReal
         print("\nStep 2: Verifying with dReal...")
@@ -507,7 +512,7 @@ def synthesize_barrier_certificate(save_dir="saved_models"):
 
         iter += 1
 
-    if iter >= MAX_ITER:
+    if iter >= max_iterations:
         print("\n" + "="*70)
         print("✗ Exceeded maximum number of iterations")
         print("="*70)
@@ -516,11 +521,34 @@ def synthesize_barrier_certificate(save_dir="saved_models"):
         print("✗ Unable to synthesize barrier certificate")
         print("="*70)
 
-    return B_net, cc_flag, model_dir
+    return B_net, cc_flag, model_dir, iter, max_iterations
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="ex2 NNT synthesis")
+    parser.add_argument("--out", type=str, default="res_nnt_ex2.json", help="output JSON path")
+    parser.add_argument("--max-iter", type=int, default=2000)
+    parser.add_argument("--epochs", type=int, default=1000)
+    parser.add_argument("--lr", type=float, default=0.01)
+    parser.add_argument("--grid-step", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--dreal-precision", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--z3-timeout-ms", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--seed", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--qi", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--qj", type=int, default=0, help="unused (kept for CLI consistency)")
+    args = parser.parse_args()
+
+    print_header(
+        "ex2",
+        "NNT",
+        "transition_safety",
+        {"solver_verify": "dreal", "hidden": 15, "max_iter": args.max_iter, "epochs": args.epochs, "lr": args.lr},
+    )
     start_time = time.time()
-    B_net, success, model_dir = synthesize_barrier_certificate()
+    B_net, success, model_dir, iter_count, max_iter = synthesize_barrier_certificate(
+        max_iterations=args.max_iter,
+        train_epochs=args.epochs,
+        train_lr=args.lr,
+    )
     end_time = time.time()
 
     if success:
@@ -545,4 +573,22 @@ if __name__ == "__main__":
         B_net.save_parameters_txt(os.path.join(model_dir, "parameters.txt"))
         print("=" * 70)
 
-    print(f"\nTime taken: {end_time - start_time:.4f} seconds")
+    elapsed = end_time - start_time
+    result = {
+        "example": "ex2",
+        "method": "NNT",
+        "certificate_type": "transition_safety",
+        "success": bool(success),
+        "iterations": int(iter_count),
+        "max_iterations": int(max_iter),
+        "elapsed_sec": float(elapsed),
+        "solver": {"synth": "adam", "verify": "dreal"},
+        "hidden_dim": int(B_net.fc1.out_features) if B_net is not None else None,
+        "model_dir": model_dir,
+        "model_state_path": os.path.join(model_dir, "barrier_net.pth") if success else None,
+    }
+    out_path = Path(args.out)
+    if not out_path.is_absolute():
+        out_path = Path(__file__).resolve().parent / out_path
+    out_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    print_result(bool(success), int(iter_count), elapsed, str(out_path))

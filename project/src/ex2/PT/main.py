@@ -3,9 +3,13 @@ import json
 import math
 import time
 from pathlib import Path
+import sys
 
 import dreal
 import z3
+
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from run_output_utils import print_header, print_result
 
 """
 ex2 PT (strictly ex1/PT-style CEGIS structure, 2D adaptation)
@@ -98,8 +102,7 @@ def synthesize(
     found_coeffs = None
 
     c = [z3.Real(f'c{i}') for i in range(7)]
-    # Paper says polynomial candidate generation is solved as LP; constraints are
-    # linear in coefficients c_i because x values are sampled constants.
+    # Candidate synthesis is solved by Z3 on sampled constraints.
     s = z3.SolverFor("QF_NRA")
     if z3_timeout_ms and z3_timeout_ms > 0:
         s.set("timeout", z3_timeout_ms)
@@ -321,8 +324,26 @@ def main():
     parser.add_argument("--grid-step", type=float, default=0.1)
     parser.add_argument("--dreal-precision", type=float, default=1e-4)
     parser.add_argument("--z3-timeout-ms", type=int, default=0, help="0 means no timeout")
+    parser.add_argument("--epochs", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--lr", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--seed", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--qi", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--qj", type=int, default=0, help="unused (kept for CLI consistency)")
     args = parser.parse_args()
 
+    print_header(
+        "ex2",
+        "PT",
+        "transition_safety",
+        {
+            "solver_synth": "z3",
+            "solver_verify": "dreal",
+            "max_iter": args.max_iter,
+            "grid_step": args.grid_step,
+            "dreal_precision": args.dreal_precision,
+            "z3_timeout_ms": args.z3_timeout_ms,
+        },
+    )
     start_time = time.time()
     result = synthesize(
         args.max_iter,
@@ -331,13 +352,15 @@ def main():
         args.z3_timeout_ms,
     )
     result["elapsed_sec"] = time.time() - start_time
-    print(f"Elapsed time: {result['elapsed_sec']:.4f} s")
+    result["example"] = "ex2"
+    result["method"] = "PT"
+    result["solver"] = {"synth": "z3", "verify": "dreal"}
 
     out_path = Path(args.out)
     if not out_path.is_absolute():
         out_path = Path(__file__).resolve().parent / out_path
     out_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
-    print(f"Saved result to: {out_path}")
+    print_result(bool(result.get("success")), result.get("iterations"), result["elapsed_sec"], str(out_path))
 
 
 if __name__ == "__main__":

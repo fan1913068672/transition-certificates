@@ -2,11 +2,16 @@ import argparse
 import json
 import math
 import random
+import time
 from pathlib import Path
+import sys
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
+
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from run_output_utils import print_header, print_result
 
 PI = 3.1415926
 
@@ -91,7 +96,8 @@ def estimate_lf_ex2() -> float:
 
 
 def train(epochs=2000, lr=1e-3, xi=0.01, eta=0.01, lam1=0.1, lam2=0.1, tol=1e-4):
-    xs = make_grid(0.0, 8 * PI / 9, max(0.1, xi))
+    xi_eff = max(0.1, xi)
+    xs = make_grid(0.0, 8 * PI / 9, xi_eff)
     pts = [(x1, x2) for x1 in xs for x2 in xs if in_x(x1, x2)]
     x0 = [(x1, x2) for x1, x2 in pts if in_x0(x1, x2)]
     q_states = [0, 1]
@@ -144,12 +150,13 @@ def train(epochs=2000, lr=1e-3, xi=0.01, eta=0.01, lam1=0.1, lam2=0.1, tol=1e-4)
     l2 = 2.0 * lt * (1.0 + lf)
     l3 = (2.0 + lam1 + lam2) * lt
     l_all = max(l1, l2, l3)
-    theorem_margin = l_all * xi / 2.0 - eta
+    theorem_margin = l_all * xi_eff / 2.0 - eta
     certified = (max_lprime <= tol) and (theorem_margin <= 0.0)
 
     payload = {
         'arch': '6-80-1',
         'xi': xi,
+        'xi_effective': xi_eff,
         'eta': eta,
         'lambda1': lam1,
         'lambda2': lam2,
@@ -169,18 +176,39 @@ def train(epochs=2000, lr=1e-3, xi=0.01, eta=0.01, lam1=0.1, lam2=0.1, tol=1e-4)
     Path('saved_models/model.json').write_text(json.dumps(payload, indent=2), encoding='utf-8')
     Path('res.txt').write_text(json.dumps(payload, indent=2), encoding='utf-8')
 
+    if abs(xi_eff - xi) > 1e-12:
+        print(f'warning: xi={xi} was clamped to effective grid step xi_effective={xi_eff}')
     print('saved to saved_models/model.json')
     print(f'certified={certified}, theorem_margin={theorem_margin:.6f}, max_lprime={max_lprime:.6f}')
+    return payload
 
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser()
+    p.add_argument('--out', type=str, default='res_ncc_ex2.json')
+    p.add_argument('--max-iter', type=int, default=0, help='unused (kept for CLI consistency)')
     p.add_argument('--epochs', type=int, default=2000)
     p.add_argument('--lr', type=float, default=1e-3)
-    p.add_argument('--xi', type=float, default=0.01)
+    p.add_argument('--grid-step', '--xi', dest='xi', type=float, default=0.01)
+    p.add_argument('--dreal-precision', type=float, default=0.0, help='unused (kept for CLI consistency)')
+    p.add_argument('--z3-timeout-ms', type=int, default=0, help='unused (kept for CLI consistency)')
+    p.add_argument('--seed', type=int, default=0, help='unused (kept for CLI consistency)')
+    p.add_argument('--qi', type=int, default=0, help='unused (kept for CLI consistency)')
+    p.add_argument('--qj', type=int, default=0, help='unused (kept for CLI consistency)')
     p.add_argument('--eta', type=float, default=0.01)
     p.add_argument('--lambda1', type=float, default=0.1)
     p.add_argument('--lambda2', type=float, default=0.1)
     p.add_argument('--tol', type=float, default=1e-4)
     args = p.parse_args()
-    train(epochs=args.epochs, lr=args.lr, xi=args.xi, eta=args.eta, lam1=args.lambda1, lam2=args.lambda2, tol=args.tol)
+    print_header("ex2", "NCC", "neural_closure_certificate", {"epochs": args.epochs, "lr": args.lr, "xi": args.xi})
+    t0 = time.time()
+    payload = train(epochs=args.epochs, lr=args.lr, xi=args.xi, eta=args.eta, lam1=args.lambda1, lam2=args.lambda2, tol=args.tol)
+    elapsed = time.time() - t0
+    out_path = Path(args.out)
+    if not out_path.is_absolute():
+        out_path = Path(__file__).resolve().parent / out_path
+    payload["example"] = "ex2"
+    payload["method"] = "NCC"
+    payload["elapsed_sec"] = elapsed
+    out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    print_result(bool(payload.get("certified")), 1, elapsed, str(out_path))

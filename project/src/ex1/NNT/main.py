@@ -1,3 +1,4 @@
+import argparse
 import math
 import torch
 import torch.nn as nn
@@ -8,6 +9,11 @@ import json
 import numpy as np
 from datetime import datetime
 import os
+from pathlib import Path
+import sys
+
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from run_output_utils import print_header, print_result
 
 """
  Kuramoto
@@ -312,7 +318,7 @@ def verify_barrier_with_dreal(B_net):
     solver.config.precision = 0.0001
     solver.SetLogic(dreal.Logic.QF_NRA)
     x_var = dreal.Variable('x')
-    solver.DeclareVariable(x_var, 0, 2 * dreal.cos(0))
+    solver.DeclareVariable(x_var, 0, 2 * PI)
 
     barrier_dreal = convert_network_to_dreal(B_net)
     counterexamples = {'init': [], 'unsafe': [], 'transition': []}
@@ -398,7 +404,7 @@ def verify_barrier_with_dreal(B_net):
 
     return (not has_counterexample, counterexamples)
 
-def synthesize_barrier_certificate(save_dir="saved_models"):
+def synthesize_barrier_certificate(save_dir="saved_models", max_iterations=20, train_epochs=1000, train_lr=0.01):
     """CEGIS"""
     print("")
     print("=" * 60)
@@ -448,7 +454,6 @@ def synthesize_barrier_certificate(save_dir="saved_models"):
         for qp in qp_list:
             training_data['transition'].append((x, q, xp, qp))
 
-    max_iterations = 20
     iteration = 0
     success = False
 
@@ -461,7 +466,7 @@ def synthesize_barrier_certificate(save_dir="saved_models"):
         print(f"  transition:  = {len(training_data['transition'])}")
 
         print("\n1: ...")
-        train_barrier_network(B_net, training_data, epochs=1000, lr=0.01)
+        train_barrier_network(B_net, training_data, epochs=train_epochs, lr=train_lr)
 
         print("\n2: dReal...")
         verified, counterexamples = verify_barrier_with_dreal(B_net)
@@ -502,11 +507,34 @@ def synthesize_barrier_certificate(save_dir="saved_models"):
         print("✗ ")
         print("=" * 60)
 
-    return B_net, success, model_dir
+    return B_net, success, model_dir, iteration, max_iterations
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="ex1 NNT synthesis")
+    parser.add_argument("--out", type=str, default="res_nnt_ex1.json", help="output JSON path")
+    parser.add_argument("--max-iter", type=int, default=20)
+    parser.add_argument("--epochs", type=int, default=1000)
+    parser.add_argument("--lr", type=float, default=0.01)
+    parser.add_argument("--grid-step", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--dreal-precision", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--z3-timeout-ms", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--seed", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--qi", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--qj", type=int, default=0, help="unused (kept for CLI consistency)")
+    args = parser.parse_args()
+
+    print_header(
+        "ex1",
+        "NNT",
+        "transition_safety",
+        {"solver_verify": "dreal", "hidden": 10, "max_iter": args.max_iter, "epochs": args.epochs, "lr": args.lr},
+    )
     start_time = time.time()
-    barrier_net, success, model_dir = synthesize_barrier_certificate()
+    barrier_net, success, model_dir, iteration, max_iterations = synthesize_barrier_certificate(
+        max_iterations=args.max_iter,
+        train_epochs=args.epochs,
+        train_lr=args.lr,
+    )
     end_time = time.time()
 
     if success:
@@ -531,4 +559,24 @@ if __name__ == "__main__":
 
         model_path = os.path.join(model_dir, "barrier_net.pth")
         barrier_net.save_model(model_path)
+
+    elapsed = end_time - start_time
+    result = {
+        "example": "ex1",
+        "method": "NNT",
+        "certificate_type": "transition_safety",
+        "success": bool(success),
+        "iterations": int(iteration),
+        "max_iterations": int(max_iterations),
+        "elapsed_sec": float(elapsed),
+        "solver": {"synth": "adam", "verify": "dreal"},
+        "hidden_dim": int(barrier_net.fc1.out_features) if barrier_net is not None else None,
+        "model_dir": model_dir,
+        "model_state_path": os.path.join(model_dir, "barrier_net.pth") if success else None,
+    }
+    out_path = Path(args.out)
+    if not out_path.is_absolute():
+        out_path = Path(__file__).resolve().parent / out_path
+    out_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    print_result(bool(success), int(iteration), elapsed, str(out_path))
 

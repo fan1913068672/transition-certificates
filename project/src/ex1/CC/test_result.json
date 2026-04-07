@@ -1,0 +1,33 @@
+{
+  "example": "ex1",
+  "method": "CC",
+  "passed": true,
+  "checks": [
+    {
+      "name": "CC-C1 closure seed",
+      "passed": true,
+      "details": "delta(1,False)=[1]"
+    },
+    {
+      "name": "CC-C2 closure propagation",
+      "passed": true,
+      "details": "delta(1,True)=[0]"
+    },
+    {
+      "name": "CC-C3 accepting decrease domain",
+      "passed": true,
+      "details": "X0 endpoints not included"
+    },
+    {
+      "name": "unsafe region config",
+      "passed": true,
+      "details": "unsafe endpoints not included"
+    },
+    {
+      "name": "dynamics finite",
+      "passed": true,
+      "details": "f_m(1.0) is not finite"
+    }
+  ],
+  "errors": []
+}

@@ -2,8 +2,12 @@ import argparse
 import json
 import time
 from pathlib import Path
+import sys
 
 from z3 import *
+
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from run_output_utils import print_header, print_result
 
 """
 ex3: two-room temperature model
@@ -142,7 +146,7 @@ def t2float(v, precision=14):
     return float(s)
 
 
-def cegeis_synthesis(qi, qj):
+def cegeis_synthesis(qi, qj, max_iter=1000):
     print(f"Synthesizing transition-persistence certificate for ({qi},{qj})...")
     found = False
     found_coeffs = None
@@ -194,8 +198,6 @@ def cegeis_synthesis(qi, qj):
     x1_next_ce, x2_next_ce = f_cond(x1_ce, x2_ce)
 
     it = 0
-    max_iter = 1000
-
     while s.check() == sat and it <= max_iter:
         ce_flag = False
         m = s.model()
@@ -341,18 +343,34 @@ def main():
     parser.add_argument("--qi", type=int, default=1, help="source automaton state")
     parser.add_argument("--qj", type=int, default=1, help="target automaton state")
     parser.add_argument("--out", type=str, default="res_pt_ex3.json", help="output JSON path")
+    parser.add_argument("--max-iter", type=int, default=1000)
+    parser.add_argument("--grid-step", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--dreal-precision", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--z3-timeout-ms", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--epochs", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--lr", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--seed", type=int, default=0, help="unused (kept for CLI consistency)")
     args = parser.parse_args()
 
+    print_header(
+        "ex3",
+        "PT",
+        "transition_persistence",
+        {"solver_synth": "z3", "solver_verify": "z3", "qi": args.qi, "qj": args.qj, "max_iter": args.max_iter},
+    )
     start = time.time()
-    result = cegeis_synthesis(args.qi, args.qj)
+    result = cegeis_synthesis(args.qi, args.qj, args.max_iter)
     result["elapsed_sec"] = time.time() - start
-    print(f"Time cost: {result['elapsed_sec']:.4f} seconds")
+    result["example"] = "ex3"
+    result["method"] = "PT"
+    result["certificate_type"] = "transition_persistence"
+    result["solver"] = {"synth": "z3", "verify": "z3"}
 
     out_path = Path(args.out)
     if not out_path.is_absolute():
         out_path = Path(__file__).resolve().parent / out_path
     out_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
-    print(f"Saved result to: {out_path}")
+    print_result(bool(result.get("success")), result.get("iterations"), result["elapsed_sec"], str(out_path))
 
 
 if __name__ == "__main__":

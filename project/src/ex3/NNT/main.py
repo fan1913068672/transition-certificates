@@ -10,6 +10,10 @@ import time
 import numpy as np
 import sympy as sp
 from pathlib import Path
+import sys
+
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from run_output_utils import print_header, print_result
 
 """
 Case: Temperature Control System with 2 Rooms
@@ -371,7 +375,7 @@ def verify_with_dreal(B_net):
 
     return (not ce_flag, counterexamples)
 
-def synthesize_persistence_certificate():
+def synthesize_persistence_certificate(max_iterations=1000, train_epochs=50, train_lr=1e-4):
     """
     Main CEGIS loop for persistence certificate
     """
@@ -412,11 +416,10 @@ def synthesize_persistence_certificate():
         min(strict_dec_size, len(training_data['non_inc']))
     )
 
-    MAX_ITER = 1000
     iter = 0
     cc_flag = False
 
-    while iter < MAX_ITER:
+    while iter < max_iterations:
         print(f"\n{'='*70}")
         print(f"Iteration {iter + 1}")
         print(f"{'='*70}")
@@ -424,7 +427,7 @@ def synthesize_persistence_certificate():
               f"strict_dec={len(training_data['strict_dec'])}")
 
         print("\n1: ...")
-        train_candidate(B_net, training_data, epochs=50, lr=1e-4)
+        train_candidate(B_net, training_data, epochs=train_epochs, lr=train_lr)
 
         print("\n2: dreal...")
         verified, counterexamples = verify_with_dreal(B_net)
@@ -455,7 +458,7 @@ def synthesize_persistence_certificate():
         model_path = "persistence_model_2layer.pth"
         torch.save(B_net.state_dict(), model_path)
 
-    if iter >= MAX_ITER:
+    if iter >= max_iterations:
         print("\n" + "="*70)
         print("✗ ")
         print("="*70)
@@ -469,10 +472,29 @@ def synthesize_persistence_certificate():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="ex3 NNT synthesis")
     parser.add_argument("--out", type=str, default="res_nnt_ex3.json", help="output JSON path")
+    parser.add_argument("--max-iter", type=int, default=1000)
+    parser.add_argument("--epochs", type=int, default=50)
+    parser.add_argument("--lr", type=float, default=1e-4)
+    parser.add_argument("--grid-step", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--dreal-precision", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--z3-timeout-ms", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--seed", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--qi", type=int, default=1, help="unused (kept for CLI consistency)")
+    parser.add_argument("--qj", type=int, default=1, help="unused (kept for CLI consistency)")
     args = parser.parse_args()
 
+    print_header(
+        "ex3",
+        "NNT",
+        "transition_persistence",
+        {"solver_verify": "dreal", "hidden": 4, "max_iter": args.max_iter, "epochs": args.epochs, "lr": args.lr},
+    )
     start_time = time.time()
-    B_net, success = synthesize_persistence_certificate()
+    B_net, success = synthesize_persistence_certificate(
+        max_iterations=args.max_iter,
+        train_epochs=args.epochs,
+        train_lr=args.lr,
+    )
     end_time = time.time()
 
     if success:
@@ -522,10 +544,14 @@ if __name__ == "__main__":
     print(f"\nElapsed time: {elapsed:.4f} s")
 
     result = {
+        "example": "ex3",
+        "method": "NNT",
+        "certificate_type": "transition_persistence",
         "success": bool(success),
         "elapsed_sec": float(elapsed),
         "epsilon": float(B_net.get_epsilon()) if B_net is not None else None,
         "hidden_dim": int(B_net.fc1.out_features) if B_net is not None else None,
+        "solver": {"synth": "adam", "verify": "dreal"},
         "model_state_path": "persistence_barrier_model_2layer.pth" if success else None,
         "checkpoint_path": "persistence_barrier_checkpoint_2layer.pth" if success else None,
     }
@@ -533,4 +559,4 @@ if __name__ == "__main__":
     if not out_path.is_absolute():
         out_path = Path(__file__).resolve().parent / out_path
     out_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
-    print(f"Saved result to: {out_path}")
+    print_result(bool(success), None, elapsed, str(out_path))

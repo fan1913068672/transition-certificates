@@ -2,9 +2,15 @@ import json
 import math
 import random
 from pathlib import Path
+import argparse
+import time
+import sys
 
 import dreal
 import z3
+
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from run_output_utils import print_header, print_result
 
 PI = 3.1415926
 
@@ -102,6 +108,7 @@ def mid_float(iv):
 
 
 def synthesize(max_iter=60, out_file='res_cc_ex2.json'):
+    start = time.time()
     tpl = Template()
     s = z3.SolverFor('QF_NRA')
 
@@ -147,6 +154,9 @@ def synthesize(max_iter=60, out_file='res_cc_ex2.json'):
             out = {'eps': eps_val}
             for (i, j), vv in coeff_vals.items():
                 out[f'T_{i}_{j}'] = vv
+            out["success"] = True
+            out["iterations"] = it + 1
+            out["elapsed_sec"] = time.time() - start
             Path(out_file).write_text(json.dumps(out, indent=2), encoding='utf-8')
             print('saved', out_file)
             return out
@@ -171,7 +181,7 @@ def synthesize(max_iter=60, out_file='res_cc_ex2.json'):
         print(f'iter={it+1}, added {kind} counterexample')
 
     print('max_iter reached')
-    return None
+    return {"success": False, "iterations": max_iter, "elapsed_sec": time.time() - start}
 
 
 def find_counterexample(coeffs, eps_val, precision=1e-4):
@@ -266,4 +276,26 @@ def find_counterexample(coeffs, eps_val, precision=1e-4):
 
 
 if __name__ == '__main__':
-    synthesize()
+    p = argparse.ArgumentParser(description="ex2 closure-certificate synthesis")
+    p.add_argument("--out", type=str, default="res_cc_ex2.json")
+    p.add_argument("--max-iter", type=int, default=60)
+    p.add_argument("--epochs", type=int, default=0, help="unused (kept for CLI consistency)")
+    p.add_argument("--lr", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    p.add_argument("--grid-step", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    p.add_argument("--dreal-precision", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    p.add_argument("--z3-timeout-ms", type=int, default=0, help="unused (kept for CLI consistency)")
+    p.add_argument("--seed", type=int, default=0, help="unused (kept for CLI consistency)")
+    p.add_argument("--qi", type=int, default=0, help="unused (kept for CLI consistency)")
+    p.add_argument("--qj", type=int, default=0, help="unused (kept for CLI consistency)")
+    args = p.parse_args()
+
+    out_path = Path(args.out)
+    if not out_path.is_absolute():
+        out_path = Path(__file__).resolve().parent / out_path
+    print_header("ex2", "CC", "closure_certificate", {"max_iter": args.max_iter, "solver_synth": "z3", "solver_verify": "dreal"})
+    result = synthesize(max_iter=args.max_iter, out_file=str(out_path))
+    if result is None:
+        result = {"success": False, "elapsed_sec": 0.0}
+    if not out_path.exists():
+        out_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    print_result(bool(result.get("success")), result.get("iterations"), float(result.get("elapsed_sec", 0.0)), str(out_path))

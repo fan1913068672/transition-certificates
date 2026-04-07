@@ -5,6 +5,10 @@ import z3
 import dreal
 import time
 from pathlib import Path
+import sys
+
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from run_output_utils import print_header, print_result
 
 TS = 0.1
 OMEGA = 0.01
@@ -457,10 +461,10 @@ class ClosureCertificateSynthesizer:
             conclusion = cert.T(x0_val, z_prime_val, s_val, l_prime_val) + EPSILON <= cert.T(x0_val, z_val, s_val, l_val)
             solver.add(z3.Implies(z3.And(premise1, premise2), conclusion))
 
-def main():
+def main(max_iter=1000):
     start_time = time.time()
 
-    synthesizer = ClosureCertificateSynthesizer(max_iter=1000)
+    synthesizer = ClosureCertificateSynthesizer(max_iter=max_iter)
     coeffs, epsilon_val = synthesizer.synthesize()
 
     end_time = time.time()
@@ -533,15 +537,25 @@ def test_specific_points(coeffs, epsilon):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="ex1 closure-certificate synthesis")
     parser.add_argument("--out", type=str, default="res_cc_ex1.json", help="output JSON path")
+    parser.add_argument("--max-iter", type=int, default=1000)
+    parser.add_argument("--epochs", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--lr", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--grid-step", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--dreal-precision", type=float, default=0.0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--z3-timeout-ms", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--seed", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--qi", type=int, default=0, help="unused (kept for CLI consistency)")
+    parser.add_argument("--qj", type=int, default=0, help="unused (kept for CLI consistency)")
     args = parser.parse_args()
 
     try:
-        result = main()
+        print_header("ex1", "CC", "closure_certificate", {"max_iter": args.max_iter, "solver_synth": "z3", "solver_verify": "dreal"})
+        result = main(max_iter=args.max_iter)
         out_path = Path(args.out)
         if not out_path.is_absolute():
             out_path = Path(__file__).resolve().parent / out_path
         out_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
-        print(f"Saved result to: {out_path}")
+        print_result(bool(result.get("success")), None, float(result.get("elapsed_sec", 0.0)), str(out_path))
     except Exception as e:
         print(f"[ERROR] ex1/CC failed: {e}")
         raise
