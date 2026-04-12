@@ -244,10 +244,35 @@ $T_{1,1}(x, y)$ & 0.000000 & 0.000000 & 0.000000 \\
 \end{table}
 
 \textbf{Two-Dimensional Kuramoto Oscillator System:}
-Timeout.
+The certificate template is defined for $i, j \in \{0, 1\}$ as:
+\begin{align*}
+T_{i,j}((x_1, x_2), (y_1, y_2)) = &\, c_{0, i, j} + c_{1, i, j} y_1 I_{X_0}(x_1, x_2) + c_{2, i, j} y_2 I_{X_0}(x_1, x_2) \\
+                                  &+ c_{3, i, j} y_1 I_{X_u}(x_1, x_2) + c_{4, i, j} y_2 I_{X_u}(x_1, x_2) \\
+                                  &+ c_{5,i,j} y_1 + c_{6,i,j} y_2
+\end{align*}
 
 \textbf{Two-Room Temperature System:}
-Timeout.
+The NBA for $a_0 \land F a_1$ is $(\Sigma, Q, q_0, \delta, \text{Acc})$.
+
+\begin{align*}
+    Q &= \{0,1,2,3\} \\
+    \Sigma &= \{\emptyset, \{a_0\}, \{a_1\}, \{a_0, a_1\}\} \\
+    q_0 &= 0 \\
+    \text{Acc} &= \{2\} \\
+    \delta &= \{(q_0, \{a_0\}, q_1), (q_0, \{a_1\}, q_1), (q_0, \{a_0, a_1\}, q_2), (q_0, \emptyset, q_3), \\
+    &\quad\;(q_0, \{a_1\}, q_3), (q_1, \emptyset, q_1), (q_1, \{a_0\}, q_1), (q_1, \{a_1\}, q_2), \\
+    &\quad\;(q_1, \{a_0, a_1\}, q_2), (q_2, \emptyset, q_2), (q_2, \{a_0\}, q_2), (q_2, \{a_1\}, q_2), \\
+    &\quad\;(q_2, \{a_0, a_1\}, q_2), (q_3, \emptyset, q_3), (q_3,\{a_0\},q_3), (q_3, \{a_1\}, q_3), \\
+    &\quad\;(q_3, \{a_0, a_1\}, q_3)\} \\
+	a_0 &\text{ is defined as } x \in X_{0} \\
+	a_1 &\text{ is defined as } x \in X_{VF} \\
+\end{align*}
+The certificate template for this system is defined for $i, j \in \{0, 1, 2, 3\}$ as:
+\begin{align*}
+T_{i,j}((x_1, x_2), (y_1, y_2)) = &\, c_{0, i, j} + c_{1, i, j}x_1 + c_{2, i, j}x_2 + c_{3, i, j}y_1 + c_{4, i, j}y_2 \\
+                                  &+ c_{5, i, j}\max(x_1, x_2) + c_{6, i, j}\max(y_1, y_2) \\
+                                  &+ c_{7, i, j}x_1^2 + c_{8, i, j}x_2^2 + c_{9, i, j}y_1^2 + c_{10, i, j}y_2^2
+\end{align*}
 
 \subsubsection{Neural Closure Certificates Method}
 The configuration for the neural closure certificates is summarized in Table~\ref{tab:ncc_config}. A sampling density $\xi$ of 0.01 and a safety margin $\eta$ of 0.01 are used for all systems. The Lipschitz constant is estimated using the spectral norm-based algorithm.
