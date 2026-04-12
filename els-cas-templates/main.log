@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.7)  8 APR 2026 00:46
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.7)  13 APR 2026 03:16
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -920,15 +920,15 @@ Package pdftex.def Info: pic/tbnba2-eps-converted-to.pdf  used on input line 90
 .
 (pdftex.def)             Requested size: 140.50114pt x 134.05835pt.
  [11 <./pic/tbnba2-eps-converted-to.pdf>]) (./conclusion.tex) [12] (./main.bbl 
-[13]) (./appendix.tex [14] [15] [16] [17]) [18] (./main.aux)
+[13]) (./appendix.tex [14] [15] [16]) [17] [18] (./main.aux)
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 17272 strings out of 476025
- 262592 string characters out of 5791021
- 1878382 words of memory out of 5000000
- 37261 multiletter control sequences out of 15000+600000
+ 17270 strings out of 476025
+ 262519 string characters out of 5791021
+ 1877382 words of memory out of 5000000
+ 37259 multiletter control sequences out of 15000+600000
  625168 words of font info for 170 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  90i,15n,90p,1840b,637s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -948,7 +948,7 @@ e/2023/texmf-dist/fonts/type1/public/stix/stix-mathit.pfb><d:/latex/texlive/202
 3/texmf-dist/fonts/type1/public/stix/stix-mathrm.pfb><d:/latex/texlive/2023/tex
 mf-dist/fonts/type1/public/stix/stix-mathscr.pfb><d:/latex/texlive/2023/texmf-d
 ist/fonts/type1/public/stix/stix-mathsf.pfb>
-Output written on main.pdf (19 pages, 439655 bytes).
+Output written on main.pdf (19 pages, 437976 bytes).
 PDF statistics:
  472 PDF objects out of 1000 (max. 8388607)
  402 compressed objects within 5 object streams

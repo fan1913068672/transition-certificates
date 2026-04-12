@@ -1,0 +1,17 @@
+Abstract. The recently introduced notions of ranking functions and cl osure certiﬁcates utilize well-foundedness
+arguments to facilitate the veriﬁcation of dynamical syste ms against ω-regular properties. A ranking function
+and a closure certiﬁcate are real-valued functions deﬁned over states and state pair s of a dynamical system
+whose zero superlevel sets are inductive state invariant an d inductive transition invariant, respectively . The
+search for such certiﬁcates can be automated by ﬁxing a speci ﬁc template class, such as a polynomial of a
+ﬁxed degree, and then using optimization techniques such as sum-of-squares (SOS) programming to ﬁnd it.
+Unfortunately , such certiﬁcates may not be found for a ﬁxed t emplate. In such a case, one must change
+the template; for example, increase the degree of the polyno mial. In this paper, we consider a notion of
+multiple functions in the form of vector certiﬁcates. T akin g inspiration from the literature on vector barrier
+certiﬁcates as generalizations of standard barrier certiﬁ cates for safety veriﬁcation, we propose vector co-Büchi
+ranking functions and vector closure certiﬁcates as nontri vial generalizations of ranking functions and closure
+certiﬁcates, respectively . Both notions consist of a set of functions that jointly overapproximate an inductive
+invariant by considering each function to be a linear combin ation of the others. The advantage of such cer-
+tiﬁcates is that they allow us to prove properties even when a single function for a ﬁxed template cannot be
+found using standard approaches. W e present an SOS programm ing approach to search for these functions
+and demonstrate the eﬀectiveness of our proposed method in v erifying ω-regular speciﬁcations in several case
+studies.

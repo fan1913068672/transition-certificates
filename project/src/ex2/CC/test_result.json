@@ -1,0 +1,46 @@
+{
+  "example": "ex2",
+  "method": "CC",
+  "passed": false,
+  "checks": [
+    {
+      "name": "CC-C1 closure seed",
+      "passed": true,
+      "details": "delta safe=[1]"
+    },
+    {
+      "name": "CC-C2 closure propagation",
+      "passed": true,
+      "details": "delta unsafe=[0]"
+    },
+    {
+      "name": "CC-C3 accepting decrease domain",
+      "passed": true,
+      "details": "X0 boundary mismatch"
+    },
+    {
+      "name": "unsafe region config",
+      "passed": true,
+      "details": "Xu definition mismatch"
+    },
+    {
+      "name": "dynamics finite",
+      "passed": true,
+      "details": "f_num not finite"
+    },
+    {
+      "name": "result epsilon",
+      "passed": false,
+      "details": "missing eps"
+    },
+    {
+      "name": "result template coeffs",
+      "passed": false,
+      "details": "expected 4 templates with 7 coeffs each"
+    }
+  ],
+  "errors": [
+    "result epsilon: missing eps",
+    "result template coeffs: expected 4 templates with 7 coeffs each"
+  ]
+}

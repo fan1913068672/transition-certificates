@@ -31,13 +31,13 @@ Based on the definition of transition safety certificates, we implement a polyno
 \[
 B_0(x, q; \mathbf{c}) = \sum_{i=0}^{4} c_i x^i + \sum_{j=1}^{3} c_{4+j} q^j + c_8 xq.
 \]
-The synthesis process begins by collecting 30 samples from region $D_0$, 600 from $D_u$, and 1200 from $D_{\mathcal{X}}$. The candidate generation phase is formulated as a constraint satisfaction problem and solved using the Z3 solver. Given that the system dynamics involve the transcendental $\sin$ function, which lies beyond the decision procedures of Z3, we employ the dReal solver during the verification phase to identify counterexamples. The complete CEGIS loop converges in 3.6 seconds, successfully yielding a valid transition certificate:
+The synthesis process begins by collecting 30 samples from region $D_0$, 600 from $D_u$, and 1200 from $D_{\mathcal{X}}$. The candidate generation phase is formulated as a constraint satisfaction problem and solved using the Z3 solver. Given that the system dynamics involve the transcendental $\sin$ function, which lies beyond the decision procedures of Z3, we employ the dReal solver during the verification phase to identify counterexamples. The complete CEGIS loop converges in 1.76 seconds, successfully yielding a valid transition certificate:
 \[
 B_0(x, q) = -1 + 2q^2 - \frac{7}{16}xq.
 \]
 
 % 神经模板方法
-In addition to polynomial templates, we synthesize a neural transition certificate $B_0(x, q; \theta)$ using the CEGIS framework. The certificate is parameterized by a feedforward neural network with a 2-10-1 architecture, featuring two input nodes for the pair $(x, q)$, a hidden layer of 10 neurons with ReLU activation, and a single linear output. The training process is initialized with a dataset of 250 samples (40 from $D_0$, 70 from $D_u$, and 140 from $D_{\mathcal{X}}$). During each iteration, the dReal solver is employed to identify any points violating the certificate conditions. These identified counterexamples are then incorporated into the training set to progressively refine the candidate certificate. The complete CEGIS loop converges in 3.2 seconds. The valid certificates obtained during the process are provided in the appendix.
+In addition to polynomial templates, we synthesize a neural transition certificate $B_0(x, q; \theta)$ using the CEGIS framework. The certificate is parameterized by a feedforward neural network with a 2-10-1 architecture, featuring two input nodes for the pair $(x, q)$, a hidden layer of 10 neurons with ReLU activation, and a single linear output. The training process is initialized with a dataset of 250 samples (40 from $D_0$, 70 from $D_u$, and 140 from $D_{\mathcal{X}}$). During each iteration, the dReal solver is employed to identify any points violating the certificate conditions. These identified counterexamples are then incorporated into the training set to progressively refine the candidate certificate. The complete CEGIS loop converges in 6.81 seconds. The valid certificates obtained during the process are provided in the appendix.
 
 \subsubsection{Two-Dimensional System}
 
@@ -59,11 +59,11 @@ f(x_1, x_2) =
 To maintain consistency with the 1D analysis, we define the labeling function such that $\mathfrak{L}(x_1, x_2) = \{a\}$ if $(x_1, x_2) \in \mathcal{X}_u$ and $\emptyset$ otherwise. The verification is performed against the same LTL specification $\phi = \mathbf{G}\neg a$ using the NBA illustrated in Figure~\ref{pic-tbnba1}.
 
 
-For the two-dimensional system, we first employ a polynomial template $B_0(x_1, x_2, q; \mathbf{c})$. The synthesis process utilizes a dataset of 30 samples from $D_0$, 729 from $D_u$, and 1,458 from $D_{\mathcal{X}}$. Within 7.3 seconds, the CEGIS loop yields a valid transition certificate:
+For the two-dimensional system, we first employ a polynomial template $B_0(x_1, x_2, q; \mathbf{c})$. The synthesis process utilizes a dataset of 30 samples from $D_0$, 729 from $D_u$, and 1,458 from $D_{\mathcal{X}}$. Within 1.72 seconds, the CEGIS loop yields a valid transition certificate:
 \begin{equation}
 B_0(x_1, x_2, q) = -1 + \tfrac{1}{8}x_1 x_2 + \tfrac{3}{2}q^2 - \tfrac{3}{32}q x_1^2 - \tfrac{153}{512}x_2 q.
 \end{equation}
-Furthermore, we implement a neural network template with a 3-15-1 architecture, featuring three input nodes for the tuple $(x_1, x_2, q)$ and a hidden layer of 15 neurons with ReLU activation. To demonstrate the efficiency of our framework, we initialize the training with a set of points: 40 from $D_0$, 90 from $D_u$, and 180 from $D_{\mathcal{X}}$. The CEGIS loop converges in 234.1 seconds, successfully producing a valid neural certificate in appendix.
+Furthermore, we implement a neural network template with a 3-15-1 architecture, featuring three input nodes for the tuple $(x_1, x_2, q)$ and a hidden layer of 15 neurons with ReLU activation. To demonstrate the efficiency of our framework, we initialize the training with a set of points: 40 from $D_0$, 90 from $D_u$, and 180 from $D_{\mathcal{X}}$. The CEGIS loop converges in 110.95 seconds, successfully producing a valid neural certificate in appendix.
 
 
 \subsection{Two-Room Temperature}
@@ -92,9 +92,9 @@ Consider the set of atomic propositions $AP = \{a, b\}$, where the labeling func
   \label{pic-tbnba2}
 \end{figure}
 
-Consider the transition safety certificate template and transition persistence certificate template(seen in Appendix~\ref{appendix-experiment}). We simultaneously synthesize them. For the transition safety certificate, we collect 16 samples for $D_0$, 196 for $D_u$, 588 for $D_{\mathcal{X}}$. For the transition persistence certificate, we collect 16 samples for $D_0$ and 196 for $D_{\mathcal{X}}$. We obtain a valid transition persistence certificate $$B_{1,1}(x_1, x_2) = 27 I_{[20,26]^2}(x_1, x_2) - x_1 I_{[20,26]^2}(x_1, x_2)$$ and $\epsilon = 0.25$ in 8.8 seconds.
+Consider the transition safety certificate template and transition persistence certificate template(seen in Appendix~\ref{appendix-experiment}). We simultaneously synthesize them. For the transition safety certificate, we collect 16 samples for $D_0$, 196 for $D_u$, 588 for $D_{\mathcal{X}}$. For the transition persistence certificate, we collect 16 samples for $D_0$ and 196 for $D_{\mathcal{X}}$. We obtain a valid transition persistence certificate $$B_{1,1}(x_1, x_2) = 27 I_{[20,26]^2}(x_1, x_2) - x_1 I_{[20,26]^2}(x_1, x_2)$$ and $\epsilon = 0.25$ in 2.68 seconds.
 
-We synthesize the transition safety certificate $B_1(x_1, x_2, q)$ for $q_1$ and the transition persistence certificate $B_{1,1}(x_1, x_2)$ for $Acc^{1,1}$. We synthesize $B_1(x_1, x_2, q)$ using the CEGIS with neural network template of architecture 3-10-1 (3 inputs for $(x_1, x_2, q)$, 10 hidden neurons with ReLU activation, 1 output). We synthesize $B_{1,1}(x_1, x_2)$ using the CEGIS with neural network template of architecture 2-3-1 (2 inputs for $(x_1, x_2)$, 3 hidden neurons with squared activation, 1 output). For the transition persistence certificate, we collect 100 samples for $D_{\mathcal{X}}$. For the transition safety certificate, we collect 4 samples for $D_0$, 9 for $D_u$, 18 for $D_{\mathcal{X}}$. The entire CEGIS loop terminates in 1228.3 seconds and the valid certificates obtained are provided in the appendix.. 
+We synthesize the transition safety certificate $B_1(x_1, x_2, q)$ for $q_1$ and the transition persistence certificate $B_{1,1}(x_1, x_2)$ for $Acc^{1,1}$. We synthesize $B_1(x_1, x_2, q)$ using the CEGIS with neural network template of architecture 3-10-1 (3 inputs for $(x_1, x_2, q)$, 10 hidden neurons with ReLU activation, 1 output). We synthesize $B_{1,1}(x_1, x_2)$ using the CEGIS with neural network template of architecture 2-3-1 (2 inputs for $(x_1, x_2)$, 3 hidden neurons with squared activation, 1 output). For the transition persistence certificate, we collect 100 samples for $D_{\mathcal{X}}$. For the transition safety certificate, we collect 4 samples for $D_0$, 9 for $D_u$, 18 for $D_{\mathcal{X}}$. The entire CEGIS loop terminates in 1461.91 seconds and the valid certificates obtained are provided in the appendix.. 
 
 \subsection{Comparison}
 We primarily compare our approach with closure certificates~\cite{murali2024closure} and neural closure certificates~\cite{nadali2024neural}, as they represent recent developments in abstraction-free LTL verification. While the state-triplet method~\cite{wongpiromsarn2015automata} is a foundational approach, it is omitted from our quantitative comparison for two reasons: (1) its inherent conservatism often fails to find valid certificates for complex LTL specifications, particularly those involving persistence properties; and (2) closure certificates~\cite{murali2024closure} were specifically developed to provide more general verification conditions than the state-triplet method. The core idea of closure certificates lies in characterizing an over-approximation of the transition closure, so closure certificates for LTL verification are defined over $\mathcal{X} \times \mathcal{X} \times Q \times Q$. In contrast, our method employs transition safety certificates to directly filter out unreachable automaton states or uses transition persistence certificates to prove that the accepting transitions occur finitely often, so the search space of transition certificates is at most $\mathcal{X} \times Q \times Q$. This allows us to reduce the search space from $\mathcal{X} \times \mathcal{X} \times Q \times Q$ to $\mathcal{X} \times Q \times Q$ and improves synthesis efficiency. For neural templates, we adopt the CEGIS framework, whereas the neural closure certificate approach relies on sampling and posteriori verification: after sampling the state space with a given density $\epsilon$ and safety margin $\eta$, the method trains until the loss converges to zero and then performs a posteriori verification to determine whether the synthesized certificate is valid.
@@ -109,9 +109,9 @@ We conduct two groups of comparisons: (1) polynomial-template CEGIS versus closu
 \hline
 \textbf{Benchmark} & \textbf{Transition Certificates} & \textbf{Closure Certificate} \\
 \hline
-Kuramoto 1D & 3.6 & 4.2 \\
-Kuramoto 2D & 7.3 & Timeout \\
-Two-Room Temperature & 8.8 & Timeout \\
+Kuramoto 1D & 1.76 & 0.37 \\
+Kuramoto 2D & 1.72 & Timeout \\
+Two-Room Temperature & 2.68 & Timeout \\
 \hline
 \end{tabular}
 \end{table}
@@ -123,9 +123,9 @@ Two-Room Temperature & 8.8 & Timeout \\
 \hline
 \textbf{Benchmark} & \textbf{Transition Certificates} & \textbf{Neural Closure Certificate} \\
 \hline
-Kuramoto 1D & 3.2 & Timeout \\
-Kuramoto 2D & 234.1 & Timeout \\
-Two-Room Temperature & 1228.3 & Timeout \\
+Kuramoto 1D & 6.81 & Timeout \\
+Kuramoto 2D & 110.95 & Timeout \\
+Two-Room Temperature & 1461.91 & Timeout \\
 \hline
 \end{tabular}
 \end{table}

@@ -1,0 +1,45 @@
+{
+  "example": "ex3",
+  "method": "CC",
+  "passed": false,
+  "checks": [
+    {
+      "name": "CC-C1 closure seed",
+      "passed": true,
+      "details": "delta_closure output is not list"
+    },
+    {
+      "name": "CC-C2 closure propagation",
+      "passed": true,
+      "details": "delta_main_pt=[1]"
+    },
+    {
+      "name": "CC-C3 accepting decrease domain",
+      "passed": true,
+      "details": "X0 boundary mismatch"
+    },
+    {
+      "name": "vf region config",
+      "passed": true,
+      "details": "VF boundary mismatch"
+    },
+    {
+      "name": "dynamics finite",
+      "passed": true,
+      "details": "f not finite"
+    },
+    {
+      "name": "result mode",
+      "passed": true,
+      "details": "mode=closure"
+    },
+    {
+      "name": "result coeff length",
+      "passed": false,
+      "details": "expected 11 coefficients in T_0_0"
+    }
+  ],
+  "errors": [
+    "result coeff length: expected 11 coefficients in T_0_0"
+  ]
+}
