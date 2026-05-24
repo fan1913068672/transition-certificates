@@ -1,27 +1,8 @@
 {
-  "success": true,
-  "epsilon": 0.5,
-  "coefficients": [
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    -0.5,
-    0.20462740678906,
-    4.6260833e-07,
-    0.20462777053779,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0
-  ],
-  "elapsed_sec": 0.4047055244445801
+  "success": false,
+  "epsilon": null,
+  "coefficients": null,
+  "elapsed_sec": 1775.1926946640015,
+  "template": "T(x,y)=c0+c1*x+c2*y",
+  "sample_count": 50
 }
