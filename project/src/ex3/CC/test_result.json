@@ -1,7 +1,7 @@
 {
   "example": "ex3",
   "method": "CC",
-  "passed": false,
+  "passed": true,
   "checks": [
     {
       "name": "CC-C1 closure seed",
@@ -12,6 +12,11 @@
       "name": "CC-C2 closure propagation",
       "passed": true,
       "details": "delta_main_pt=[1]"
+    },
+    {
+      "name": "CC state edge 0ab1",
+      "passed": true,
+      "details": "delta_state_based_gf=[1]"
     },
     {
       "name": "CC-C3 accepting decrease domain",
@@ -29,17 +34,30 @@
       "details": "f not finite"
     },
     {
-      "name": "result mode",
+      "name": "result meta",
       "passed": true,
-      "details": "mode=closure"
+      "details": "wrong example/method"
     },
     {
-      "name": "result coeff length",
-      "passed": false,
-      "details": "expected 11 coefficients in T_0_0"
+      "name": "result type",
+      "passed": true,
+      "details": "wrong certificate_type"
+    },
+    {
+      "name": "result mode",
+      "passed": true,
+      "details": "mode=state"
+    },
+    {
+      "name": "result backend",
+      "passed": true,
+      "details": "backend={'synth': 'z3', 'verify': 'z3'}"
+    },
+    {
+      "name": "unsuccessful result has no coefficients",
+      "passed": true,
+      "details": "failed CC run should not report coefficients"
     }
   ],
-  "errors": [
-    "result coeff length: expected 11 coefficients in T_0_0"
-  ]
+  "errors": []
 }

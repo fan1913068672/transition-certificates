@@ -1,0 +1,113 @@
+﻿\section{转移证书}
+\label{sec:method}
+在本节中，我们提出一种新的证明证书类型，称为转移证书，用于验证系统 $\mathfrak{S}$ 满足 LTL 公式 $\phi$。转移证书的核心思想，是将验证问题化约为分析用于 $\neg\phi$ 的 NBA $\mathcal{A}$ 中接受转移的行为。根据基于转移的接受条件定义，一个字被 $\mathcal{A}$ 接受，当且仅当在其某条运行上接受转移出现无限多次。因此，为证明 $\mathfrak{S} \models_{\mathfrak{L}} \phi$，只需证明对于 $\mathfrak{S}$ 的所有轨迹，$\mathcal{A}$ 中每个接受转移至多发生有限多次。我们引入两类转移证书：\emph{转移安全性证书}和\emph{转移持久性证书}。这两类证书从根本不同的角度处理该问题，并关注集合 $Acc^{start}$，该集合由 $\mathcal{A}$ 中所有接受转移的起始状态组成（参见式~\ref{atstart}）。
+
+\begin{itemize}
+    \item \emph{转移安全性证书}证明系统轨迹永远不能到达 $Acc^{start}$，从而保证相关接受转移\textbf{永不发生}。
+    \item \emph{转移持久性证书}允许系统到达 $Acc^{start}$，但证明相关接受转移只能\textbf{有限多次}被采取。
+\end{itemize}
+
+高层直觉如下。给定 $\neg\phi$ 的 NBA，我们逐个考察每个接受转移。如果某个接受转移的源状态从初始乘积状态不可达，则我们用安全性论证对此进行认证：使用一个在初始处非负、在源状态处为负、并沿轨迹保持非负性的函数。如果源状态可达，我们则采用另一种方法，证明每当接受转移可能触发时，系统动力学都会迫使一个有界非负函数发生严格正的下降，因此它只能触发有限多次。通过用其中一种机制覆盖所有接受转移，我们保证不存在接受运行。
+
+\subsection{转移安全性证书}
+
+转移安全性证书的目标是阻止任何接受转移发生。为此，我们通过证明 $Acc^{start}$ 在系统与自动机的乘积中不可达，来验证接受转移永不发生。
+
+\begin{definition}[转移安全性证书]
+  \label{transition-safety-certificate-definition}
+  给定系统 $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$、标记函数 $\mathfrak{L}:\mathcal{X} \rightarrow 2^{AP}$ 和 NBA $\mathcal{A} = (2^{AP}, Q, q_0, \delta, Acc)$。构造乘积系统 $\mathfrak{S} \times \mathcal{A} = (\mathcal{Y}, \mathcal{Y}_0, F)$，其中 $\mathcal{Y} = \{(x, q) \,|\, x \in \mathcal{X}, q \in Q \}$，$\mathcal{Y}_0 = \{ (x_0, q_0) \,|\, x_0 \in \mathcal{X}_0 \}$，且 $F(x,q) = \{(x^{\prime}, q') \,|\, x^{\prime} = f(x) \land (q, \mathfrak{L}(x), q') \in \delta\}$。对于 $q_k \in Acc^{start}$，定义不安全集 $\mathcal{Y}_u = \{(x, q_k) \,|\, x \in \mathcal{X}\}$。若有界函数 $B_{k}(x, q): \mathcal{X} \times Q \rightarrow \mathbb{R}$ 对于所有 $(x,q) \in \mathcal{Y}$、$(x_0, q_0) \in \mathcal{Y}_0$、$(x^{\prime}, q^{\prime}) \in F(x, q)$，满足：
+  \begin{align}
+    &B_{k}(x_0, q_0) \geq 0, \label{btsc1} \\
+    &B_{k}(x, q_k) < 0, \label{btsc2} \\
+    &B_{k}(x, q) \geq 0 \Rightarrow B_{k}(x^{\prime}, q^{\prime}) \geq 0, \label{btsc3}
+  \end{align}
+  则称其为相对于 $q_k \in Acc^{start}$ 的\emph{转移安全性证书}。
+\end{definition}
+
+% 直观地，这些条件确保：1）证书值在初始状态处非负；2）它恰好在与 $q_k$ 相关的不安全集 $\mathcal{Y}_u^k$ 上为负；3）一旦为非负，其值沿乘积系统任意轨迹保持非负。证书 $B_k$ 保证 $q_k$ 不可达，从而阻止从 $q_k$ 出发的所有接受转移。以下引理形式化了这一保证。其证明见附录~\ref{appendix-proof}。
+
+直观地，条件（\ref{btsc1}）保证证书值在乘积系统初始状态处非负；条件（\ref{btsc2}）确保证书恰好在与 $q_k$ 相关的不安全集 $\mathcal{Y}_u^k$ 上变为负值，从而标记接受转移可能起源的状态；条件（\ref{btsc3}）意味着一旦证书值在某一状态处非负，它沿乘积系统的任意轨迹都保持非负，从而保持安全不变式。
+
+这些条件共同确保，证书 $B_k$ 保证 $q_k$ 不可达，从而阻止从 $q_k$ 出发的所有接受转移。以下引理形式化了这一保证。其证明见附录~\ref{appendix-proof}。
+
+\begin{lemma}
+  \label{transition-safety-lemma}
+  若能够找到一个相对于 $q_k \in Acc^{start}$ 的转移安全性证书 $B_k$，则 $\mathfrak{L}(\mathfrak{S})$ 中所有字的所有运行都永不访问状态 $q_k$，从而阻止所有从 $q_k$ 出发的接受转移。
+\end{lemma}
+
+下一个定理直接由将上述引理应用于 $Acc^{start}$ 中每个状态而得出。若能为 $Acc^{start}$ 中每个状态找到一个转移安全性证书，则没有接受转移可以被采取，从而确保 LTL 规约成立。
+
+\begin{theorem}
+  \label{transition-safety-LTL}
+  给定系统 $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$、标记函数 $\mathfrak{L}:\mathcal{X} \rightarrow 2^{AP}$，以及用于 $\neg\phi$ 的 NBA $\mathcal{A} = (2^{AP}, Q, q_0, \delta, Acc)$。如果对于任意 $q_k \in Acc^{start}$，都能找到转移安全性证书 $B_k$，则可以保证 $\mathfrak{S} \models_{\mathfrak{L}} \phi$。
+\end{theorem}
+
+\begin{proof}
+利用引理~\ref{transition-safety-lemma}，所有接受转移的起始状态均不可达。因此，所有接受转移永不发生，确保系统语言不被接受，从而保证 $\mathfrak{S} \models_{\mathfrak{L}} \phi$。
+\end{proof}
+
+\subsection{转移持久性证书}
+相比之下，\emph{转移持久性证书}提供了一种替代方法。该证书并不完全阻止系统到达可能发生接受转移的状态，而是证明即便这些状态被到达，相应接受转移也只能发生有限次。这通过要求每次采取接受转移时证书值发生下降来实现。
+
+\begin{definition}[转移持久性证书]
+  \label{transition-persistence-certificate-definition}
+  给定系统 $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$、标记函数 $\mathfrak{L}:\mathcal{X} \rightarrow 2^{AP}$ 和 NBA $\mathcal{A} = (2^{AP}, Q, q_0, \delta, Acc)$。对于 $(k, l) \in Acc^{pair}$，定义示性函数 $I_{k,l}(x) = 1$，如果 $(q_k, \mathfrak{L}(x), q_l) \in Acc^{k,l}$，否则为 $0$。若存在 $\epsilon > 0$，使得有界函数 $B_{k, l}(x): \mathcal{X} \rightarrow \mathbb{R}$ 对于所有 $x_0 \in \mathcal{X}_0$、$x \in \mathcal{X}$、$x^{\prime} = f(x)$，满足：
+  \begin{align}
+    &B_{k, l}(x_0) \geq 0, \label{btpc1} \\
+    &B_{k, l}(x) \geq 0 \Rightarrow B_{k, l}(x^{\prime}) \geq 0, \label{btpc2} \\
+    &B_{k, l}(x) \geq B_{k, l}(x^{\prime}) + I_{k,l}(x)\epsilon. \label{btpc3}
+  \end{align}
+  则称 $B_{k,l}$ 是相对于 $Acc^{k,l}$ 的\emph{转移持久性证书}。
+\end{definition}
+
+我们强调定义~\ref{transition-persistence-certificate-definition} 的两个重要方面。第一，每个证书 $B_{k,l}$ 都是为一个\emph{特定的}接受转移对 $(k, l) \in Acc^{pair}$ 构造的；不同的转移对可能需要不同的证书。第二，$B_{k,l}(x): \mathcal{X} \rightarrow \mathbb{R}$ 仅是系统状态 $x$ 的函数，并不依赖于当前自动机状态。这一设计是可靠的，因为示性函数 $I_{k,l}(x)$ 捕获了接受转移 $(q_k, \mathfrak{L}(x), q_l)$ 发生的\emph{必要条件}。无论某条特定运行在时间步 $i$ 处于哪个自动机状态，只要 $I_{k,l}(x_i) = 0$，从 $q_k$ 到 $q_l$ 的转移就不能被采取。通过限制系统轨迹沿使能区域 $\{x \mid I_{k,l}(x) = 1\}$ 的访问次数，该证书为接受转移在\emph{任何}运行中实际可能发生的次数提供了上界。
+
+这一设计引入了一定程度的保守性。由于 $B_{k,l}$ 约束的是 $I_{k,l}(x) = 1$ 的总时间步数，而不考虑当前自动机状态，因此即使系统占据的自动机状态不是 $q_k$，它也限制对使能区域的访问。因此，即便 LTL 规约得到满足，如果轨迹在自动机处于非 $q_k$ 的状态时频繁进入使能区域，一个有效的持久性证书也可能不存在。这种保守性是使用定义在 $\mathcal{X}$ 上、而非完整乘积空间 $\mathcal{X} \times Q$ 上的函数所付出的代价，并且类似于基于轨迹的 Lyapunov 论证中固有的过近似。
+
+直观地，条件（\ref{btpc1}）保证证书 $B_{k,l}$ 在系统初始状态处非负；条件（\ref{btpc2}）确保 $B_{k,l}$ 沿系统任意轨迹保持非负；条件（\ref{btpc3}）意味着只要状态标签匹配从 $q_k$ 到 $q_l$ 的接受转移，$B_{k,l}$ 至少下降 $\epsilon$，否则保持非增。
+
+% 由（\ref{btpc1}）和（\ref{btpc2}），$B_{k,l}$ 沿任意从 $x_0 \in \mathcal{X}_0$ 出发的轨迹保持非负。由（\ref{btpc3}），每当 $I_{k,l}(x) = 1$ 时，$B_{k,l}$ 至少下降 $\epsilon$。
+
+由于从 $q_k$ 到 $q_l$ 的接受转移只有在 $(q_k, \mathfrak{L}(x), q_l) \in Acc^{k,l}$ 时才可能发生，因此这类转移的次数由 $B_{k,l}(x_0)/\epsilon$ 所界定，从而保证其有限发生。这得到以下引理。其证明见附录~\ref{appendix-proof}。
+
+\begin{lemma}
+  \label{transition-persistence-lemma}
+  若能够找到转移持久性证书 $B_{k,l}$，则 $\mathfrak{L}(\mathfrak{S})$ 中所有字的所有运行都使从 $q_k$ 到 $q_l$ 的接受转移只发生有限多次。
+\end{lemma}
+
+下一个定理通过将该引理应用于每个接受转移对而得到。
+
+\begin{theorem}
+  \label{transition-persistence-LTL}
+  给定系统 $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$、标记函数 $\mathfrak{L}:\mathcal{X} \rightarrow 2^{AP}$，以及用于 $\neg\phi$ 的 NBA $\mathcal{A} = (2^{AP}, Q, q_0, \delta, Acc)$。如果对于任意 $(k, l) \in Acc^{pair}$，都能找到相应的转移持久性证书 $B_{k,l}$，则可以保证 $\mathfrak{S} \models_{\mathfrak{L}} \phi$。
+\end{theorem}
+
+\begin{proof}
+利用引理~\ref{transition-persistence-lemma}，所有接受转移都只发生有限多次，这确保系统语言不被接受，从而保证 $\mathfrak{S} \models_{\mathfrak{L}} \phi$。
+\end{proof}
+
+虽然由定理~\ref{transition-safety-LTL} 和定理~\ref{transition-persistence-LTL} 建立的两种方法都可用于验证 LTL 性质，但这两类证书是互补的，并且在结合使用时显著扩展了可验证系统的范围。在某些场景中，要求系统完全避开某些状态可能过于严格，使得无法找到转移安全性证书。然而，只要接受转移只发生有限多次，系统仍可能满足该性质，而这一条件可以由转移持久性证书来认证。反过来，考虑使用用于 $\mathbf{F} a$ 的 NBA 来验证 $\mathbf{G} \neg a$，其中 $Acc^{0,0} = \{(q_0, \emptyset, q_0), (q_0, \{a\}, q_0)\}$。对于持久性证书 $B_{0,0}$，条件（\ref{btpc3}）要求对任何使能接受转移的 $x$，都有 $B_{0,0}(x) \geq B_{0,0}(f(x)) + \epsilon$。这将要求有界证书值发生无限下降，而这是不可能的，因此不可能满足转移持久性证书的条件，也就不存在这样的证书。然而，转移安全性证书能够通过证明状态 $q_0$（接受转移的起点）在乘积系统中不可达而成功验证该性质。因此，同时提供这两类证书能够覆盖更广泛的系统行为，增强方法的适用性。现在我们给出用于 LTL 验证的主定理。对于 NBA 中每个接受转移起始状态，我们使用转移安全性证书或转移持久性证书，来证明从该状态出发的接受转移只发生有限多次。
+
+\begin{theorem}[LTL 验证]
+  \label{ltl-verification-theorem}
+  给定系统 $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$、标记函数 $\mathfrak{L}: \mathcal{X} \rightarrow \Sigma$，以及表示 LTL 公式 $\phi$ 否定式的 NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$。对于每个 $q_k \in Acc^{start}$，如果我们能够找到下列之一：
+  \begin{enumerate}
+    \item 相对于 $q_k$ 的转移安全性证书 $B_k$，或
+    \item 对所有以 $q_k$ 为起始状态的 $(k, l) \in Acc^{pair}$，找到转移持久性证书 $B_{k,l}$，
+  \end{enumerate}
+  则可以保证 $\mathfrak{S} \models_{\mathfrak{L}} \phi$。
+\end{theorem}
+
+\begin{proof}
+  给定接受转移起始状态 $q_k \in Acc^{start}$：
+  \begin{enumerate}
+    \item 如果找到了转移安全性证书 $B_k$，由引理~（\ref{transition-safety-lemma}），所有运行都永不访问状态 $q_k$，从而阻止所有从 $q_k$ 出发的接受转移。
+    \item 对于以 $q_k$ 为起始状态的每个 $(k, l) \in Acc^{pair}$，如果找到了转移持久性证书 $B_{k,l}$，由引理~（\ref{transition-persistence-lemma}），所有运行都使从 $q_k$ 到 $q_l$ 的接受转移只发生有限多次。
+  \end{enumerate}
+  这确保 $Acc$ 中所有接受转移都只发生有限多次。根据 NBA 接受条件的定义，字 $w$ 被接受当且仅当存在一条运行，其中接受转移出现无限多次，即 $\mathit{Inf}(r) \cap Acc \neq \emptyset$。由于所有接受转移都只发生有限多次，对于任意字 $w \in \mathfrak{L}(\mathfrak{S})$ 以及 $w$ 上任意运行 $r$，都有 $\mathit{Inf}(r) \cap Acc = \emptyset$。因此，$\mathfrak{L}(\mathfrak{S})$ 中没有字被自动机 $\mathcal{A}$ 接受，这意味着 $\mathfrak{L}(\mathfrak{S}) \cap \mathfrak{L}(\mathcal{A}) = \emptyset$。由于 $\mathfrak{L}(\mathcal{A}) = \mathfrak{L}(\neg \phi)$，我们有 $\mathfrak{L}(\mathfrak{S}) \subseteq \mathfrak{L}(\phi)$，从而 $\mathfrak{S} \models_{\mathfrak{L}} \phi$。
+\end{proof}
+
+定理~\ref{ltl-verification-theorem} 的一个结构性方面需要澄清。对于每个 $q_k \in Acc^{start}$，验证必须选择一种单一策略：要么提供同时阻止所有源自 $q_k$ 的接受转移的转移安全性证书 $B_k$，要么为每个以 $q_k$ 为起始状态的转移对 $(k, l) \in Acc^{pair}$ 提供单独的持久性证书 $B_{k,l}$。对于同一个 $q_k$，这两种策略不能混用，因为安全性证书 $B_k$ 给出的是 $q_k$ 完全不可达的全局论证，它已经阻止了从 $q_k$ 出发的所有接受转移，因此在该状态处不再给持久性证书留下剩余作用。
+
+总之，转移安全性证书与转移持久性证书的结合提供了一个更灵活的验证框架。我们强调，我们方法的新颖性并不在于简单组合类似屏障和类似排名的论证，因为这些都是成熟的证明技术。相反，关键贡献在于验证问题的\emph{转移层级分解}。我们不是在整个乘积状态空间上构造一个单体证书，而是以单个接受转移为粒度分解任务。对于每个接受转移起始状态 $q_k$，我们根据自动机的局部结构和系统动力学，独立选择最合适的证明策略（安全性或持久性）。这种逐转移分解产生的证书各自在较小的域上运行，且条件更简单，从而降低了合成问题的维度和充分条件的限制性。所得框架相比闭包证书保持了更小的搜索空间，同时提供两种不同机制来确保接受转移只发生有限多次，最终证明系统满足其 LTL 规约。
+

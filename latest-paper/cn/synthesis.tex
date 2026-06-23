@@ -1,0 +1,99 @@
+﻿\section{证书合成}
+\label{sec:synthesis}
+本节发展用于转移证书的自动化合成技术。我们利用反例引导归纳合成（Counterexample-Guided Inductive Synthesis, CEGIS）框架~\cite{solar2008program}，这是一种在屏障证书合成中已被广泛采用的范式，用于迭代细化候选解。通过在候选生成与形式化验证之间交替进行，该方法确保所发现的证书有效，并证明系统满足给定的 LTL 性质。给定系统 $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$ 和表示 $\neg \phi$ 的 NBA $\mathcal{A} = (2^{AP}, Q, q_0, \delta, Acc)$，我们采用统一记号，其中 $B_k$ 表示状态 $q_k \in Acc^{\text{start}}$ 的转移安全性证书模板，$B_{k,l}$ 表示 $Acc^{k,l}$ 的转移持久性证书模板。为寻找转移证书，我们分别给出针对多项式模板和神经网络模板的 CEGIS 框架。合成过程在两个交替阶段中进行：\textit{候选生成}与\textit{验证}。
+
+\subsection{多项式模板 CEGIS}
+\subsubsection{转移安全性证书} 
+我们定义一个参数化多项式模板：
+\begin{align}
+B_k(x, q; \mathbf{c}) = \sum_{i=1}^{m} c_i \, p_i(x, q),
+\end{align}
+其中 $x \in \mathcal{X}$，$q \in Q$，$\{p_1, \ldots, p_m\}$ 是用户定义的、定义在 $\mathcal{X} \times Q$ 上且次数至多为 $d$ 的单项式基，$\mathbf{c} = (c_1, \ldots, c_m) \in \mathbb{R}^m$ 是未知系数。我们的目标是寻找 $\mathbf{c}$，使得 $B_k(\cdot, \cdot; \mathbf{c})$ 满足条件~(\ref{btsc1})、(\ref{btsc2}) 和~(\ref{btsc3})。
+
+\textbf{候选生成。} 基于证书条件，我们对采样数据集中的所有点编码约束。
+对于转移安全性证书，约束为：
+\begin{align}
+  &\bigwedge_{(x,q) \in D_0} B_k(x, q; \mathbf{c}) \geq 0 \label{smt:init} \\ 
+  \wedge \; &\bigwedge_{(x,q) \in D_u} B_k(x, q; \mathbf{c}) < 0 \label{smt:unsafe} \\ 
+  \wedge \; &\bigwedge_{\substack{(x,q) \in D_{\mathcal{X}} \\ (q, \mathfrak{L}(x), q') \in \delta}} \big[ B_k(x, q; \mathbf{c}) \geq 0 \Rightarrow B_k(f(x), q'; \mathbf{c}) \geq 0 \big], \label{smt:inv}
+\end{align}
+其中 $D_0, D_u, D_{\mathcal{X}}$ 分别是从 $\mathcal{X}_0 \times \{q_0\}$、$\mathcal{X} \times \{q_k\}$ 和 $\mathcal{X} \times Q$ 采样得到的数据集。系数合成涉及线性不等式之间的逻辑蕴含（析取约束）。我们采用 Z3~\cite{de2008z3} 作为 SMT 求解器来直接处理该逻辑结构。若该约束可满足并得到解 $\hat{\mathbf{c}}$，则将候选证书定义为 $\hat{B}_k = B_k(\cdot, \cdot; \hat{\mathbf{c}})$。
+
+\textbf{验证。} 为验证 $\hat{B}_k$ 有效，我们构造条件的否定并验证其不可满足。对于转移安全性证书，我们检查：
+\begin{align}
+  & x \in \mathcal{X}_0 \land \hat{B}_k(x, q_0) < 0, \label{smt:cex-init} \\ 
+  & x \in \mathcal{X} \land \hat{B}_k(x, q_k) \geq 0, \label{smt:cex-unsafe}  \\ 
+  & x \in \mathcal{X} \land (q, \mathfrak{L}(x), q') \in \delta \land \hat{B}_k(x, q) \geq 0 \land \hat{B}_k(f(x), q') < 0. \label{smt:cex-inv}
+\end{align}
+我们选择 dReal~\cite{gao2013dreal} 作为 SMT 验证器来检查这些约束。若约束可满足（即存在反例），则相应地将其加入 $D_0$、$D_u$ 或 $D_{\mathcal{X}}$。随后合成过程继续迭代，直到找不到反例，从而得到有效的转移安全性证书。
+
+\subsubsection{转移持久性证书} 
+我们定义一个参数化多项式模板：
+\begin{align}
+B_{k,l}(x; \mathbf{c}) = \sum_{i=1}^{m} c_i \, p_i(x),
+\end{align}
+其中 $x \in \mathcal{X}$，$\{p_1, \ldots, p_{m}\}$ 是 $\mathcal{X}$ 上的单项式，$\mathbf{c} \in \mathbb{R}^{m}$ 是未知系数。我们寻找满足条件~(\ref{btpc1})、(\ref{btpc2}) 和~(\ref{btpc3}) 的 $\mathbf{c}$ 与 $\epsilon > 0$。
+
+\textbf{候选生成。} 基于证书条件，我们对采样数据集中的所有点编码约束。
+对于转移持久性证书，约束为：
+\begin{align}
+  & \bigwedge_{x \in D_0} B_{k,l}(x; \mathbf{c}) \geq 0 \label{smt:tp-init} \\ 
+  \wedge \; &\bigwedge_{x \in D_{\mathcal{X}}} \big[ B_{k,l}(x; \mathbf{c}) \geq 0 \Rightarrow B_{k,l}(f(x); \mathbf{c}) \geq 0 \big] \label{smt:tp-inv} \\ 
+  \wedge \; &\bigwedge_{\substack{x \in D_{\mathcal{X}} \\ (q_k, \mathfrak{L}(x), q_l) \notin Acc^{k,l}}} B_{k,l}(x; \mathbf{c}) \geq B_{k,l}(f(x); \mathbf{c}) \label{smt:tp-non-dec} \\ 
+  \wedge \; &\bigwedge_{\substack{x \in D_{\mathcal{X}} \\ (q_k, \mathfrak{L}(x), q_l) \in Acc^{k,l}}} B_{k,l}(x; \mathbf{c}) \geq B_{k,l}(f(x); \mathbf{c}) + \epsilon, \label{smt:tp-dec}
+\end{align}
+其中 $D_0, D_{\mathcal{X}}$ 分别是从 $\mathcal{X}_0$ 和 $\mathcal{X}$ 采样得到的数据集。我们使用 Z3 求解器~\cite{de2008z3} 求解系数合成问题。若可满足并得到解 $(\hat{\mathbf{c}}, \hat{\epsilon})$，则将候选转移持久性证书定义为 $\hat{B}_{k,l} = B_{k,l}(\cdot; \hat{\mathbf{c}})$。
+
+\textbf{验证。} 为验证 $\hat{B}_{k,l}$ 有效，我们编码条件否定的约束并验证其不可满足。对于转移持久性证书，我们检查：
+\begin{align}
+  & x \in \mathcal{X}_0 \land \hat{B}_{k,l}(x) < 0, \label{smt:tp-cex-init} \\ 
+  & x \in \mathcal{X} \land \hat{B}_{k,l}(x) \geq 0 \land \hat{B}_{k,l}(f(x)) < 0, \label{smt:tp-cex-inv} \\ 
+  & x \in \mathcal{X} \land (q_k, \mathfrak{L}(x), q_l) \in Acc^{k,l} \land \hat{B}_{k,l}(x) < \hat{B}_{k,l}(f(x)) + \hat{\epsilon}, \label{smt:tp-cex-dec} \\ 
+  & x \in \mathcal{X} \land (q_k, \mathfrak{L}(x), q_l) \notin Acc^{k,l} \land \hat{B}_{k,l}(x) < \hat{B}_{k,l}(f(x)). \label{smt:tp-cex-non-dec}
+\end{align}
+
+我们使用 dReal~\cite{gao2013dreal} 检查这些约束。若约束可满足，则相应地将其加入 $D_0$ 或 $D_{\mathcal{X}}$。随后合成过程继续迭代，直到找不到反例，从而得到有效的转移持久性证书。
+
+\subsection{神经模板 CEGIS}
+由于神经网络具有逼近任意函数的能力，将其作为证书模板相比多项式具有优势~\cite{zhao2020synthesizing}。假设 $x \in \mathbb{R}^n$ 表示神经网络的 $n$ 维输入向量，$L-1$ 表示隐藏层数量，$y$ 是神经网络相对于输入 $x$ 的标量输出。因此，前馈神经网络可表示为如下结构：
+
+\[
+\begin{cases}
+z_l = \mathbf{W}_l x_{l-1} + \mathbf{b}_l, & 0 < l \leqslant L \\
+x_l = \sigma(z_l), & 0 < l \leqslant L \\
+y = x_L
+\end{cases}
+\tag{5}
+\]
+
+其中，
+\begin{itemize}
+    \item $z_l$ 表示第 $l$ 层中线性运算的输出向量；
+    \item $\mathbf{W}_l$ 和 $\mathbf{b}_l$ 分别表示神经网络第 $l$ 层的权重矩阵和偏置向量；
+    \item $\sigma$ 表示激活函数。常见激活函数包括 Tanh 函数、Sigmoid 函数和 ReLU 函数。
+\end{itemize}
+
+\textbf{候选生成。} 基于证书条件，我们为训练数据集设计损失函数。对于转移安全性证书，损失函数为：
+\begin{align}
+\mathcal{L}_B = &\sum_{(x,q) \in D_0} \text{ReLU}(-B_k(x, q; \theta)) \nonumber \\ 
+&+ \sum_{(x,q) \in D_u} \text{ReLU}(B_k(x, q; \theta)) \nonumber \\ 
+&+ \sum_{\substack{(x,q) \in D_{\mathcal{X}} \\ (q, \mathfrak{L}(x), q') \in \delta}} \text{ReLU}(B_k(x, q; \theta)) \cdot \text{ReLU}(-B_k(f(x), q'; \theta)),
+\end{align}
+其中 $D_0, D_u, D_{\mathcal{X}}$ 分别是从 $\mathcal{X}_0 \times \{q_0\}$、$\mathcal{X} \times \{q_k\}$ 和 $\mathcal{X} \times Q$ 采样得到的数据集。损失函数中的各项直观地度量了神经网络违反证书条件的程度。
+
+对于转移持久性证书，损失函数为：
+\begin{align}
+\mathcal{L}_B = &\sum_{\substack{x \in D_{\mathcal{X}} \\ (q_k, \mathfrak{L}(x), q_l) \in Acc^{k,l}}} \text{ReLU}(B_{k,l}(f(x); \theta) + \epsilon - B_{k,l}(x; \theta)) \\
+&+ \sum_{\substack{x \in D_{\mathcal{X}} \\ (q_k, \mathfrak{L}(x), q_l) \not\in Acc^{k,l}}} \text{ReLU}(B_{k,l}(f(x); \theta) - B_{k,l}(x; \theta)),
+\end{align}
+其中 $D_{\mathcal{X}} \subseteq \mathcal{X}$ 是从 $\mathcal{X}$ 采样得到的数据集。
+
+为生成神经证书候选，我们采用梯度下降技术最小化损失函数。当损失下降到 0 时，表明学习得到的神经网络可以作为候选证书。此外，两类证书所使用的激活函数不同。转移安全性证书采用 ReLU 激活函数，而转移持久性证书使用平方激活函数。这一设计消除了在验证阶段验证非负性条件的需要。我们将候选转移安全性证书定义为 $\hat{B}_{k} = B_{k}(\cdot, \cdot; \hat{\theta})$，并将候选转移持久性证书定义为 $\hat{B}_{k,l} = B_{k,l}(\cdot; \hat{\theta})$。
+
+\textbf{验证。} 为验证候选神经证书有效，我们构造条件的否定，并使用 dReal~\cite{gao2013dreal} 验证其不可满足。对于转移安全性证书，我们检查约束（\ref{smt:cex-init}）、（\ref{smt:cex-unsafe}）和（\ref{smt:cex-inv}）。对于转移持久性证书，我们验证约束（\ref{smt:tp-cex-dec}）和（\ref{smt:tp-cex-non-dec}）。若发现反例，则相应地将其加入训练集，并迭代合成过程，直到不再存在反例。
+
+我们选择 dReal~\cite{gao2013dreal} 作为 SMT 验证器，它保证其不可满足判定的正确性。因此，当 dReal 对给定公式返回 unsat 时，它确认在指定精度内不存在解，候选证书有效。否则，这意味着 dReal 找到了一个违反证书条件的反例。这些反例被加入样本集合，并重复候选生成阶段。该过程迭代进行，直到所有验证查询都不可满足（在 dReal 的 $\delta$-完备性阈值内），从而得到有效证书。
+
+我们简要评论完备性。对于应用于具有多项式动力学和半代数约束系统的多项式模板，原则上可以通过 Positivstellensatz 类型的论证来处理证书条件；这些论证保证在温和正则性条件下，只要性质成立，就存在足够高次数的充分多项式证书。在这一设置下，按递增次数迭代模板提供了一条通向完备性的理论路径，尽管所需次数在最坏情况下可能很大。对于神经网络模板，情况有所不同：CEGIS 循环未能收敛表明当前架构缺乏表示有效证书的表达能力，而不意味着不存在证书。在这种情况下，增大神经网络、改变激活函数，或切换到更高次数的多项式模板，都可能解决该问题。
+
+%这种基于神经网络的方法不依赖多项式模板，并能处理一般非多项式系统。然而，它的瓶颈主要在于 SMT 求解的计算负担，尤其是在处理具有高度非线性动力学的高维系统时。

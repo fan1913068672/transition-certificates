@@ -1,0 +1,72 @@
+{
+  "example": "ex2",
+  "method": "NCC",
+  "passed": false,
+  "checks": [
+    {
+      "name": "sampled X0 safety (100 points)",
+      "passed": true,
+      "details": "counterexample initial points: []"
+    },
+    {
+      "name": "NCC-g1 domain/transition",
+      "passed": true,
+      "details": "delta safe mismatch"
+    },
+    {
+      "name": "NCC-g2 closure set",
+      "passed": true,
+      "details": "Xu boundary mismatch"
+    },
+    {
+      "name": "NCC-g3 initial set",
+      "passed": true,
+      "details": "X0 boundary mismatch"
+    },
+    {
+      "name": "dynamics finite",
+      "passed": true,
+      "details": "f not finite"
+    },
+    {
+      "name": "label partition",
+      "passed": true,
+      "details": "label_of mismatch"
+    },
+    {
+      "name": "result meta",
+      "passed": true,
+      "details": "wrong example/method"
+    },
+    {
+      "name": "result type",
+      "passed": false,
+      "details": "wrong certificate_type"
+    },
+    {
+      "name": "result arch",
+      "passed": true,
+      "details": "arch=6-80-1"
+    },
+    {
+      "name": "xi_effective",
+      "passed": true,
+      "details": "missing xi_effective"
+    },
+    {
+      "name": "result backend",
+      "passed": false,
+      "details": "missing backend"
+    },
+    {
+      "name": "result automaton",
+      "passed": false,
+      "details": "wrong accepting_states"
+    }
+  ],
+  "errors": [
+    "result type: wrong certificate_type",
+    "result backend: missing backend",
+    "result automaton: wrong accepting_states"
+  ]
+}

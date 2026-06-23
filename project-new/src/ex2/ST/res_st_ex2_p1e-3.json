@@ -1,0 +1,101 @@
+{
+  "success": true,
+  "status": "proved",
+  "iterations": 0,
+  "strict_wong_pf3": true,
+  "backend": "SMT(z3+dreal discrete-time adaptation)",
+  "accepting_reports": [
+    {
+      "accepting_state": 2,
+      "ppath": [
+        {
+          "path": [
+            0,
+            1,
+            2
+          ],
+          "pf3": [
+            [
+              0,
+              1,
+              2
+            ]
+          ],
+          "resolved": true,
+          "triplets": [
+            {
+              "triplet": [
+                0,
+                1,
+                2
+              ],
+              "resolved": true,
+              "mode": "corollary2",
+              "sigma0": [
+                "{i}"
+              ],
+              "sigma1": [
+                "{u}",
+                "{i,u}"
+              ],
+              "sigma_mid": [
+                "{}",
+                "{i}"
+              ],
+              "backend": {
+                "success": true,
+                "kind": "smt",
+                "coefficients": [
+                  0.0,
+                  -1.0,
+                  -1.0,
+                  -3.125,
+                  2.0,
+                  2.0
+                ],
+                "verified": "z3+dreal",
+                "iterations": 0
+              }
+            }
+          ]
+        },
+        {
+          "path": [
+            0,
+            2
+          ],
+          "pf3": [],
+          "resolved": true,
+          "reason": "no length-3 subpath under strict Wong PF^3 framework",
+          "edge": {
+            "edge": [
+              0,
+              2
+            ],
+            "labels": [
+              "{i,u}"
+            ],
+            "resolved": true,
+            "mode": "edge-empty",
+            "reason": "edge label region is empty"
+          }
+        }
+      ],
+      "pcyc": [
+        {
+          "path": [
+            2
+          ],
+          "pf3": [],
+          "resolved": true,
+          "mode": "not-required",
+          "reason": "path-blocking condition proves accepting states unreachable"
+        }
+      ]
+    }
+  ],
+  "example": "ex2",
+  "method": "ST",
+  "certificate_type": "state_triplet_barrier",
+  "elapsed_sec": 1.1321938037872314
+}

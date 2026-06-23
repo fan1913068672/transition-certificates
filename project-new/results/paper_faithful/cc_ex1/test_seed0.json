@@ -1,0 +1,83 @@
+{
+  "example": "ex1",
+  "method": "CC",
+  "passed": true,
+  "checks": [
+    {
+      "name": "sampled X0 safety (100 points)",
+      "passed": true,
+      "details": "counterexample initial points: []"
+    },
+    {
+      "name": "unsafe region config",
+      "passed": true,
+      "details": "unsafe endpoints not included"
+    },
+    {
+      "name": "initial region config",
+      "passed": true,
+      "details": "X0 endpoints not included"
+    },
+    {
+      "name": "dynamics finite",
+      "passed": true,
+      "details": "f_num(1.0) is not finite"
+    },
+    {
+      "name": "accepting state",
+      "passed": true,
+      "details": "accepting_states=[0]"
+    },
+    {
+      "name": "verify backend",
+      "passed": true,
+      "details": "verify_backend=dreal"
+    },
+    {
+      "name": "safe edge",
+      "passed": true,
+      "details": "missing 1 --{}--> 1"
+    },
+    {
+      "name": "unsafe edge",
+      "passed": true,
+      "details": "missing 1 --{a}--> 0"
+    },
+    {
+      "name": "accepting self-loop",
+      "passed": true,
+      "details": "missing accepting self-loop"
+    },
+    {
+      "name": "result meta",
+      "passed": true,
+      "details": "wrong example/method"
+    },
+    {
+      "name": "result type",
+      "passed": true,
+      "details": "wrong certificate_type"
+    },
+    {
+      "name": "result backend",
+      "passed": true,
+      "details": "backend={'synth': 'z3-lra-strengthened', 'verify': 'dreal'}"
+    },
+    {
+      "name": "result automaton",
+      "passed": true,
+      "details": "wrong accepting_states in result"
+    },
+    {
+      "name": "result coefficients",
+      "passed": true,
+      "details": "expected 3 coefficients in T_0_0"
+    },
+    {
+      "name": "result epsilon",
+      "passed": true,
+      "details": "missing numeric epsilon"
+    }
+  ],
+  "errors": []
+}

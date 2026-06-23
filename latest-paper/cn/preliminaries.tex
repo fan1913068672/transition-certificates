@@ -1,0 +1,122 @@
+﻿\section{预备知识}
+\subsection{记号}
+\label{notation123}
+我们分别使用 \(\mathbb{N}\) 和 \(\mathbb{R}\) 表示自然数集合和实数集合。我们定义：
+\begin{align*}
+  \mathbb{N}_{\sim i} &= \{n \in \mathbb{N} \mid n \sim i\}, \quad \text{其中 } i \in \mathbb{N}, \sim \in \{\geq, \leq, >, <\}, \\
+  \mathbb{R}_{\sim i} &= \{r \in \mathbb{R} \mid r \sim i\}, \quad \text{其中 } i \in \mathbb{R}, \sim \in \{\geq, \leq, >, <\}.
+\end{align*}
+给定集合 \( S \) 和集合 $S_1$，我们定义示性函数：
+$$I_S(x) =
+  \begin{cases}
+  1, & \text{若 } x \in S \\
+  0, & \text{若 } x \not\in S.
+  \end{cases}$$
+$|S|$ 表示 $S$ 的基数，$S\backslash S_1$ 表示 $\{x \in S \mid x \not\in S_1\}$。
+
+给定序列 \( s = \langle s_0, s_1, \dots \rangle \)，其中对 $i \in \mathbb{N}$ 有 $s_i \in S$：
+\begin{itemize}
+  \item \( s[i] \) 表示 \( s_i \)；
+  \item \( s[i:j] \) 表示 \( \langle s_i, \dots, s_j \rangle \)，其中 \( j \geq i \)；
+  \item \( s[i:\infty] \) 表示 \( \langle s_i, s_{i+1}, \dots \rangle \)。
+\end{itemize}
+若存在 $i \in \mathbb{N}$ 使得 $s_i \in S$，则称 $s$ 访问 $S$。$Inf(s)$ 表示在 $s$ 中出现无限多次的元素集合。$S^{\omega}$ 表示 $S$ 上的无限序列集合，即 $S^{\omega} = \{s \mid s=\langle s_0, s_1, \dots \rangle \text{ 且 } s_i \in S \text{ 对所有 } i \in \mathbb{N}\}$。函数 $f: S \rightarrow \mathbb{R}$ 有界，当且仅当存在 $a, b \in \mathbb{R}$，使得对所有 $x \in S$ 都有 $a \leq f(x) \leq b$。
+
+\subsection{离散时间动力系统}
+\label{dtds}
+离散时间动力系统定义为 $\mathfrak{S}$ = $(\mathcal{X}, \mathcal{X}_0, f)$，其中 $\mathcal{X} \subseteq \mathbb{R}^n$ 表示状态集，$\mathcal{X}_{0} \subseteq \mathcal{X}$ 表示初始状态集合，$f: \mathcal{X} \rightarrow \mathcal{X}$ 表示转移函数。系统状态的演化描述如下：
+\[
+  x_{t+1} = f(x_t).
+\]
+% 若对 $x \in \mathcal{X}$ 有 $ |f(x)|  = 1$，则系统是\emph{确定性的}。若 $\mathfrak{S}$ 是确定性的，则 $f$ 可被视为\emph{状态转移函数}。
+%我们假设所考虑系统的状态集是紧的。
+若无限状态序列 $\langle x_0, x_1, x_2, \dots \rangle$ 满足 $x_0 \in \mathcal{X}_0$ 且对 $i \in \mathbb{N}$ 有 $x_{i+1} = f(x_{i})$，则称其为系统的一条\emph{轨迹}。我们使用 $\mathfrak{T}(\mathfrak{S})$ 表示 $\mathfrak{S}$ 上所有\emph{轨迹}。\(x_{i+1}\) 的\emph{前驱}是 \(x_i\)，其中 \(i \in \mathbb{N}\)。在给定\emph{轨迹}中，\(x_{i+1}\) 只有一个\emph{前驱}。我们使用记号 \(x_{i}^{pre}\) 表示\emph{轨迹}中 \(x_{i}\) 的\emph{前驱}。
+\subsection{规约}
+\label{specification123}
+本文关注离散时间动力系统的 LTL 性质验证。下面介绍安全性、持久性和非确定性 Büchi 自动机（NBA）的基础概念，这些概念对于建立我们的框架至关重要。
+
+\textbf{安全性：} 若对于任意\emph{轨迹} $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$，均有对所有 $i \in \mathbb{N}$ 成立 $x_i \not\in \mathcal{X}_u$，则称系统 $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ 相对于不安全状态 $\mathcal{X}_u \subseteq \mathcal{X}$ 是\emph{安全的}。
+
+\textbf{持久性：} 若对于任意\emph{轨迹} $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$，$\mathcal{X}_{VF}$ 中的元素在 $\tau$ 中只出现有限多次，则称系统 $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ 相对于状态 $\mathcal{X}_{VF} \subseteq \mathcal{X}$ 是\emph{持久的}。
+
+\textbf{线性时序逻辑（LTL）~\cite{pnueli1977temporal}:} LTL 公式定义在原子命题集合 $AP$ 上。标记函数 $\mathfrak{L}: \mathcal{X} \rightarrow 2^{AP}$ 将系统状态映射为 $AP$ 的子集。给定\emph{轨迹} $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$，我们将 $\mathfrak{L}(\tau) = \langle \mathfrak{L}(x_0), \mathfrak{L}(x_1), \dots \rangle$ 表示为相应的\emph{字}。
+
+LTL 的语法为：
+\[
+\phi := \top \mid a \mid \lnot \phi \mid \phi \land \phi \mid X \phi \mid \phi U \phi,
+\]
+其中 $a \in AP$ 是原子命题。时序算子最终（$F$）和总是（$G$）由下一个（$X$）和直到（$U$）导出。
+
+给定\emph{字} $w = \mathfrak{L}(\tau)$ 和 LTL 公式 $\phi$，其语义归纳定义为：
+\begin{itemize}
+    \item \(w \models \top \) 总是成立，
+    \item \(w \models a\) 当且仅当 \(a \in w[0]\)，
+    \item \(w \models \phi_1 \land \phi_2\) 当且仅当 \(w \models \phi_1\) 且 \(w \models \phi_2\)，
+    \item \(w \models \lnot \phi_1\) 当且仅当 \(w \not\models \phi_1\)，
+    \item \(w \models X \phi_1\) 当且仅当 \(w[1:\infty] \models \phi_1\)，
+    \item \(w \models \phi_1 U \phi_2\) 当且仅当存在 \(j \in \mathbb{N}\)，使得 \(w[j:\infty] \models \phi_2\)，并且对所有 \(i \in \mathbb{N}_{<j}\)，有 \(w[i:\infty] \models \phi_1\)。
+\end{itemize}
+若对任意 $\tau \in \mathfrak{T}(\mathfrak{S})$，均有 $\mathfrak{L}(\tau) \models \phi$，则称 $\mathfrak{S} \models_{\mathfrak{L}} \phi$。
+
+\textbf{非确定性 Büchi 自动机（NBA）~\cite{hahn2020reward}:} NBA 是一个元组 $(\Sigma, Q, q_0, \delta, Acc)$，其中 $\Sigma = 2^{AP}$ 是字母表，$Q$ 是有限状态集，$q_0 \in Q$ 是初始状态，$\delta \subseteq Q \times \Sigma \times Q$ 是转移关系，$Acc \subseteq \delta$ 是\emph{接受转移}集合。给定字 $w = \langle w_0, w_1, \ldots \rangle \in \Sigma^{\omega}$，$w$ 上的一条\textbf{运行}是序列 $r = \langle (r_0, w_0, r_1), (r_1, w_1, r_2), \ldots \rangle$，其中 $r_0 = q_0$，且对所有 $i \in \mathbb{N}$ 有 $(r_i, w_i, r_{i+1}) \in \delta$。\textit{基于转移的接受条件}是：若存在一条运行，其中至少一个接受转移出现无限多次，即 $\mathit{Inf}(r) \cap Acc \neq \emptyset$，则 NBA 接受 $w$。
+
+对于 NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$，我们定义：
+\begin{align}
+  Acc^{pair} &= \{(p, q) \mid \exists \sigma \in \Sigma. (p, \sigma, q) \in Acc \}, \label{atpair}\\
+  Acc^{start} &= \{p \mid \exists \sigma \in \Sigma, q \in Q. (p, \sigma, q) \in Acc \}, \label{atstart}\\
+  Acc^{k, l} &= \{(q_k, \sigma, q_l) \mid (q_k, \sigma, q_l) \in Acc \}. \label{atkl}
+\end{align}
+
+我们将 $\mathfrak{L}(\mathfrak{S}) = \{\mathfrak{L}(\tau) \mid \tau \in \mathfrak{T}(\mathfrak{S})\}$ 表示为 $\mathfrak{S}$ 的\emph{语言}，将 $\mathfrak{L}(\mathcal{A})$ 表示为 $\mathcal{A}$ 接受的语言。为了验证 $\mathfrak{S} \models_{\mathfrak{L}} \phi$，我们为 $\neg \phi$ 构造一个 NBA $\mathcal{A}$，并证明 $\mathfrak{L}(\mathfrak{S}) \cap \mathfrak{L}(\mathcal{A}) = \emptyset$。
+
+\subsection{证明证书}
+屏障证书~\cite{prajna2004safety} 和闭包证书~\cite{murali2024closure} 分别用于验证 LTL 性质~\cite{wongpiromsarn2015automata,murali2024closure}。我们给出它们的定义以及先前工作的相关结论。
+
+\begin{definition}[屏障证书~\cite{prajna2004safety}]
+  \label{SCDEF}
+  给定系统 $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$ 和 $\mathcal{X}_{u} \subseteq \mathcal{X}$，若有界函数 $B(x): \mathcal{X} \rightarrow \mathbb{R}$ 对所有 $x_0 \in \mathcal{X}_0$、$x_u \in \mathcal{X}_u$、$x \in \mathcal{X}$ 以及 $x^{\prime} = f(x)$ 满足以下条件，则称 $B(x)$ 是相对于 $\mathcal{X}_{u}$ 的\emph{屏障证书}：
+  \begin{align}
+    &B(x_0) \geq 0, \label{bsinn0} \\ % 初始状态非负
+    &B(x_u) < 0, \label{bsun0} \\ % 接受状态为负
+    &B(x) \geq 0 \Rightarrow B(x^{\prime}) \geq 0. \label{bstnn0} % 转移后保持非负
+  \end{align}
+\end{definition}
+\begin{theorem}[安全性~\cite{prajna2004safety}]
+  \label{corollary_tbsc}
+  屏障证书 \( B(x) \) 的存在意味着系统 $\mathfrak{S}$ 相对于 $\mathcal{X}_u$ 是安全的。
+\end{theorem}
+
+状态三元组方法\cite{wongpiromsarn2015automata} 使用屏障证书来验证 LTL 性质。给定 LTL 规约 $\phi$，该方法通过寻找屏障证书来确保 $\mathfrak{L}(\mathfrak{S})$ 上的运行永不访问接受状态，从而证明在 $\neg\phi$ 的 NBA 中接受状态不可达，并验证 $\mathfrak{S} \models_{\mathfrak{L}} \phi$。状态三元组方法需要为每条简单路径寻找屏障证书，其中一个证书对应一个特定状态三元组，用于单独阻断一条简单路径。状态三元组方法引入了限制性，因为它无法应用于那些满足 LTL 规约、但在这些限制性约束下无法被证明安全的系统。
+
+
+\begin{definition}[闭包证书~\cite{murali2024closure}]
+\label{LTLCC}
+考虑系统 $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$、原子命题集合 $AP$、标记函数 $\mathfrak{L} : \mathcal{X} \rightarrow 2^{AP}$，以及表示 $\neg \phi$ 的 NBA $\mathcal{A} = (2^{AP}, Q, q_0, \delta, Acc)$。若存在一个值 $\epsilon \in \mathbb{R}_{> 0}$，使得有界函数 $T : \mathcal{X} \times Q \times \mathcal{X} \times Q \rightarrow \mathbb{R}$ 对所有状态 $x, y, y' \in \mathcal{X}$、$x' = f(x)$、状态 $q_i, q_j \in Q$ 以及 $q_i' \in \delta(q_i, \mathfrak{L}(x))$ 满足：
+\begin{align}
+    &T((x, q_i), (x', q_i')) \geq 0, \label{eq:closure1} \\
+    &T((x', q_i'), (y, q_j)) \geq 0 \Rightarrow T((x, q_i), (y, q_j)) \geq 0. \label{eq:closure2}
+\end{align}
+并且对所有状态 $x_0 \in \mathcal{X}_0$ 以及 $\ell, \ell' \in Acc$，有：
+
+\begin{align}
+  & T((x_0, q_0), (y, \ell)) \geq 0 \land T((y, \ell), (y', \ell')) \geq 0 \notag \\
+  &\Rightarrow T((x_0, q_0), (y', \ell')) \leq T((x_0, q_0), (y, \ell)) - \epsilon. \label{eq:closure3}
+\end{align}
+则称 $T$ 是 $\phi$ 的闭包证书。
+\end{definition}
+
+\begin{theorem}[LTL 验证~\cite{murali2024closure}]
+考虑系统 $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$、原子命题集合 $AP$、标记函数 $\mathfrak{L}: \mathcal{X} \rightarrow 2^{AP}$ 和 LTL 公式 $\phi$。设 NBA $\mathcal{A} = (2^{AP}, Q, q_0, \delta, Acc)$ 表示 $\neg \phi$。若存在满足条件 \eqref{eq:closure1}--\eqref{eq:closure3} 的闭包证书，则可推出 $\mathfrak{S} \models_\mathfrak{L} \phi$。
+\end{theorem}
+
+闭包证书通过刻画转移闭包的过近似并结合下降条件来定义，从而确保某些区域中的转移只被访问有限多次，并用于 LTL 验证。闭包证书（\ref{LTLCC}）定义在 $\mathcal{X} \times Q \times \mathcal{X} \times Q$ 上，产生高维搜索空间和沉重的计算负担。
+
+%我们的证书作用于更小的空间：转移持久性证书作用于 $\mathcal{X}$，转移安全性证书作用于 $\mathcal{X} \times Q$。我们最多需要 $|Acc^{pair}|$ 个转移持久性证书和 $|Acc^{start}|$ 个转移安全性证书，从而得到至多为 $\mathcal{X} \times Q \times Q$ 的搜索空间，小于 $\mathcal{X} \times Q \times \mathcal{X} \times Q$。
+
+
+
+\subsection{问题陈述}
+\textbf{问题。} 给定离散时间动力系统 $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$、原子命题集合 $AP$、标记函数 $\mathfrak{L}: \mathcal{X} \rightarrow 2^{AP}$ 和 LTL 公式 $\phi$，验证 $\mathfrak{S} \models_{\mathfrak{L}} \phi$ 成立。
+
+\noindent
+在本文中，我们提出了一种解决 LTL 验证问题的新方法。

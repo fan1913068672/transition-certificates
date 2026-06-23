@@ -1,0 +1,8 @@
+{
+  "case": "ex3",
+  "method": "CC",
+  "source": "paper D.2 coeffs mapped to current 18-term template without max terms",
+  "success": false,
+  "counterexample": "('c1', 1, 2, (21.0, 27.0), (21.75315, 27.169349999999998))",
+  "elapsed_sec": 0.043460845947265625
+}

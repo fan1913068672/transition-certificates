@@ -55,16 +55,14 @@ def delta_closure(q, x1, x2):
     a0, a1 = labels(x1, x2)
     if q == 0:
         if (a0, a1) == (1, 1):
-            return [2]
-        if (a0, a1) == (0, 1):
-            return [1, 3]
-        if (a0, a1) == (1, 0):
             return [1]
+        if (a0, a1) == (1, 0):
+            return [2]
         return [3]
     if q == 1:
-        return [2] if a1 == 1 else [1]
+        return [1] if a1 == 1 else [2]
     if q == 2:
-        return [2]
+        return [1] if a1 == 1 else [2]
     return [3]
 
 
@@ -145,7 +143,7 @@ def train(mode='closure', epochs=2200, lr=1e-3, xi=0.01, eta=0.01, lam1=0.1, lam
     if mode == 'closure':
         q_states = [0, 1, 2, 3]
         q0 = 0
-        q_acc = [2]
+        q_acc = [1]
         delta = delta_closure
     else:
         q_states = [0, 1, 2]
@@ -261,6 +259,9 @@ if __name__ == '__main__':
         out_path = Path(__file__).resolve().parent / out_path
     payload["example"] = "ex3"
     payload["method"] = "NCC"
+    payload["certificate_type"] = "neural_closure_certificate"
+    payload["backend"] = {"train": "pytorch", "certify": "lipschitz_bound"}
+    payload["automaton"] = {"states": [0, 1, 2, 3] if args.mode == "closure" else [0, 1, 2], "initial_state": 0, "accepting_states": [1]}
     payload["elapsed_sec"] = elapsed
     out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     print_result(bool(payload.get("certified")), 1, elapsed, str(out_path))

@@ -1,0 +1,17 @@
+{
+  "success": false,
+  "iterations": 0,
+  "epsilon": null,
+  "coefficients": null,
+  "last_epsilon": null,
+  "last_counterexample": "None",
+  "last_coefficients": null,
+  "backend": {
+    "synth": "z3",
+    "verify": "dreal"
+  },
+  "example": "ex2",
+  "method": "CC",
+  "certificate_type": "closure_certificate",
+  "elapsed_sec": 2512.2915518283844
+}

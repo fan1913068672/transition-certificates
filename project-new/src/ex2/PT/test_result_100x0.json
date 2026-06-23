@@ -1,0 +1,38 @@
+{
+  "example": "ex2",
+  "method": "PT",
+  "passed": true,
+  "checks": [
+    {
+      "name": "sampled X0 safety (100 points)",
+      "passed": true,
+      "details": "counterexample initial points: []"
+    },
+    {
+      "name": "TS-C1 source",
+      "passed": true,
+      "details": "C1 block not found"
+    },
+    {
+      "name": "TS-C2 source",
+      "passed": true,
+      "details": "C2 block not found"
+    },
+    {
+      "name": "TS-C3 source",
+      "passed": true,
+      "details": "C3 block not found"
+    },
+    {
+      "name": "result coefficients",
+      "passed": true,
+      "details": "expected 7 coefficients"
+    },
+    {
+      "name": "result type",
+      "passed": true,
+      "details": "type=transition_safety"
+    }
+  ],
+  "errors": []
+}

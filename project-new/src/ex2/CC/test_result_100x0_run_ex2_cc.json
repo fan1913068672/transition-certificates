@@ -1,0 +1,53 @@
+{
+  "example": "ex2",
+  "method": "CC",
+  "passed": false,
+  "checks": [
+    {
+      "name": "sampled X0 safety (100 points)",
+      "passed": true,
+      "details": "counterexample initial points: []"
+    },
+    {
+      "name": "fallback verify backend",
+      "passed": true,
+      "details": "strict dreal verify not found in source"
+    },
+    {
+      "name": "fallback automaton labels",
+      "passed": true,
+      "details": "a automaton label not found in source"
+    },
+    {
+      "name": "fallback accepting state",
+      "passed": true,
+      "details": "accepting state 0 not found in source"
+    },
+    {
+      "name": "result meta",
+      "passed": true,
+      "details": "wrong example/method"
+    },
+    {
+      "name": "result type",
+      "passed": true,
+      "details": "wrong certificate_type"
+    },
+    {
+      "name": "result backend",
+      "passed": false,
+      "details": "backend=z3 sampled CEGIS"
+    },
+    {
+      "name": "result automaton",
+      "passed": false,
+      "details": "wrong accepting_states in result"
+    }
+  ],
+  "errors": [
+    "result backend: backend=z3 sampled CEGIS",
+    "result automaton: wrong accepting_states in result",
+    "AttributeError: 'NoneType' object has no attribute 'get'"
+  ],
+  "traceback": "Traceback (most recent call last):\n  File \"E:\\fyh\\05persistence-certificate-one-column\\project\\src\\ex2\\CC\\test.py\", line 46, in main\n    t00 = coeffs.get(\"T_0_0\")\nAttributeError: 'NoneType' object has no attribute 'get'\n"
+}

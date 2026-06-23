@@ -1,0 +1,16 @@
+{
+  "success": false,
+  "iterations": 500,
+  "epsilon": null,
+  "coefficients": null,
+  "template": "T(x,y)=c0+c1*x+c2*y",
+  "certificate_scope": "safety_closure_certificate",
+  "backend": {
+    "synth": "z3-lra-paper-cegis",
+    "verify": "dreal"
+  },
+  "example": "ex1",
+  "method": "CC",
+  "certificate_type": "closure_certificate",
+  "elapsed_sec": 1.7709717750549316
+}

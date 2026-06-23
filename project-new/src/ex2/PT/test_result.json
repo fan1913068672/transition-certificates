@@ -1,0 +1,28 @@
+{
+  "example": "ex2",
+  "method": "PT",
+  "passed": true,
+  "checks": [
+    {
+      "name": "TS-C1 init nonneg (set)",
+      "passed": true,
+      "details": "X0 boundary mismatch"
+    },
+    {
+      "name": "TS-C2 unsafe neg (set)",
+      "passed": true,
+      "details": "Xu boundary mismatch"
+    },
+    {
+      "name": "TS-C3 transition preserve (delta)",
+      "passed": true,
+      "details": "delta mismatch"
+    },
+    {
+      "name": "dynamics finite",
+      "passed": true,
+      "details": "f_m not finite"
+    }
+  ],
+  "errors": []
+}

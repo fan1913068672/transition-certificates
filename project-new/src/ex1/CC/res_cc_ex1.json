@@ -1,0 +1,8 @@
+{
+  "success": false,
+  "epsilon": null,
+  "coefficients": null,
+  "elapsed_sec": 1775.1926946640015,
+  "template": "T(x,y)=c0+c1*x+c2*y",
+  "sample_count": 50
+}

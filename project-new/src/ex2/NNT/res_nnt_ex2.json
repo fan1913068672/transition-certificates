@@ -1,0 +1,16 @@
+{
+  "example": "ex2",
+  "method": "NNT",
+  "certificate_type": "transition_safety",
+  "success": true,
+  "iterations": 11,
+  "max_iterations": 2000,
+  "elapsed_sec": 110.9514217376709,
+  "solver": {
+    "synth": "adam",
+    "verify": "dreal"
+  },
+  "hidden_dim": 15,
+  "model_dir": "saved_models/barrier_net_ex2_20260408_013944",
+  "model_state_path": "saved_models/barrier_net_ex2_20260408_013944/barrier_net.pth"
+}

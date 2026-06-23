@@ -8,7 +8,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 from common_test_utils import find_latest_model, load_model
-from test_report_utils import add_check, add_exception, base_parser, load_local_main, make_report, save_and_print
+from test_report_utils import check_sampled_initial_points, add_check, add_exception, base_parser, load_local_main, make_report, save_and_print
 
 
 def main() -> int:
@@ -17,6 +17,7 @@ def main() -> int:
     args = parser.parse_args()
 
     report = make_report("ex3", "NNT")
+    check_sampled_initial_points(report, None, "ex3", args.x0_samples, args.sim_steps)
     try:
         try:
             m = load_local_main(__file__)

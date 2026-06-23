@@ -1,0 +1,11 @@
+{
+  "success": false,
+  "iterations": 1,
+  "epsilon": null,
+  "coefficients": null,
+  "backend": "z3 sampled CEGIS",
+  "example": "ex2",
+  "method": "CC",
+  "certificate_type": "closure_certificate",
+  "elapsed_sec": 195.2070152759552
+}

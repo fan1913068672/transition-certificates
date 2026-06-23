@@ -1,0 +1,73 @@
+{
+  "example": "ex3",
+  "method": "CC",
+  "passed": false,
+  "checks": [
+    {
+      "name": "sampled X0 persistence (100 points)",
+      "passed": true,
+      "details": "non-stabilizing initial points: []"
+    },
+    {
+      "name": "CC-C1 closure seed",
+      "passed": true,
+      "details": "delta_closure output is not list"
+    },
+    {
+      "name": "CC-C2 closure propagation",
+      "passed": true,
+      "details": "delta_main_pt=[1]"
+    },
+    {
+      "name": "CC state edge 0ab1",
+      "passed": true,
+      "details": "delta_state_based_gf=[1]"
+    },
+    {
+      "name": "CC-C3 accepting decrease domain",
+      "passed": true,
+      "details": "X0 boundary mismatch"
+    },
+    {
+      "name": "vf region config",
+      "passed": true,
+      "details": "VF boundary mismatch"
+    },
+    {
+      "name": "dynamics finite",
+      "passed": true,
+      "details": "f not finite"
+    },
+    {
+      "name": "result meta",
+      "passed": false,
+      "details": "wrong example/method"
+    },
+    {
+      "name": "result type",
+      "passed": false,
+      "details": "wrong certificate_type"
+    },
+    {
+      "name": "result mode",
+      "passed": false,
+      "details": "mode=closure"
+    },
+    {
+      "name": "result backend",
+      "passed": false,
+      "details": "backend=None"
+    },
+    {
+      "name": "unsuccessful result has no coefficients",
+      "passed": true,
+      "details": "failed CC run should not report coefficients"
+    }
+  ],
+  "errors": [
+    "result meta: wrong example/method",
+    "result type: wrong certificate_type",
+    "result mode: mode=closure",
+    "result backend: backend=None"
+  ]
+}

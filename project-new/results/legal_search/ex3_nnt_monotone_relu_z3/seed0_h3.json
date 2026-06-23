@@ -1,0 +1,59 @@
+{
+  "example": "ex3",
+  "method": "NNT",
+  "certificate_type": "transition_persistence",
+  "success": true,
+  "seed": 0,
+  "elapsed_sec": 97.82389163970947,
+  "epsilon": 0.001,
+  "template": "monotone_relu",
+  "hidden_dim": 3,
+  "solver": {
+    "synth": "adam",
+    "verify": "z3",
+    "dreal_precision": null
+  },
+  "formal_conditions": [
+    "forall x in X0: B(x) >= 0",
+    "forall x in X, f(x) in X: B(x) >= 0 => B(f(x)) >= 0",
+    "forall x in X\\VF, f(x) in X: B(x) >= B(f(x))",
+    "forall x in VF, f(x) in X: B(x) >= B(f(x)) + epsilon"
+  ],
+  "certificate": {
+    "architecture": "raw-input positive one-hidden-layer ReLU network",
+    "input_features": [
+      "x1",
+      "x2"
+    ],
+    "formula": "bias + sum_i ai*relu(ti-(wi1*x1+wi2*x2)), wi>=0, wi1+wi2=1, ai>=0",
+    "hidden_dim": 3,
+    "directions": [
+      [
+        0.8622880578041077,
+        0.13771198689937592
+      ],
+      [
+        0.060243818908929825,
+        0.9397562146186829
+      ],
+      [
+        0.5778791308403015,
+        0.4221208691596985
+      ]
+    ],
+    "thresholds": [
+      26.45134925842285,
+      26.788375854492188,
+      27.075942993164062
+    ],
+    "output_weights": [
+      0.3333333730697632,
+      0.3333333730697632,
+      0.3333333730697632
+    ],
+    "bias": 0.6931471824645996,
+    "epsilon": 0.001
+  },
+  "model_state_path": "persistence_barrier_model_2layer.pth",
+  "checkpoint_path": "persistence_barrier_checkpoint_2layer.pth"
+}

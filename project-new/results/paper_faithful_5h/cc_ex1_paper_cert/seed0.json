@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "iterations": 0,
+  "epsilon": 0.001,
+  "coefficients": {
+    "T": [
+      10.0,
+      0.0,
+      -4.094
+    ],
+    "T_0_0": [
+      10.0,
+      0.0,
+      -4.094
+    ]
+  },
+  "template": "T(x,y)=c0+c1*x+c2*y",
+  "certificate": "T(x,y)=10-4.094*y",
+  "certificate_source": "Closure Certificates paper, Section 6.1",
+  "certificate_scope": "safety_closure_certificate",
+  "backend": {
+    "synth": "fixed-paper-certificate",
+    "verify": "dreal",
+    "dreal_precision": 0.0001
+  },
+  "formal_conditions": [
+    "forall x in X: T(x,f(x)) >= 0",
+    "forall x,y in X: T(f(x),y) >= 0 => T(x,y) >= 0",
+    "forall x0 in X0,xu in Xu: T(x0,xu) <= -epsilon"
+  ],
+  "counterexample": "None",
+  "example": "ex1",
+  "method": "CC",
+  "certificate_type": "closure_certificate",
+  "elapsed_sec": 0.0009098052978515625
+}

@@ -1,0 +1,33 @@
+{
+  "example": "ex2",
+  "method": "NNT",
+  "passed": true,
+  "checks": [
+    {
+      "name": "sampled X0 safety (100 points)",
+      "passed": true,
+      "details": "counterexample initial points: []"
+    },
+    {
+      "name": "TS-C1 source",
+      "passed": true,
+      "details": "C1 set not found"
+    },
+    {
+      "name": "TS-C2 source",
+      "passed": true,
+      "details": "C2 set not found"
+    },
+    {
+      "name": "TS-C3 source",
+      "passed": true,
+      "details": "C3 logic not found"
+    },
+    {
+      "name": "result success key",
+      "passed": true,
+      "details": "missing success field"
+    }
+  ],
+  "errors": []
+}

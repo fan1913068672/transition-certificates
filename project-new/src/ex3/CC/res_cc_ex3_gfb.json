@@ -1,0 +1,15 @@
+{
+  "success": false,
+  "iterations": 50,
+  "epsilon": null,
+  "coefficients": null,
+  "backend": {
+    "synth": "z3",
+    "verify": "z3"
+  },
+  "example": "ex3",
+  "method": "CC",
+  "certificate_type": "closure_certificate",
+  "mode": "state",
+  "elapsed_sec": 25.191898107528687
+}

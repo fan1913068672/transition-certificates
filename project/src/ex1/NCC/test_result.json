@@ -4,9 +4,14 @@
   "passed": true,
   "checks": [
     {
+      "name": "NCC domain",
+      "passed": true,
+      "details": "domain mismatch"
+    },
+    {
       "name": "NCC-g1 domain/transition",
       "passed": true,
-      "details": "delta(1,1.0)=[1]"
+      "details": "delta mismatch"
     },
     {
       "name": "NCC-g2 closure set",
@@ -22,6 +27,21 @@
       "name": "dynamics finite",
       "passed": true,
       "details": "f(1.0) is not finite"
+    },
+    {
+      "name": "automaton state set",
+      "passed": true,
+      "details": "q_states=[0, 1]"
+    },
+    {
+      "name": "accepting state set",
+      "passed": true,
+      "details": "q_acc=[0]"
+    },
+    {
+      "name": "label partition",
+      "passed": true,
+      "details": "label_of mismatch"
     }
   ],
   "errors": []

@@ -1,0 +1,13 @@
+{
+  "case": "ex2",
+  "method": "CC",
+  "source": "paper D.1 coefficients",
+  "epsilon": 1.0,
+  "semantics": "domain_restricted_successor_guard",
+  "state_mapping": "swapped_current0_paper1_current1_paper0",
+  "success": false,
+  "counterexample": "('c2', 0, 0, 0, (0.08726646111111111, 0.7420998440549251), (1.7778978615825904, 2.4037654145302856), (0.9755004810647547, 0.9890340961181641))",
+  "error": null,
+  "elapsed_sec": 0.011641502380371094,
+  "dreal_precision": 0.0001
+}

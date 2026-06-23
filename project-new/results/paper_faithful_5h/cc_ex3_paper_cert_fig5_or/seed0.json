@@ -1,0 +1,13 @@
+{
+  "case": "ex3",
+  "method": "CC",
+  "source": "paper D.2 coefficients",
+  "epsilon": 0.5,
+  "region": "paper a1=([20,26]xX) union (Xx[20,26])",
+  "automaton": "paper Fig.5 state-based NBA, accepting q2",
+  "template": "paper Eq.(36) 11-term max template",
+  "success": false,
+  "counterexample": "('c1', 1, 1, (28.0, 27.0), (28.1116, 27.197349999999997))",
+  "elapsed_sec": 0.06070828437805176,
+  "backend": "z3 exact"
+}

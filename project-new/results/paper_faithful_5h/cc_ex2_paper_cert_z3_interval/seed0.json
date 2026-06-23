@@ -1,0 +1,12 @@
+{
+  "case": "ex2",
+  "method": "CC",
+  "source": "paper D.1 coefficients",
+  "epsilon": 1.0,
+  "semantics": "domain-restricted successor guard + Z3 interval overapprox of sin",
+  "state_mapping": "current0=paper q1, current1=paper q0",
+  "success": false,
+  "counterexample": "('c2', 0, 0, 0, (0.0, 1.0), (1.6910400390625, 2.6378173828125), (0.0, 1.0))",
+  "elapsed_sec": 0.11307287216186523,
+  "backend": "z3 exact with interval successor relation"
+}

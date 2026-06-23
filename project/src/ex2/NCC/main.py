@@ -37,9 +37,20 @@ def f(x1, x2):
 
 
 def delta(q, x1, x2):
+    lab = label_of(x1, x2)
     if q == 1:
-        return [0] if in_xu(x1, x2) else [1]
-    return [0]
+        if lab == "a":
+            return [0]
+        return [1]
+    if q == 0:
+        return [0]
+    raise ValueError(f"invalid automaton state: {q}")
+
+
+def label_of(x1, x2):
+    if in_xu(x1, x2):
+        return "a"
+    return "n"
 
 
 class Net(nn.Module):
@@ -209,6 +220,9 @@ if __name__ == '__main__':
         out_path = Path(__file__).resolve().parent / out_path
     payload["example"] = "ex2"
     payload["method"] = "NCC"
+    payload["certificate_type"] = "neural_closure_certificate"
+    payload["backend"] = {"train": "pytorch", "certify": "lipschitz_bound"}
+    payload["automaton"] = {"states": [0, 1], "initial_state": 1, "accepting_states": [0]}
     payload["elapsed_sec"] = elapsed
     out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     print_result(bool(payload.get("certified")), 1, elapsed, str(out_path))

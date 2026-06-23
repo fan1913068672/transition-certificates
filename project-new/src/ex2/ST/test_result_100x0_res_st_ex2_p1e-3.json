@@ -1,0 +1,73 @@
+{
+  "example": "ex2",
+  "method": "ST",
+  "passed": true,
+  "checks": [
+    {
+      "name": "sampled X0 safety (100 points)",
+      "passed": true,
+      "details": "counterexample initial points: []"
+    },
+    {
+      "name": "unsafe boundary",
+      "passed": true,
+      "details": "unsafe corridor mismatch"
+    },
+    {
+      "name": "delta structure",
+      "passed": true,
+      "details": "delta mismatch"
+    },
+    {
+      "name": "dynamics finite",
+      "passed": true,
+      "details": "f_m not finite"
+    },
+    {
+      "name": "accepting state",
+      "passed": true,
+      "details": "accepting state mismatch"
+    },
+    {
+      "name": "initial edge",
+      "passed": true,
+      "details": "missing 0 --{i}--> 1"
+    },
+    {
+      "name": "unsafe edge",
+      "passed": true,
+      "details": "missing 1 --{u}--> 2"
+    },
+    {
+      "name": "result type",
+      "passed": true,
+      "details": "wrong certificate_type"
+    },
+    {
+      "name": "result status",
+      "passed": true,
+      "details": "ex2 ST should be proved"
+    },
+    {
+      "name": "blocked path 0-1-2",
+      "passed": true,
+      "details": "0->1->2 not resolved"
+    },
+    {
+      "name": "formal backend",
+      "passed": true,
+      "details": "certificate is not formally verified"
+    },
+    {
+      "name": "coefficients",
+      "passed": true,
+      "details": "unexpected ex2 ST coefficients"
+    },
+    {
+      "name": "direct edge empty",
+      "passed": true,
+      "details": "0->2 empty edge not resolved"
+    }
+  ],
+  "errors": []
+}

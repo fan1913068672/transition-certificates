@@ -1,15 +1,20 @@
+from __future__ import annotations
+
 import argparse
 import json
-import random
-from pathlib import Path
-import z3
 import time
+from pathlib import Path
 import sys
 
-sys.path.append(str(Path(__file__).resolve().parents[2]))
-from run_output_utils import print_header, print_result
+import z3
 
-def f(x1, x2):
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+from closure_smt import ClosureCase, synthesize_closure
+from run_output_utils import print_header, print_result
+from state_triplet_smt import Automaton, label
+
+
+def f(x1: float, x2: float):
     alpha, theta, mu, Th, Te = 0.004, 0.01, 0.15, 40.0, 0.0
     def u(x):
         return 0.59 - 0.011 * x
@@ -18,164 +23,178 @@ def f(x1, x2):
         alpha * x1 + (1 - 2 * alpha - theta - mu * u(x2)) * x2 + mu * Th * u(x2) + theta * Te,
     )
 
-def in_x(x1, x2):
+
+def f_z3(x1, x2):
+    alpha, theta, mu, Th, Te = 0.004, 0.01, 0.15, 40.0, 0.0
+    u1 = 0.59 - 0.011 * x1
+    u2 = 0.59 - 0.011 * x2
+    return (
+        (1 - 2 * alpha - theta - mu * u1) * x1 + alpha * x2 + mu * Th * u1 + theta * Te,
+        alpha * x1 + (1 - 2 * alpha - theta - mu * u2) * x2 + mu * Th * u2 + theta * Te,
+    )
+
+
+def in_x(x1: float, x2: float) -> bool:
     return 20 <= x1 <= 34 and 20 <= x2 <= 34
 
-def in_x0(x1, x2):
+
+def in_x0(x1: float, x2: float) -> bool:
     return 21 <= x1 <= 24 and 21 <= x2 <= 24
 
-def in_vf(x1, x2):
+
+def in_vf(x1: float, x2: float) -> bool:
     return 20 <= x1 <= 26 and 20 <= x2 <= 26
 
-def label_bits(x1, x2):
-    return int(in_x0(x1, x2)), int(in_vf(x1, x2))
+
+def in_x_z3(x1, x2):
+    return z3.And(x1 >= 20, x1 <= 34, x2 >= 20, x2 <= 34)
+
+
+def in_x0_z3(x1, x2):
+    return z3.And(x1 >= 21, x1 <= 24, x2 >= 21, x2 <= 24)
+
+
+def in_vf_z3(x1, x2):
+    return z3.And(x1 >= 20, x1 <= 26, x2 >= 20, x2 <= 26)
+
+
+def label_of(x1: float, x2: float):
+    a = in_x0(x1, x2)
+    b = in_vf(x1, x2)
+    if a and b:
+        return label("a", "b")
+    if a:
+        return label("a")
+    if b:
+        return label("b")
+    return label()
+
+
+def build_case() -> ClosureCase:
+    automaton = Automaton(
+        states=[0, 1, 2, 3],
+        initial_states=[0],
+        accepting_states=[1],
+        transitions={
+            (0, label("a")): [2],
+            (0, label("a", "b")): [1],
+            (0, label()): [3],
+            (0, label("b")): [3],
+            (1, label()): [2],
+            (1, label("a")): [2],
+            (1, label("b")): [1],
+            (1, label("a", "b")): [1],
+            (2, label()): [2],
+            (2, label("a")): [2],
+            (2, label("b")): [1],
+            (2, label("a", "b")): [1],
+            (3, label()): [3],
+            (3, label("a")): [3],
+            (3, label("b")): [3],
+            (3, label("a", "b")): [3],
+        },
+    )
+    xs = [20.0, 21.0, 22.0, 23.0, 24.0, 26.0, 28.0, 30.0, 32.0, 34.0]
+    pts = [(x1, x2) for x1 in xs for x2 in xs if in_x(x1, x2)]
+    x0s = [(x1, x2) for x1, x2 in pts if in_x0(x1, x2)]
+    return ClosureCase(
+        name="ex3",
+        automaton=automaton,
+        dim=2,
+        q0=0,
+        accepting_states=[1],
+        sample_points=pts,
+        x0_samples=x0s,
+        domain_bounds=[(20.0, 34.0), (20.0, 34.0)],
+        domain_member=lambda x1, x2: in_x(x1, x2),
+        x0_member=lambda x1, x2: in_x0(x1, x2),
+        next_num=lambda x1, x2: f(x1, x2),
+        next_z3=lambda x1, x2: f_z3(x1, x2),
+        next_dreal=None,
+        label_of=lambda x1, x2: label_of(x1, x2),
+        label_cond_z3={
+            label(): lambda x1, x2: z3.And(in_x_z3(x1, x2), z3.Not(in_x0_z3(x1, x2)), z3.Not(in_vf_z3(x1, x2))),
+            label("a"): lambda x1, x2: z3.And(in_x0_z3(x1, x2), z3.Not(in_vf_z3(x1, x2))),
+            label("b"): lambda x1, x2: z3.And(in_vf_z3(x1, x2), z3.Not(in_x0_z3(x1, x2))),
+            label("a", "b"): lambda x1, x2: z3.And(in_x0_z3(x1, x2), in_vf_z3(x1, x2)),
+        },
+        label_cond_dreal=None,
+        domain_cond_z3=lambda x1, x2: in_x_z3(x1, x2),
+        domain_cond_dreal=None,
+        x0_cond_z3=lambda x1, x2: in_x0_z3(x1, x2),
+        x0_cond_dreal=None,
+        template_terms_num=[
+            lambda x1, x2, y1, y2: 1.0,
+            lambda x1, x2, y1, y2: x1,
+            lambda x1, x2, y1, y2: x2,
+            lambda x1, x2, y1, y2: y1,
+            lambda x1, x2, y1, y2: y2,
+            lambda x1, x2, y1, y2: x1 * y1,
+            lambda x1, x2, y1, y2: x2 * y2,
+            lambda x1, x2, y1, y2: x1 * x2,
+            lambda x1, x2, y1, y2: y1 * y2,
+        ],
+        template_terms_z3=[
+            lambda x1, x2, y1, y2: 1.0,
+            lambda x1, x2, y1, y2: x1,
+            lambda x1, x2, y1, y2: x2,
+            lambda x1, x2, y1, y2: y1,
+            lambda x1, x2, y1, y2: y2,
+            lambda x1, x2, y1, y2: x1 * y1,
+            lambda x1, x2, y1, y2: x2 * y2,
+            lambda x1, x2, y1, y2: x1 * x2,
+            lambda x1, x2, y1, y2: y1 * y2,
+        ],
+        template_terms_dreal=None,
+        verify_backend="z3",
+        max_c2_points=12,
+        max_c3_points=8,
+    )
+
+
+def delta_state_based_gf(q, x1, x2):
+    return build_case().automaton.transitions[(q, label_of(x1, x2))]
+
 
 def delta_closure_paper(q, x1, x2):
-    a0, a1 = label_bits(x1, x2)
-    sigma = (a0, a1)
-    if q == 0:
-        if sigma == (1, 1):
-            return [2]
-        if sigma == (0, 1):
-            return [1, 3]
-        if sigma == (1, 0):
-            return [1]
-        return [3]
-    if q == 1:
-        return [2] if a1 == 1 else [1]
-    if q == 2:
-        return [2]
-    return [3]
+    return delta_state_based_gf(q, x1, x2)
+
 
 def delta_main_pt(q, x1, x2):
-    a0, _ = label_bits(x1, x2)
     if q == 0:
-        return [1] if a0 == 1 else [2]
+        return [1] if in_x0(x1, x2) else [2]
     if q == 1:
         return [1]
     return [2]
 
-class Template:
-    # main.pdf appendix comparative setting: 11 coeffs each (i,j)
-    def __init__(self, q_states):
-        self.q_states = q_states
-        self.c = {(i, j): [z3.Real(f"c_{i}_{j}_{k}") for k in range(11)] for i in q_states for j in q_states}
 
-    def T(self, i, j, x1, x2, y1, y2):
-        c = self.c[(i, j)]
-        return (
-            c[0] + c[1] * x1 + c[2] * x2 + c[3] * y1 + c[4] * y2 + c[5] * z3.If(x1 > x2, x1, x2)
-            + c[6] * z3.If(y1 > y2, y1, y2) + c[7] * x1 * x1 + c[8] * x2 * x2 + c[9] * y1 * y1 + c[10] * y2 * y2
-        )
+def main() -> None:
+    parser = argparse.ArgumentParser(description="ex3 closure-certificate synthesis")
+    parser.add_argument('--mode', choices=['state', 'pt', 'main', 'closure'], default='state')
+    parser.add_argument('--out', default='res_cc_ex3.json')
+    parser.add_argument('--max-iter', type=int, default=50)
+    parser.add_argument('--epochs', type=int, default=0)
+    parser.add_argument('--lr', type=float, default=0.0)
+    parser.add_argument('--grid-step', type=float, default=0.0)
+    parser.add_argument('--dreal-precision', type=float, default=0.0)
+    parser.add_argument('--z3-timeout-ms', type=int, default=0)
+    parser.add_argument('--seed', type=int, default=0)
+    parser.add_argument('--qi', type=int, default=0)
+    parser.add_argument('--qj', type=int, default=0)
+    args = parser.parse_args()
 
-def grid(a, b, step):
-    vals = []
-    v = a
-    while v <= b + 1e-9:
-        vals.append(round(v, 8))
-        v += step
-    return vals
-
-def sample_points():
-    xs = grid(20, 34, 1.0)
-    pts = [(x1, x2) for x1 in xs for x2 in xs if in_x(x1, x2)]
-    x0 = [(x1, x2) for x1, x2 in pts if in_x0(x1, x2)]
-    vf = [(x1, x2) for x1, x2 in pts if in_vf(x1, x2)]
-    return pts, x0, vf
-
-def solve(mode='main', out_file='res_cc_ex3.json'):
+    resolved_mode = 'state' if args.mode in {'state', 'closure'} else 'pt'
+    print_header("ex3", "CC", "closure_certificate", {"mode": resolved_mode, "solver_synth": "z3", "solver_verify": "z3"})
     start = time.time()
-    pts, x0_pts, vf_pts = sample_points()
+    result = synthesize_closure(build_case(), max_iter=args.max_iter)
+    result.update({"example": "ex3", "method": "CC", "certificate_type": "closure_certificate", "mode": resolved_mode, "elapsed_sec": time.time() - start})
 
-    if mode == 'closure':
-        q_states = [0, 1, 2, 3]
-        delta = delta_closure_paper
-        q0 = 0
-        qacc = 2
-    else:
-        q_states = [0, 1, 2]
-        delta = delta_main_pt
-        q0 = 0
-        qacc = 1
-
-    tpl = Template(q_states)
-    s = z3.SolverFor('QF_NRA')
-
-    for coeffs in tpl.c.values():
-        for ci in coeffs:
-            s.add(ci >= -20, ci <= 20)
-
-    # C1
-    for x1, x2 in random.sample(pts, min(100, len(pts))):
-        y1, y2 = f(x1, x2)
-        if not in_x(y1, y2):
-            continue
-        for i in q_states:
-            for ip in delta(i, x1, x2):
-                s.add(tpl.T(i, ip, x1, x2, y1, y2) >= 0)
-
-    # C2 strengthening: T(x,z) >= T(y,z)
-    z_pool = random.sample(pts, min(60, len(pts)))
-    for x1, x2 in random.sample(pts, min(80, len(pts))):
-        y1, y2 = f(x1, x2)
-        if not in_x(y1, y2):
-            continue
-        for i in q_states:
-            for ip in delta(i, x1, x2):
-                for z1, z2 in z_pool[:15]:
-                    for j in q_states:
-                        s.add(tpl.T(i, j, x1, x2, z1, z2) >= tpl.T(ip, j, y1, y2, z1, z2))
-
-    # C3 persistence strengthening on accepting states
-    # T(x0,y) - delta - T(x0,y') >= tau2*T(x0,y) + tau3*T(y,y')
-    d, tau2, tau3 = 0.1, 0.1, 0.1
-    for x01, x02 in random.sample(x0_pts, min(15, len(x0_pts))):
-        for y1, y2 in random.sample(vf_pts, min(20, len(vf_pts))):
-            for yp1, yp2 in random.sample(vf_pts, min(20, len(vf_pts))):
-                lhs = tpl.T(q0, qacc, x01, x02, y1, y2) - d - tpl.T(q0, qacc, x01, x02, yp1, yp2)
-                rhs = tau2 * tpl.T(q0, qacc, x01, x02, y1, y2) + tau3 * tpl.T(qacc, qacc, y1, y2, yp1, yp2)
-                s.add(lhs >= rhs)
-
-    if s.check() != z3.sat:
-        print('unsat')
-        return
-
-    m = s.model()
-    out = {'mode': mode}
-    for (i, j), coeffs in tpl.c.items():
-        vals = []
-        for c in coeffs:
-            v = m[c]
-            vals.append(float(v.as_decimal(16).replace('?', '')) if v is not None else 0.0)
-        out[f'T_{i}_{j}'] = vals
-    Path(out_file).write_text(json.dumps(out, indent=2), encoding='utf-8')
-    print('saved', out_file)
-    out["success"] = True
-    out["elapsed_sec"] = time.time() - start
-    out["iterations"] = 1
-    Path(out_file).write_text(json.dumps(out, indent=2), encoding='utf-8')
-    return out
-
-if __name__ == '__main__':
-    p = argparse.ArgumentParser(description="ex3 closure-certificate synthesis")
-    p.add_argument('--mode', choices=['main', 'closure'], default='main')
-    p.add_argument('--out', default='res_cc_ex3.json')
-    p.add_argument("--max-iter", type=int, default=1, help="unused (kept for CLI consistency)")
-    p.add_argument("--epochs", type=int, default=0, help="unused (kept for CLI consistency)")
-    p.add_argument("--lr", type=float, default=0.0, help="unused (kept for CLI consistency)")
-    p.add_argument("--grid-step", type=float, default=0.0, help="unused (kept for CLI consistency)")
-    p.add_argument("--dreal-precision", type=float, default=0.0, help="unused (kept for CLI consistency)")
-    p.add_argument("--z3-timeout-ms", type=int, default=0, help="unused (kept for CLI consistency)")
-    p.add_argument("--seed", type=int, default=0, help="unused (kept for CLI consistency)")
-    p.add_argument("--qi", type=int, default=0, help="unused (kept for CLI consistency)")
-    p.add_argument("--qj", type=int, default=0, help="unused (kept for CLI consistency)")
-    args = p.parse_args()
     out_path = Path(args.out)
     if not out_path.is_absolute():
         out_path = Path(__file__).resolve().parent / out_path
-    print_header("ex3", "CC", "closure_certificate", {"mode": args.mode, "solver_synth": "z3", "solver_verify": "z3"})
-    result = solve(mode=args.mode, out_file=str(out_path))
-    if result is None:
-        result = {"success": False, "elapsed_sec": 0.0}
-        out_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    out_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
     print_result(bool(result.get("success")), result.get("iterations"), float(result.get("elapsed_sec", 0.0)), str(out_path))
+
+
+if __name__ == '__main__':
+    main()

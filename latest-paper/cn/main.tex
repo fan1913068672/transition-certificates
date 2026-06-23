@@ -1,0 +1,79 @@
+\PassOptionsToPackage{unicode,bookmarks=false}{hyperref}
+\documentclass[a4paper,fleqn]{cas-sc}
+
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\IfFontExistsTF{SimSun}{\setCJKmainfont[AutoFakeBold=true]{SimSun}}{\IfFontExistsTF{Microsoft YaHei}{\setCJKmainfont[AutoFakeBold=true]{Microsoft YaHei}}{\setCJKmainfont[AutoFakeBold=true]{SimHei}}}
+\IfFontExistsTF{SimHei}{\setCJKsansfont[AutoFakeBold=true]{SimHei}}{\setCJKsansfont[AutoFakeBold=true]{SimSun}}
+\IfFontExistsTF{FangSong}{\setCJKmonofont[AutoFakeBold=true]{FangSong}}{\setCJKmonofont[AutoFakeBold=true]{SimSun}}
+\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{}
+\usepackage[misc]{ifsym}
+\usepackage{amsthm}
+
+\renewcommand{\abstractname}{摘要}
+\renewcommand{\proofname}{证明}
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}[theorem]{引理}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{定义}
+
+\begin{document}
+\let\WriteBookmarks\relax
+\def\floatpagepagefraction{1}
+\def\textpagefraction{.001}
+
+\shorttitle{基于转移证书的高效 LTL 验证}
+\shortauthors{Y. Fan 等}
+
+\title[mode=title]{基于转移证书的 LTL 高效验证框架}
+
+\author{Yuheng Fan}
+\author{Zenan Qian}
+\author{Wang Lin}
+\cormark[1]
+\ead{linwang@zstu.edu.cn}
+
+\affiliation{organization={Zhejiang Sci-Tech University},
+                city={Hangzhou},
+                state={Zhejiang},
+                country={China}}
+
+\cortext[cor1]{通讯作者：Wang Lin (linwang@zstu.edu.cn).}
+
+\begin{abstract}
+\noindent\textbf{背景：} 对具有连续状态空间的离散时间动力系统验证线性时序逻辑（LTL）性质，在安全关键软件和信息物理系统应用中十分重要。现有方法，如状态三元组方法和闭包证书，通常存在限制性较强或计算成本较高的问题。\par
+\noindent\textbf{目标：} 本工作旨在发展一种验证框架，在保持 LTL 验证形式化可靠性的同时，提供更大的灵活性并提升效率。\par
+\noindent\textbf{方法：} 我们方法的关键洞见是将 LTL 验证分解为两类证书：转移持久性证书，用于保证接受转移只发生有限多次；以及转移安全性证书，用于使接受转移不可达。与闭包证书相比，这种设计不仅显著减少了搜索空间，而且比状态三元组方法提供了更大的灵活性。我们引入了基于多项式模板和神经网络模板的自动化合成技术，以平衡表达能力与计算效率。\par
+\noindent\textbf{结果：} 在基准案例研究中，包括一维和二维 Kuramoto 振子模型以及双房间温度模型，所提出的方法成功合成了有效证书并提供了形式化保证。与闭包证书基线相比，转移证书减少了合成时间。\par
+\noindent\textbf{结论：} 转移证书为连续状态动力系统的 LTL 验证提供了一种有效且实用的框架。通过结合安全性推理与持久性推理，该方法相对于既有方法提高了效率并提供了更大的灵活性。
+\end{abstract}
+
+\begin{highlights}
+\item 我们提出了用于 LTL 验证的转移安全性证书和转移持久性证书。
+\item 我们设计了一种面向转移证书的自动化反例引导归纳合成过程，该过程同时使用多项式模板和神经模板，并结合求解器引导的反例细化。
+\item 在一维/二维 Kuramoto 和双房间温度基准上，该方法验证了目标 LTL 性质，并且与闭包证书基线相比持续减少了合成时间。
+\end{highlights}
+
+\begin{keywords}
+线性时序逻辑 \sep 基于证书的验证 \sep 信息物理系统 \sep CEGIS
+\end{keywords}
+
+\maketitle
+
+\input{introduction}
+\input{preliminaries}
+\input{method}
+\input{synthesis}
+\input{casestudy}
+\input{conclusion}
+
+\bibliographystyle{cas-model2-names}
+\bibliography{reference}
+
+\appendix
+\input{appendix}
+
+\end{document}
+
+

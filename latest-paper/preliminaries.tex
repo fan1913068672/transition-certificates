@@ -1,0 +1,121 @@
+\section{Preliminaries}
+\subsection{Notation}
+\label{notation123}
+We use \(\mathbb{N}\) and \(\mathbb{R}\) to represent the set of natural numbers and the set of real numbers, respectively. We define:
+\begin{align*}
+  \mathbb{N}_{\sim i} &= \{n \in \mathbb{N} \mid n \sim i\}, \quad \text{where } i \in \mathbb{N}, \sim \in \{\geq, \leq, >, <\}, \\
+  \mathbb{R}_{\sim i} &= \{r \in \mathbb{R} \mid r \sim i\}, \quad \text{where } i \in \mathbb{R}, \sim \in \{\geq, \leq, >, <\}.
+\end{align*}
+Given a set \( S \) and a set $S_1$, we define an indicator function:
+$$I_S(x) =
+  \begin{cases}
+  1, & \text{if } x \in S \\
+  0, & \text{if } x \not\in S.
+  \end{cases}$$
+$|S|$ denotes the cardinality of $S$ and $S\backslash S_1$ denotes $\{x \in S \mid x \not\in S_1\}$.
+
+Given a sequence \( s = \langle s_0, s_1, \dots \rangle \), where $s_i \in S$ for $i \in \mathbb{N}$:
+\begin{itemize}
+  \item \( s[i] \) denotes \( s_i \);
+  \item \( s[i:j] \) denotes \( \langle s_i, \dots, s_j \rangle \) for \( j \geq i \);
+  \item \( s[i:\infty] \) denotes \( \langle s_i, s_{i+1}, \dots \rangle \).
+\end{itemize}
+We say $s$ visits $S$ if there exists $i \in \mathbb{N}$ such that $s_i \in S$. $Inf(s)$ denotes the set of elements that appear in $s$ infinitely often. $S^{\omega}$ denotes the set of infinite sequences over $S$, i.e., $S^{\omega} = \{s \mid s=\langle s_0, s_1, \dots \rangle \text{ and } s_i \in S \text{ for } i \in \mathbb{N}\}$. A function $f: S \rightarrow \mathbb{R}$ is bounded if and only if there exist $a, b \in \mathbb{R}$ such that $a \leq f(x) \leq b$ for all $x \in S$.
+
+\subsection{Discrete-time Dynamical System}
+\label{dtds}
+A discrete-time dynamical system is defined as $\mathfrak{S}$ = $(\mathcal{X}, \mathcal{X}_0, f)$, where $\mathcal{X} \subseteq \mathbb{R}^n$ represents the state set, $\mathcal{X}_{0} \subseteq \mathcal{X}$ represents a set of initial states, and $f: \mathcal{X} \rightarrow \mathcal{X}$ represents the transition function. The evolution of the system state is described as follows:
+\[
+  x_{t+1} = f(x_t).
+\]
+% A system is \emph{deterministic} if $ |f(x)|  = 1$ for $x \in \mathcal{X}$. If $\mathfrak{S}$ is deterministic, then $f$ can be regarded as a \emph{state transition function}.
+%We assume that state set of the systems under consideration are compact. 
+An infinite sequence of states $\langle x_0, x_1, x_2, \dots \rangle$ is called a \emph{trajectory} of the system if $x_0 \in \mathcal{X}_0$ and $x_{i+1} = f(x_{i})$ for $i \in \mathbb{N}$. We use $\mathfrak{T}(\mathfrak{S})$ to represent all \emph{trajectories} on $\mathfrak{S}$. The \emph{predecessor} of \(x_{i+1}\) is \(x_i\) for \(i \in \mathbb{N}\). In a given \emph{trajectory}, \(x_{i+1}\) has only one \emph{predecessor}. We use the notation \(x_{i}^{pre}\) to denote the \emph{predecessor} of \(x_{i}\) in a \emph{trajectory}.
+\subsection{Specification}
+\label{specification123}
+This paper focuses on the verification of LTL properties for discrete-time dynamical systems. Below we introduce the foundational concepts of safety, persistence, and Nondeterministic Büchi Automata (NBA), which are essential for establishing our framework.
+
+\textbf{Safety:} A system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ is \emph{safe} with respect to unsafe states $\mathcal{X}_u \subseteq \mathcal{X}$ if for any \emph{trajectory} $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, we have $x_i \not\in \mathcal{X}_u$ for all $i \in \mathbb{N}$.
+
+\textbf{Persistence:} A system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$ is \emph{persistent} with respect to states $\mathcal{X}_{VF} \subseteq \mathcal{X}$ if for any \emph{trajectory} $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, elements of $\mathcal{X}_{VF}$ appear finitely often in $\tau$.
+
+\textbf{Linear Temporal Logic (LTL)~\cite{pnueli1977temporal}:} LTL formulae are defined over a set of atomic propositions $AP$. A labelling function $\mathfrak{L}: \mathcal{X} \rightarrow 2^{AP}$ maps system states to subsets of $AP$. Given a \emph{trajectory} $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, we denote $\mathfrak{L}(\tau) = \langle \mathfrak{L}(x_0), \mathfrak{L}(x_1), \dots \rangle$ as the corresponding \emph{word}.
+
+The syntax of LTL is:
+\[
+\phi := \top \mid a \mid \lnot \phi \mid \phi \land \phi \mid X \phi \mid \phi U \phi,
+\]
+where $a \in AP$ is an atomic proposition. Temporal operators finally ($F$) and always ($G$) are derived from next ($X$) and until ($U$).
+
+Given a \emph{word} $w = \mathfrak{L}(\tau)$ and an LTL formula $\phi$, the semantics is defined inductively:
+\begin{itemize}
+    \item \(w \models \top \) always holds,
+    \item \(w \models a\)  iff  \(a \in w[0]\),
+    \item \(w \models \phi_1 \land \phi_2\)  iff  \(w \models \phi_1\) and \(w \models \phi_2\),
+    \item \(w \models \lnot \phi_1\)  iff  \(w \not\models \phi_1\),
+    \item \(w \models X \phi_1\)  iff  \(w[1:\infty] \models \phi_1\),
+    \item \(w \models \phi_1 U \phi_2\)  iff  there exists \(j \in \mathbb{N}\) such that \(w[j:\infty] \models \phi_2\) and for all \(i \in \mathbb{N}_{<j}\), \(w[i:\infty] \models \phi_1\).
+\end{itemize}
+We say $\mathfrak{S} \models_{\mathfrak{L}} \phi$ if for any $\tau \in \mathfrak{T}(\mathfrak{S})$, we have $\mathfrak{L}(\tau) \models \phi$.
+
+\textbf{Nondeterministic Büchi Automaton (NBA)~\cite{hahn2020reward}:} An NBA is a tuple $(\Sigma, Q, q_0, \delta, Acc)$, where $\Sigma = 2^{AP}$ is the alphabet, $Q$ is a finite set of states, $q_0 \in Q$ is the initial state, $\delta \subseteq Q \times \Sigma \times Q$ is the transition relation, and $Acc \subseteq \delta$ is the set of \emph{accepting transitions}. Given a word $w = \langle w_0, w_1, \ldots \rangle \in \Sigma^{\omega}$, a \textbf{run} on $w$ is a sequence $r = \langle (r_0, w_0, r_1), (r_1, w_1, r_2), \ldots \rangle$ where $r_0 = q_0$ and $(r_i, w_i, r_{i+1}) \in \delta$ for all $i \in \mathbb{N}$. The \textit{transition-based accepting condition} is that an NBA accepts $w$ if there exists a run where at least one accepting transition occurs infinitely often, i.e., $\mathit{Inf}(r) \cap Acc \neq \emptyset$.
+
+For an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$, we define:
+\begin{align}
+  Acc^{pair} &= \{(p, q) \mid \exists \sigma \in \Sigma. (p, \sigma, q) \in Acc \}, \label{atpair}\\
+  Acc^{start} &= \{p \mid \exists \sigma \in \Sigma, q \in Q. (p, \sigma, q) \in Acc \}, \label{atstart}\\
+  Acc^{k, l} &= \{(q_k, \sigma, q_l) \mid (q_k, \sigma, q_l) \in Acc \}. \label{atkl}
+\end{align}
+
+We denote $\mathfrak{L}(\mathfrak{S}) = \{\mathfrak{L}(\tau) \mid \tau \in \mathfrak{T}(\mathfrak{S})\}$ as the \emph{language} of $\mathfrak{S}$, and $\mathfrak{L}(\mathcal{A})$ as the language accepted by $\mathcal{A}$. To verify $\mathfrak{S} \models_{\mathfrak{L}} \phi$, we construct an NBA $\mathcal{A}$ for $\neg \phi$ and show $\mathfrak{L}(\mathfrak{S}) \cap \mathfrak{L}(\mathcal{A}) = \emptyset$.
+
+\subsection{Proof Certificates}
+Barrier certificates~\cite{prajna2004safety} and closure certificates~\cite{murali2024closure} are used for verifying LTL properties~\cite{wongpiromsarn2015automata,murali2024closure}, respectively. We provide their definitions and related conclusions from prior work.
+
+\begin{definition}[barrier certificate~\cite{prajna2004safety}]
+  \label{SCDEF}
+  Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$ and $\mathcal{X}_{u} \subseteq \mathcal{X}$, a bounded function $B(x): \mathcal{X} \rightarrow \mathbb{R}$ is a \emph{barrier certificate} with respect to $\mathcal{X}_{u}$ if for all $x_0 \in \mathcal{X}_0$, $x_u \in \mathcal{X}_u$, $x \in \mathcal{X}$, and $x^{\prime} = f(x)$, the following conditions hold:
+  \begin{align}
+    &B(x_0) \geq 0, \label{bsinn0} \\ % initial state is non-negative
+    &B(x_u) < 0, \label{bsun0} \\ % accepting state is negative
+    &B(x) \geq 0 \Rightarrow B(x^{\prime}) \geq 0. \label{bstnn0} % transition will remain non-negative
+  \end{align}
+\end{definition}
+\begin{theorem}[Safety~\cite{prajna2004safety}]
+  \label{corollary_tbsc}
+  The existence of a barrier certificate \( B(x) \)  implies that the system $\mathfrak{S}$ is safe with respect to $\mathcal{X}_u$.
+\end{theorem}
+
+The state-triplet approach\cite{wongpiromsarn2015automata} uses barrier certificates to verify LTL properties. Given an LTL specification $\phi$, it proves that accepting states are unreachable in the NBA for $\neg\phi$ by finding barrier certificates to ensure that runs on $\mathfrak{L}(\mathfrak{S})$ will never visit accepting states, verifying $\mathfrak{S} \models_{\mathfrak{L}} \phi$. The state-triplet method needs to find barrier certificates for each simple path, with a certificate corresponding to a specific state triplet to individually block a simple path. The state-triplet method introduces restrictiveness since it cannot be applied to systems that satisfy the LTL specification but cannot be proven safe under these restrictive constraints.
+
+
+\begin{definition}[closure certificate~\cite{murali2024closure}]
+\label{LTLCC}
+Consider a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a set of atomic propositions $AP$, a labelling function $\mathfrak{L} : \mathcal{X} \rightarrow 2^{AP}$ and an NBA $\mathcal{A} = (2^{AP}, Q, q_0, \delta, Acc)$ represent $\neg \phi$. A bounded function $T : \mathcal{X} \times Q \times \mathcal{X} \times Q \rightarrow \mathbb{R}$ is a closure certificate for $\phi$ if there exists a value $\epsilon \in \mathbb{R}_{> 0}$ such that for all states $x, y, y' \in \mathcal{X}$, $x' = f(x)$, states $q_i, q_j \in Q$, and $q_i' \in \delta(q_i, \mathfrak{L}(x))$, we have:
+\begin{align}
+    &T((x, q_i), (x', q_i')) \geq 0, \label{eq:closure1} \\
+    &T((x', q_i'), (y, q_j)) \geq 0 \Rightarrow T((x, q_i), (y, q_j)) \geq 0. \label{eq:closure2}
+\end{align}
+and for all states $x_0 \in \mathcal{X}_0$, and $\ell, \ell' \in Acc$, we have:
+
+\begin{align}
+  & T((x_0, q_0), (y, \ell)) \geq 0 \land T((y, \ell), (y', \ell')) \geq 0 \notag \\
+  &\Rightarrow T((x_0, q_0), (y', \ell')) \leq T((x_0, q_0), (y, \ell)) - \epsilon. \label{eq:closure3}
+\end{align}
+\end{definition}
+
+\begin{theorem}[LTL Verification~\cite{murali2024closure}]
+Consider a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, a set of atomic propositions $AP$, a labelling function $\mathfrak{L}: \mathcal{X} \rightarrow 2^{AP}$ and an LTL formula $\phi$. Let an NBA $\mathcal{A} = (2^{AP}, Q, q_0, \delta, Acc)$ represent $\neg \phi$. The existence of a closure certificate satisfying conditions \eqref{eq:closure1}-\eqref{eq:closure3} implies that $\mathfrak{S} \models_\mathfrak{L} \phi$.
+\end{theorem}
+
+Closure certificates are defined by characterizing an over-approximation of the transition closure along with a decrease condition, ensuring that transitions in certain regions are visited only finitely often, and are used for LTL verification. Closure certificates (\ref{LTLCC}) are defined on $\mathcal{X} \times Q \times \mathcal{X} \times Q$, creating high-dimensional search spaces with heavy computational burdens. 
+
+%Our certificates operate on smaller spaces: transition persistence certificates on $\mathcal{X}$, transition safety certificates on $\mathcal{X} \times Q$. We require at most $|Acc^{pair}|$ transition persistence certificates and $|Acc^{start}|$ transition safety certificates, yielding a search space of at most $\mathcal{X} \times Q \times Q$ smaller than $\mathcal{X} \times Q \times \mathcal{X} \times Q$.
+
+
+
+\subsection{Problem Statement}
+\textbf{Problem.} Given a discrete-time dynamical system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a set of atomic propositions $AP$, a labeling function $\mathfrak{L}: \mathcal{X} \rightarrow 2^{AP}$, and an LTL formula $\phi$, verify that $\mathfrak{S} \models_{\mathfrak{L}} \phi$ holds.
+
+\noindent
+In this paper, we propose a new approach to address the LTL verification problem.

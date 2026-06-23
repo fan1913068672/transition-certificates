@@ -1,0 +1,35 @@
+{
+  "example": "ex3",
+  "method": "NNT",
+  "certificate_type": "transition_persistence",
+  "success": true,
+  "seed": 2,
+  "elapsed_sec": 0.6605093479156494,
+  "epsilon": 0.001,
+  "template": "dynamics_cubic",
+  "hidden_dim": 2,
+  "solver": {
+    "synth": "adam",
+    "verify": "interval",
+    "dreal_precision": null
+  },
+  "formal_conditions": [
+    "forall x in X0: B(x) >= 0",
+    "forall x in X, f(x) in X: B(x) >= 0 => B(f(x)) >= 0",
+    "forall x in X\\VF, f(x) in X: B(x) >= B(f(x))",
+    "forall x in VF, f(x) in X: B(x) >= B(f(x)) + epsilon"
+  ],
+  "certificate": {
+    "architecture": "raw-input cubic potential network",
+    "input_features": [
+      "x1",
+      "x2"
+    ],
+    "internal_activation": "V'(x)=-(f_diag(x)-x), cubic polynomial in raw x",
+    "gain": 1.0,
+    "bias": 100.0,
+    "epsilon": 0.001
+  },
+  "model_state_path": "persistence_barrier_model_2layer.pth",
+  "checkpoint_path": "persistence_barrier_checkpoint_2layer.pth"
+}

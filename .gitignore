@@ -1,0 +1,63 @@
+# Local agent / scratch state
+.omx/
+.codex_tmp/
+.claude/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# LaTeX build products
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.synctex.gz
+*.toc
+comment.cut
+
+# Local temporary scripts and remote scratch helpers
+tmp_*
+tmp_remote_*
+tmp_debug_*
+tmp_verify_*
+
+# Archives / installers / local environment payloads
+*.zip
+*.tar.gz
+*.tgz
+*.tar.bz2
+*.deb
+
+# Large generated artifacts
+*.pt
+*.pth
+*.pkl
+*.npy
+*.npz
+saved_models/
+tmp_pdf*/
+文献/
+
+# Generated experiment result pools; curated summaries can be tracked explicitly.
+project/src/**/test_result_100x0*.json
+project/src/**/run_*.json
+project/src/**/res_*.json
+project/src/**/smoke_res_*.json
+
+# OS/editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo

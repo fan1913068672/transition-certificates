@@ -1,0 +1,83 @@
+{
+  "success": true,
+  "iterations": 1,
+  "epsilon": 1.0,
+  "coefficients": {
+    "T_0_0": [
+      0.0,
+      0.0,
+      9.126666437e-11,
+      0.0,
+      0.0,
+      0.0,
+      5.91356928921971e-06
+    ],
+    "T_0_1": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "T_1_0": [
+      -1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "T_1_1": [
+      0.0,
+      9.126666437e-11,
+      0.0,
+      0.0,
+      0.0,
+      5.91356928921971e-06,
+      0.0
+    ]
+  },
+  "automaton": {
+    "states": [
+      0,
+      1
+    ],
+    "initial_state": 1,
+    "accepting_states": [
+      0
+    ],
+    "transitions": [
+      {
+        "src": 1,
+        "label": "{}",
+        "dst": 1
+      },
+      {
+        "src": 1,
+        "label": "{a}",
+        "dst": 0
+      },
+      {
+        "src": 0,
+        "label": "{}",
+        "dst": 0
+      },
+      {
+        "src": 0,
+        "label": "{a}",
+        "dst": 0
+      }
+    ]
+  },
+  "backend": {
+    "synth": "z3",
+    "verify": "z3"
+  },
+  "example": "ex2",
+  "method": "CC",
+  "certificate_type": "closure_certificate",
+  "elapsed_sec": 14.41789698600769
+}

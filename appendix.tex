@@ -205,8 +205,63 @@ This section provides the neural network certificates synthesized in the three c
 \end{itemize}
 
 \subsection{Comparative Method Setting}
+
+\subsubsection{State-Triplet Method}
+The state-triplet baseline follows the accepting-state NBA path-blocking scheme of~\cite{wongpiromsarn2015automata}. For each accepting state, all simple paths from the initial automaton state to the accepting state are enumerated. For a triplet $(q_i,q_j,q_k)$, let $Y_0$ be the union of labels on $q_i\to q_j$, $Y_1$ the union of labels on $q_j\to q_k$, and $Y_m$ the labels on the self-loop $q_j\to q_j$ when present. We synthesize a barrier $B$ satisfying
+\[
+B(x)\le 0 \text{ on } Y_0,\qquad
+B(x)\ge 10^{-2} \text{ on } Y_1,
+\]
+and the invariance condition
+\[
+x\in (Y_0\cup Y_m\cup Y_1)\setminus Y_1,\; f(x)\in Y_0\cup Y_m\cup Y_1,\; B(x)\le 0
+\Rightarrow B(f(x))\le 0.
+\]
+Candidate coefficients are synthesized by Z3 and formally checked by dReal for the Kuramoto systems and by Z3 for the two-room system.
+
+For the 1D Kuramoto benchmark, the state-triplet template is
+\[
+B(x)=c_0+c_1x+c_2x^2+c_3x^3+c_4x^4.
+\]
+The synthesized certificate is
+\[
+B(x)=-4.5x^2+2x^3,
+\]
+which blocks the accepting path $0\to1\to2$ with $Y_0=\{i\}$, $Y_1=\{u\}\cup\{i,u\}$, and $Y_m=\emptyset\cup\{i\}$. The direct accepting edge $0\to2$ is discharged because its label region $\{i,u\}$ is empty.
+
+For the 2D Kuramoto benchmark, the tested state-triplet template is
+\[
+B(x_1,x_2)=c_0+c_1x_1+c_2x_2+c_3x_1x_2+c_4x_1^2+c_5x_2^2.
+\]
+The direct accepting edge $0\to2$ is again discharged by the empty label region $\{i,u\}$. The path $0\to1\to2$ is blocked by the synthesized certificate
+\[
+B(x_1,x_2)=-x_1-x_2-3.125x_1x_2+2x_1^2+2x_2^2,
+\]
+with $Y_0=\{i\}$, $Y_1=\{u\}\cup\{i,u\}$, and $Y_m=\emptyset\cup\{i\}$. This run used dReal precision $10^{-3}$ for the dynamics-dependent invariance check.
+
+For the two-room benchmark, the tested state-triplet template is
+\[
+B(x_1,x_2)=c_0+c_1x_1+c_2x_2+c_3x_1x_2+c_4x_1^2+c_5x_2^2+c_6\max(x_1,x_2).
+\]
+The accepting path $0\to2\to1$, with $Y_0=\{a\}\cup\{a,b\}$, $Y_1=\{b\}\cup\{a,b\}$, and $Y_m=\emptyset\cup\{a\}$, is not discharged before timeout. This is expected for this persistence-style benchmark: since $X_0\subseteq X_{VF}$, traces from the initial region can satisfy both $a$ and $b$, so the accepting state of the state-based NBA is reachable and the path-blocking ST obligation is too conservative.
+
+\begin{table}[h]
+\centering
+\caption{State-triplet path-blocking results}
+\label{tab:st_path_blocking}
+\begin{tabular}{llll}
+\hline
+\textbf{Benchmark} & \textbf{Blocked/resolved path} & \textbf{Status} & \textbf{Time (s)} \\
+\hline
+1D Kuramoto & $0\to1\to2$; $0\to2$ empty & Proved & 0.095 \\
+2D Kuramoto & $0\to1\to2$; $0\to2$ empty & Proved & 1.13 \\
+Two-Room & $0\to2\to1$ unresolved & Timeout & Timeout \\
+\hline
+\end{tabular}
+\end{table}
+
 \subsubsection{Closure Certificates Method}
-The synthesis process uses Z3 to find candidate certificates and dReal to find counterexamples, with a dReal precision of 0.0001.
+The synthesis process uses Z3 to find candidate certificates and dReal to find counterexamples, with a dReal precision of 0.0001. For the Kuramoto benchmarks, CC uses the original state-based automaton for the standard negated safety objective $\mathbf{F}a$. The strengthened encoding $i \land \mathbf{F}u$ is used only by ST, where state triplets are required. For the two-room benchmark, CC uses the negated objective $a \land \mathbf{GF} b$.
 
 \textbf{One-Dimensional Kuramoto Oscillator System:}
 The NBA is defined as $(\Sigma, Q, q_0, \delta, \text{Acc})$ to represent $F a$.
@@ -225,20 +280,18 @@ The certificate templates are:
     T_{1,0} &= c_6 + c_7 x + c_8 y \\
     T_{1,1} &= c_9 + c_{10} x + c_{11} y
 \end{align*}
-The final synthesized coefficients are shown in Table~\ref{tab:coeff_1d}.
+The current faithful rerun is recorded as Timeout, so no reproduced coefficients are reported in Table~\ref{tab:coeff_1d}.
+
 
 \begin{table}[h]
 \centering
-\caption{Coefficients for the synthesized closure certificates (One-Dimensional System)}
+\caption{Current faithful CC reproduction status (One-Dimensional System)}
 \label{tab:coeff_1d}
-\begin{tabular}{lccc}
+\begin{tabular}{lc}
 \hline
-\textbf{Template} & c_0 & c_1 & c_2 \\
+\textbf{Benchmark} & \textbf{Status} \\
 \hline
-T_{0,0}(x, y) & 0.000000 & 0.000000 & 0.000000 \\
-T_{0,1}(x, y) & -0.500000 & 0.000000 & 0.000000 \\
-T_{1,0}(x, y) & -4.310550 & 1.764117 & 0.000000 \\
-T_{1,1}(x, y) & 0.000000 & 0.000000 & 0.000000 \\
+1D Kuramoto CC & Timeout \\
 \hline
 \end{tabular}
 \end{table}
@@ -250,7 +303,7 @@ Timeout.
 Timeout.
 
 \subsubsection{Neural Closure Certificates Method}
-The configuration for the neural closure certificates is summarized in Table~\ref{tab:ncc_config}. A sampling density $\xi$ of 0.01 and a safety margin $\eta$ of 0.01 are used for all systems. The Lipschitz constant is estimated using the spectral norm-based algorithm.
+The configuration for the neural closure certificates is summarized in Table~\ref{tab:ncc_config}. The faithful NCC reruns use the original one-hidden-layer ReLU architecture and posteriori Lipschitz verification. Current certified results are recorded as Timeout in Table~\ref{tab:results-neural}; the architecture and verification settings are summarized in Table~\ref{tab:ncc_config}. For the Kuramoto benchmarks, NCC uses the original state-based automaton for $\mathbf{F}a$; for the two-room benchmark, NCC uses $a \land \mathbf{GF} b$.
 
 \begin{table}[h]
 \centering

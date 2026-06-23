@@ -1,0 +1,63 @@
+{
+  "success": false,
+  "status": "inconclusive",
+  "strict_wong_pf3": true,
+  "backend": "SMT(z3+dreal discrete-time adaptation)",
+  "accepting_reports": [
+    {
+      "accepting_state": 2,
+      "ppath": [
+        {
+          "path": [
+            0,
+            1,
+            2
+          ],
+          "pf3": [
+            [
+              0,
+              1,
+              2
+            ]
+          ],
+          "resolved": true,
+          "triplets": [
+            {
+              "triplet": [
+                0,
+                1,
+                2
+              ],
+              "resolved": true,
+              "mode": "lemma6",
+              "reason": "Y0 \u2229 Y1 is empty"
+            }
+          ]
+        },
+        {
+          "path": [
+            0,
+            2
+          ],
+          "pf3": [],
+          "resolved": false,
+          "reason": "no length-3 subpath under strict Wong PF^3 framework"
+        }
+      ],
+      "pcyc": [
+        {
+          "path": [
+            2
+          ],
+          "pf3": [],
+          "resolved": false,
+          "reason": "no length-3 subpath under strict Wong PF^3 framework"
+        }
+      ]
+    }
+  ],
+  "example": "ex2",
+  "method": "ST",
+  "certificate_type": "state_triplet_barrier",
+  "elapsed_sec": 0.0014865398406982422
+}

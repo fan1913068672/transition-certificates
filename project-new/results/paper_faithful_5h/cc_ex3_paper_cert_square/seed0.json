@@ -1,0 +1,11 @@
+{
+  "case": "ex3",
+  "method": "CC",
+  "source": "paper D.2 coefficients",
+  "region": "square",
+  "template": "paper 11-term with max",
+  "automaton": "state NBA for a0 and GF a1, accepting state 1",
+  "success": false,
+  "counterexample": "('c1', 1, 2, (27.0, 21.0), (27.169349999999998, 21.75315))",
+  "elapsed_sec": 0.046365976333618164
+}

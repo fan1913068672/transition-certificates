@@ -1,0 +1,59 @@
+{
+  "example": "ex2",
+  "method": "CC",
+  "passed": false,
+  "checks": [
+    {
+      "name": "sampled X0 safety (100 points)",
+      "passed": true,
+      "details": "counterexample initial points: []"
+    },
+    {
+      "name": "fallback verify backend",
+      "passed": true,
+      "details": "strict dreal verify not found in source"
+    },
+    {
+      "name": "fallback automaton labels",
+      "passed": true,
+      "details": "a automaton label not found in source"
+    },
+    {
+      "name": "fallback accepting state",
+      "passed": true,
+      "details": "accepting state 0 not found in source"
+    },
+    {
+      "name": "result meta",
+      "passed": false,
+      "details": "wrong example/method"
+    },
+    {
+      "name": "result type",
+      "passed": false,
+      "details": "wrong certificate_type"
+    },
+    {
+      "name": "result backend",
+      "passed": false,
+      "details": "backend=None"
+    },
+    {
+      "name": "result automaton",
+      "passed": false,
+      "details": "wrong accepting_states in result"
+    },
+    {
+      "name": "result T_0_0",
+      "passed": false,
+      "details": "expected 9 coeffs in T_0_0"
+    }
+  ],
+  "errors": [
+    "result meta: wrong example/method",
+    "result type: wrong certificate_type",
+    "result backend: backend=None",
+    "result automaton: wrong accepting_states in result",
+    "result T_0_0: expected 9 coeffs in T_0_0"
+  ]
+}

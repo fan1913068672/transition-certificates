@@ -1,0 +1,25 @@
+{
+  "example": "ex3",
+  "method": "NNT",
+  "certificate_type": "transition_persistence",
+  "success": true,
+  "seed": 2,
+  "elapsed_sec": 0.03214097023010254,
+  "epsilon": 0.25,
+  "template": "gated_vf_linear",
+  "hidden_dim": 0,
+  "solver": {
+    "synth": "adam",
+    "verify": "z3",
+    "dreal_precision": null
+  },
+  "formal_conditions": [
+    "forall x in X0: B(x) >= 0",
+    "forall x in X, f(x) in X: B(x) >= 0 => B(f(x)) >= 0",
+    "forall x in X\\VF, f(x) in X: B(x) >= B(f(x))",
+    "forall x in VF, f(x) in X: B(x) >= B(f(x)) + epsilon"
+  ],
+  "certificate": "B(x1,x2)=If(VF,27-x1,0)",
+  "model_state_path": null,
+  "checkpoint_path": null
+}

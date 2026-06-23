@@ -1,0 +1,323 @@
+\section{Proof}
+\label{appendix-proof}
+\begin{lemma}
+  Given a system $\mathfrak{S} = (\mathcal{X}, \mathcal{X}_0, f)$, a trajectory $\tau=\langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$, a labelling function $\mathfrak{L}:\mathcal{X} \rightarrow \Sigma$ and an NBA $\mathcal{A}=(\Sigma, Q, q_0, \delta, Acc)$, if a transition safety certificate $B_{k}(x, q)$ with respect to $q_k \in Acc^{start}$ can be found, then it can be guaranteed that all runs of all \emph{words} in $\mathfrak{L}(\mathfrak{S})$ cannot visit the state $q_k$.
+\end{lemma}
+
+\begin{proof}
+  By Definition~\ref{transition-safety-certificate-definition}, we have $\mathcal{Y}_u = \{(x, q_k) \mid x \in \mathcal{X}\}$ as the unsafe set in the product system $\mathfrak{S} \times \mathcal{A}$. We verify that $B_k$ satisfies the barrier certificate conditions (\ref{bsinn0}, \ref{bsun0}, \ref{bstnn0}) with respect to $\mathcal{Y}_u$:
+  \begin{itemize}
+    \item Condition (\ref{btsc1}) states $B_k(x_0, q_0) \geq 0$ for all $(x_0, q_0) \in \mathcal{Y}_0$, which corresponds to condition (\ref{bsinn0}).
+    \item Condition (\ref{btsc2}) states $B_k(x, q_k) < 0$ for all $(x, q_k) \in \mathcal{Y}_u$, which corresponds to condition (\ref{bsun0}).
+    \item Condition (\ref{btsc3}) states $B_k(x, q) \geq 0 \Rightarrow B_k(x', q') \geq 0$ for all $(x', q') \in F(x, q)$, which corresponds to condition (\ref{bstnn0}).
+  \end{itemize}
+
+  By Theorem~(\ref{corollary_tbsc}), any trajectory of the product system $\mathfrak{S} \times \mathcal{A}$ cannot visit $\mathcal{Y}_u$.
+
+  Now we establish the connection to automaton runs. For any word $w = \mathfrak{L}(\tau) \in \mathfrak{L}(\mathfrak{S})$ where $\tau = \langle x_0, x_1, \dots \rangle$ is a trajectory of $\mathfrak{S}$, the corresponding run $r$ of $w$ on $\mathcal{A}$ is a sequence $r = \langle (r_0, w_0, r_1), (r_1, w_1, r_2), \ldots \rangle$ where $r_0 = q_0$. The sequence of product states $\langle (x_0, r_0), (x_1, r_1), \ldots \rangle$ forms a trajectory in $\mathfrak{S} \times \mathcal{A}$. Since this trajectory cannot visit $\mathcal{Y}_u = \{(x, q_k) \mid x \in \mathcal{X}\}$, we have $r_i \neq q_k$ for all $i$. Therefore, runs of all words in $\mathfrak{L}(\mathfrak{S})$ cannot visit state $q_k$.
+\end{proof}
+
+\begin{lemma}
+  Given a system $\mathfrak{S}=(\mathcal{X}, \mathcal{X}_0, f)$, an NBA $\mathcal{A} = (\Sigma, Q, q_0, \delta, Acc)$, and $(k, l) \in Acc^{pair}$, if a transition persistence certificate $B_{k, l}$ can be found, then it can be guaranteed that all runs of the words in $\mathfrak{L}(\mathfrak{S})$ make accepting transitions from $q_k$ to $q_l$ happen finitely often.
+\end{lemma}
+
+\begin{proof}
+We define $\mathcal{X}_{k, l}=\{x \mid (q_k, \mathfrak{L}(x), q_l) \in Acc^{k,l}\}$ as the set of states where accepting transitions from $q_k$ to $q_l$ can occur.
+
+Consider any trajectory $\tau = \langle x_0, x_1, \dots \rangle \in \mathfrak{T}(\mathfrak{S})$ and its corresponding word $w = \mathfrak{L}(\tau)$. Let $r$ be a run of $w$ on $\mathcal{A}$ starting from $q_0$. An accepting transition from $q_k$ to $q_l$ can occur at step $i$ only if $(q_k, \mathfrak{L}(x_i), q_l) \in Acc^{k,l}$, which is equivalent to $x_i \in \mathcal{X}_{k,l}$. Therefore, the number of accepting transitions from $q_k$ to $q_l$ is bounded by the number of times the trajectory visits $\mathcal{X}_{k,l}$.
+
+By Definition~\ref{transition-persistence-certificate-definition}, we have:
+\begin{itemize}
+  \item $B_{k,l}(x_0) \geq 0$ by condition (\ref{btpc1}).
+  \item $B_{k,l}(x_i) \geq 0$ for all $i$ by condition (\ref{btpc2}), since $B_{k,l}$ remains non-negative along the trajectory.
+  \item $B_{k,l}(x_i) \geq B_{k,l}(x_{i+1}) + I_{k,l}(x_i)\epsilon$ by condition (\ref{btpc3}), where $I_{k,l}(x_i) = 1$ if $x_i \in \mathcal{X}_{k,l}$ and $0$ otherwise.
+\end{itemize}
+
+Suppose the trajectory visits $\mathcal{X}_{k,l}$ at indices $i_1, i_2, \dots, i_m$ where $m$ is the number of times accepting transitions occur. At each visit, $B_{k,l}$ decreases by at least $\epsilon$:
+\begin{align}
+B_{k,l}(x_0) \geq B_{k,l}(x_{i_1}) + \epsilon \geq B_{k,l}(x_{i_2}) + 2\epsilon \geq \cdots \geq B_{k,l}(x_{i_m}) + m\epsilon.
+\end{align}
+
+Since $B_{k,l}(x_{i_m}) \geq 0$ by condition (\ref{btpc2}), we have $B_{k,l}(x_0) \geq m\epsilon$, which gives $m \leq \frac{B_{k,l}(x_0)}{\epsilon}$. Therefore, the number of accepting transitions from $q_k$ to $q_l$ is bounded, ensuring they occur only finitely often.
+\end{proof}
+
+
+\section{Experiment}
+\label{appendix-experiment}
+\subsection{Template for Two-Dimensional Kuramoto Oscillator System}
+The transition safety certificate template for the two-dimensional Kuramoto Oscillator system is given by:
+\begin{align*}
+B_0(x_1, x_2, q) = &\, c_0 + c_1 \cdot x_1 + c_2 \cdot x_2 + c_3 \cdot q \\
+                   &+ c_4 \cdot I_{X_u}(x_1, x_2) + c_5 \cdot x_1 q + c_6 \cdot x_2 q
+\end{align*}
+
+\subsection{Template for Two-Room Temperature System}
+For the \textit{transition safety certificate}:
+\begin{align*}
+B_1(x_1, x_2, q) = &\, c_0 + c_1 \cdot I_{X_0}(x_1, x_2) + c_2 \cdot I_{X_{VF}}(x_1, x_2) \\
+                   &+ c_3 \cdot x_1 I_{X_0}(x_1, x_2) + c_4 \cdot x_2 I_{X_0}(x_1, x_2) \\
+                   &+ c_5 \cdot x_1 I_{X_{VF}}(x_1, x_2) + c_6 \cdot x_2 I_{X_{VF}}(x_1, x_2) \\
+                   &+ c_7 \cdot \max(x_1, x_2) + c_8 \cdot x_1^2 + c_9 \cdot x_2^2 + c_{10} \cdot q + c_{11} \cdot q^2.
+\end{align*}
+The template for the \textit{transition persistence certificate} is as follows:
+\begin{align*}
+B_{1,1}(x_1, x_2) = & \, c_0 + c_1 \cdot I_{X_0}(x_1, x_2) + c_2 \cdot I_{X_{VF}}(x_1, x_2) \\
+                    & + c_3 \cdot x_1 I_{X_0}(x_1, x_2) + c_4 \cdot x_2 I_{X_0}(x_1, x_2) \\
+                    & + c_5 \cdot x_1 I_{X_{VF}}(x_1, x_2) + c_6 \cdot x_2 I_{X_{VF}}(x_1, x_2) \\ 
+                    & + c_7 \cdot \max(x_1, x_2) + c_8 \cdot x_1^2 + c_9 \cdot x_2^2.
+\end{align*}
+
+\subsection{Neural Network Certificate Synthesis Results}
+\label{app:neural_cert_results}
+
+This section provides the neural network certificates synthesized in the three case studies.
+
+	\subsubsection{Kuramoto Oscillator: One-Dimensional System}
+	\label{app:ko1d_neural}
+	\textbf{Valid transition safety certificate network parameters:}
+	\begin{itemize}
+	    \item \textbf{Network architecture:} 2 -> 10 -> 1 (ReLU activation network)
+	    \item \textbf{Layer 1 weights} $W^{(1)} \in \mathbb{R}^{10 \times 2}$:
+	    \[
+	    W^{(1)} = \begin{bmatrix}
+	     0.35423541 &  0.03017079 \\
+	     0.40347892 &  0.15485710 \\
+	    -0.33290595 &  0.20670444 \\
+	     0.05953831 & -0.57081002 \\
+	    -0.77764583 & -0.30270880 \\
+	     0.28167149 & -0.56571352 \\
+	    -0.00433345 &  0.27621469 \\
+	    -0.11347809 & -0.37141919 \\
+	     0.30172166 & -0.14517429 \\
+	     0.00136681 &  0.32282710
+	    \end{bmatrix}
+	    \]
+	    
+	    \item \textbf{Layer 1 bias} $b^{(1)} \in \mathbb{R}^{10}$:
+	    \[
+	    b^{(1)} = \begin{bmatrix}
+	    -0.83490396 &  0.57956743 & -0.47568363 & -0.27932465 & -0.28890583 \\
+	     0.16922584 & -0.66955644 & -0.23689666 &  0.49750403 &  0.55335736
+	    \end{bmatrix}^\top
+	    \]
+	    
+	    \item \textbf{Layer 2 weights} $W^{(2)} \in \mathbb{R}^{1 \times 10}$:
+	    \[
+	    W^{(2)} = \begin{bmatrix}
+	    -1.36676764 &  0.13470453 & -0.01585477 & -0.04601728 &  0.22054167 \\
+	    -0.15794340 & -0.09915265 &  0.00324699 & -0.02935893 &  0.18765648
+	    \end{bmatrix}
+	    \]
+	    
+	    \item \textbf{Layer 2 bias} $b^{(2)} \in \mathbb{R}$:
+	    \[
+	    b^{(2)} = -0.25243226
+	    \]
+	    
+	    \item \textbf{Analytical expression:}
+	    \[
+	    B(x, q) = W^{(2)} \cdot \text{ReLU}(W^{(1)} \cdot [x, q]^\top + b^{(1)}) + b^{(2)}
+	    \]
+	\end{itemize}
+
+	\subsubsection{Kuramoto Oscillator: Two-Dimensional System}
+	\label{app:ko2d_neural}
+	
+	\textbf{Valid transition safety certificate network parameters:}
+	
+	\begin{itemize}
+	    \item \textbf{Network architecture:} 3 -> 15 -> 1 (ReLU activation network)
+	    \item \textbf{Layer 1 weights} $W^{(1)} \in \mathbb{R}^{15 \times 3}$:
+	    {\footnotesize
+	    \[
+	    W^{(1)} = \begin{bmatrix}
+	    -0.01797801 &  0.64069444 & -0.03856681 \\
+	    -0.57299656 & -0.14924462 & -0.04329325 \\
+	    -0.56604266 & -0.25653100 &  0.10918397 \\
+	    -0.12088224 &  0.62192768 & -0.95162183 \\
+	    -0.54926884 & -0.45272782 &  0.26691911 \\
+	    -0.35724673 &  0.10176215 & -0.26044405 \\
+	    -0.62156856 &  0.45307916 & -0.63630158 \\
+	    -0.50465399 & -0.00161430 &  0.04746520 \\
+	    -0.21175091 &  0.12297605 & -0.52375120 \\
+	     0.60632193 &  0.14016706 & -2.34126782 \\
+	    -0.07868959 & -0.15929390 & -0.10671024 \\
+	     0.68689883 & -0.58823287 & -0.65129077 \\
+	    -0.75197023 &  0.13900414 & -0.01829747 \\
+	    -0.55132180 &  0.17512728 & -0.04693245 \\
+	    -0.18292713 &  0.10734314 & -0.20697621
+	    \end{bmatrix}
+	    \]}
+	    
+	    \item \textbf{Layer 1 bias} $b^{(1)} \in \mathbb{R}^{15}$:
+	    {\scriptsize
+	    \[
+	    b^{(1)} = \begin{bmatrix}
+	    -0.23332441 & -0.25264311 & -0.20304658 &  0.00498547 & -0.41519192 \\
+	    -0.18106091 & -0.32431474 &  0.83221281 & -0.54517263 &  0.07074507 \\
+	    -0.18164203 &  0.44940028 &  0.60892761 & -0.63835907 &  0.36881346
+	    \end{bmatrix}^\top
+	    \]}
+	    
+	    \item \textbf{Layer 2 weights} $W^{(2)} \in \mathbb{R}^{1 \times 15}$:
+	    {\footnotesize
+	    \[
+	    W^{(2)} = \begin{bmatrix}
+	    -0.22106327 &  0.12717371 & -0.04997402 & -0.50930381 & -0.18251525 \\
+	     0.08938225 &  0.48234484 & -0.43327656 & -0.12058055 &  0.42470711 \\
+	     0.11804953 & -0.65379494 &  0.25955433 &  0.05265374 &  0.01196656
+	    \end{bmatrix}
+	    \]}
+	    
+	    \item \textbf{Layer 2 bias} $b^{(2)} \in \mathbb{R}$:
+	    \[
+	    b^{(2)} = 0.36412391
+	    \]
+	    
+	    \item \textbf{Analytical expression:}
+	    \[
+	    B(x_1, x_2, q) = W^{(2)} \cdot \text{ReLU}(W^{(1)} \cdot [x_1, x_2, q]^\top + b^{(1)}) + b^{(2)}
+	    \]
+	\end{itemize}
+
+\subsubsection{Two-Room Temperature System}
+\label{app:two_room_neural}
+\textbf{Valid transition persistence certificate network parameters:}
+
+\begin{itemize}
+    \item \textbf{Network architecture:} 2 -> 3 -> 1
+    \item \textbf{Decrease constant $\epsilon$:} 0.01 (fixed)
+    \item \textbf{Layer 1 weights} $W^{(1)} \in \mathbb{R}^{3 \times 2}$:
+    \[
+    W^{(1)} = \begin{bmatrix}
+    -0.12892260 &  0.07935464 \\
+     0.39971098 & -0.35251060 \\
+    -0.61775041 &  0.61788529
+    \end{bmatrix}
+    \]
+    
+    \item \textbf{Layer 1 bias} $b^{(1)} \in \mathbb{R}^{3}$:
+    \[
+    b^{(1)} = \begin{bmatrix}
+     1.44339669 & -1.41302800 & -0.01615771
+    \end{bmatrix}^\top
+    \]
+\end{itemize}
+
+\subsection{Comparative Method Setting}
+
+\subsubsection{State-Triplet Method}
+The state-triplet baseline follows the accepting-state NBA path-blocking scheme of~\cite{wongpiromsarn2015automata}. For each accepting state, all simple paths from the initial automaton state to the accepting state are enumerated. For a triplet $(q_i,q_j,q_k)$, let $Y_0$ be the union of labels on $q_i\to q_j$, $Y_1$ the union of labels on $q_j\to q_k$, and $Y_m$ the labels on the self-loop $q_j\to q_j$ when present. We synthesize a barrier $B$ satisfying
+\[
+B(x)\le 0 \text{ on } Y_0,\qquad
+B(x)\ge 10^{-2} \text{ on } Y_1,
+\]
+and the invariance condition
+\[
+x\in (Y_0\cup Y_m\cup Y_1)\setminus Y_1,\; f(x)\in Y_0\cup Y_m\cup Y_1,\; B(x)\le 0
+\Rightarrow B(f(x))\le 0.
+\]
+Candidate coefficients are synthesized by Z3 and formally checked by dReal for the Kuramoto systems and by Z3 for the two-room system.
+
+For the 1D Kuramoto benchmark, the state-triplet template is
+\[
+B(x)=c_0+c_1x+c_2x^2+c_3x^3+c_4x^4.
+\]
+The synthesized certificate is
+\[
+B(x)=-4.5x^2+2x^3,
+\]
+which blocks the accepting path $0\to1\to2$ with $Y_0=\{i\}$, $Y_1=\{u\}\cup\{i,u\}$, and $Y_m=\emptyset\cup\{i\}$. The direct accepting edge $0\to2$ is discharged because its label region $\{i,u\}$ is empty.
+
+For the 2D Kuramoto benchmark, the tested state-triplet template is
+\[
+B(x_1,x_2)=c_0+c_1x_1+c_2x_2+c_3x_1x_2+c_4x_1^2+c_5x_2^2.
+\]
+The direct accepting edge $0\to2$ is again discharged by the empty label region $\{i,u\}$. The path $0\to1\to2$ is blocked by the synthesized certificate
+\[
+B(x_1,x_2)=-x_1-x_2-3.125x_1x_2+2x_1^2+2x_2^2,
+\]
+with $Y_0=\{i\}$, $Y_1=\{u\}\cup\{i,u\}$, and $Y_m=\emptyset\cup\{i\}$. This run used dReal precision $10^{-3}$ for the dynamics-dependent invariance check.
+
+For the two-room benchmark, the tested state-triplet template is
+\[
+B(x_1,x_2)=c_0+c_1x_1+c_2x_2+c_3x_1x_2+c_4x_1^2+c_5x_2^2+c_6\max(x_1,x_2).
+\]
+The accepting path $0\to2\to1$, with $Y_0=\{a\}\cup\{a,b\}$, $Y_1=\{b\}\cup\{a,b\}$, and $Y_m=\emptyset\cup\{a\}$, is not discharged before timeout. This is expected for this persistence-style benchmark: since $X_0\subseteq X_{VF}$, traces from the initial region can satisfy both $a$ and $b$, so the accepting state of the state-based NBA is reachable and the path-blocking ST obligation is too conservative.
+
+\begin{table}[h]
+\centering
+\caption{State-triplet path-blocking results}
+\label{tab:st_path_blocking}
+\begin{tabular}{llll}
+\hline
+\textbf{Benchmark} & \textbf{Blocked/resolved path} & \textbf{Status} & \textbf{Time (s)} \\
+\hline
+1D Kuramoto & $0\to1\to2$; $0\to2$ empty & Proved & 0.095 \\
+2D Kuramoto & $0\to1\to2$; $0\to2$ empty & Proved & 1.13 \\
+Two-Room & $0\to2\to1$ unresolved & Timeout & Timeout \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Closure Certificates Method}
+The synthesis process uses Z3 to find candidate certificates and dReal to find counterexamples, with a dReal precision of 0.0001. For the Kuramoto benchmarks, CC uses the original state-based automaton for the standard negated safety objective $\mathbf{F}a$. The strengthened encoding $i \land \mathbf{F}u$ is used only by ST, where state triplets are required. For the two-room benchmark, CC uses the negated objective $a \land \mathbf{GF} b$.
+
+\textbf{One-Dimensional Kuramoto Oscillator System:}
+The NBA is defined as $(\Sigma, Q, q_0, \delta, \text{Acc})$ to represent $F a$.
+\begin{align*}
+    \text{Acc} &= \{0\} \\
+    Q &= \{1, 0\} \\
+    q_0 &= 1 \\
+    \Sigma &= \{\emptyset, \{a\}\} \\
+    \delta &= \{(1, \emptyset, 1), (1, \{a\}, 0), (0, \emptyset, 0), (0, \{a\}, 0)\} \\
+	a &\text{ is defined as } x \in X_{\text{u}}
+\end{align*}
+The certificate templates are:
+\begin{align*}
+    T_{0,0} &= c_0 + c_1 x + c_2 y \\
+    T_{0,1} &= c_3 + c_4 x + c_5 y \\
+    T_{1,0} &= c_6 + c_7 x + c_8 y \\
+    T_{1,1} &= c_9 + c_{10} x + c_{11} y
+\end{align*}
+The final synthesized coefficients are shown in Table~\ref{tab:coeff_1d}.
+
+\begin{table}[h]
+\centering
+\caption{Coefficients for the synthesized closure certificates (One-Dimensional System)}
+\label{tab:coeff_1d}
+\begin{tabular}{lccc}
+\hline
+\textbf{Template} & $c_0$ & $c_1$ & $c_2$ \\
+\hline
+$T_{0,0}(x, y)$ & 0.000000 & 0.000000 & 0.000000 \\
+$T_{0,1}(x, y)$ & -0.500000 & 0.000000 & 0.000000 \\
+$T_{1,0}(x, y)$ & -4.310550 & 1.764117 & 0.000000 \\
+$T_{1,1}(x, y)$ & 0.000000 & 0.000000 & 0.000000 \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Two-Dimensional Kuramoto Oscillator System:}
+Timeout.
+
+\textbf{Two-Room Temperature System:}
+Timeout.
+
+\subsubsection{Neural Closure Certificates Method}
+The configuration for the neural closure certificates is summarized in Table~\ref{tab:ncc_config}. A sampling density $\xi$ of 0.01 and a safety margin $\eta$ of 0.01 are used for all systems. The Lipschitz constant is estimated using the spectral norm-based algorithm. For the Kuramoto benchmarks, NCC uses the original state-based automaton for $\mathbf{F}a$; for the two-room benchmark, NCC uses $a \land \mathbf{GF} b$.
+
+\begin{table}[h]
+\centering
+\caption{Neural network architecture and parameters for Neural Closure Certificates}
+\label{tab:ncc_config}
+\begin{tabular}{lccc}
+\hline
+\textbf{System} & \textbf{Network Architecture} & \textbf{Activation} & \textbf{Lipschitz Estimation} \\
+\hline
+1D Kuramoto Oscillator & (4-80-1) & ReLU & Spectral Norm \\
+2D Kuramoto Oscillator & (6-80-1) & ReLU & Spectral Norm \\
+Two-Room Temperature & (6-80-1) & ReLU & Spectral Norm \\
+\hline
+\end{tabular}
+\end{table}
