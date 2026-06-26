@@ -35,16 +35,16 @@
 
 \begin{abstract}
 \noindent\textbf{Context:} Verifying Linear Temporal Logic (LTL) properties for discrete-time dynamical systems with continuous state spaces is important in safety-critical software and cyber-physical applications. Existing approaches, such as state-triplet methods and closure certificates, typically suffer from either conservatism or high computational cost.\par
-\noindent\textbf{Objectives:} This work aims to develop a verification framework that reduces conservatism and improves efficiency while preserving formal soundness for LTL verification.\par
-\noindent\textbf{Methods:} The key insight of our approach is to decompose LTL verification into two types of certificates: transition persistence certificates, which guarantee accepting transitions take finitely often, and transition safety certificates, which render accepting transitions unreachable. This design not only reduces the search space significantly compared to closure certificates but also mitigates conservatism inherent in state-triplet methods. We introduce automated synthesis techniques based on polynomial and neural network templates, balancing expressiveness and computational efficiency.\par
+\noindent\textbf{Objectives:} This work aims to develop a verification framework that reduces certificate conservatism and synthesis cost while preserving formal soundness for LTL verification.\par
+\noindent\textbf{Methods:} The key insight of our approach is to decompose LTL verification into two types of certificates: transition persistence certificates, which guarantee that accepting transitions are taken finitely often, and transition safety certificates, which render accepting transitions unreachable. This design reduces the certificate search space relative to closure certificates and avoids the path-blocking requirement of state-triplet methods in persistence-style cases. We introduce automated synthesis techniques based on polynomial and neural network templates, balancing expressiveness and computational efficiency.\par
 \noindent\textbf{Results:} On benchmark case studies, including one-dimensional and two-dimensional Kuramoto oscillator models and a two-room temperature model, the proposed methods synthesize valid certificates under the stated transition certificate conditions. Compared with closure certificate baselines, transition certificates reduce synthesis time on the reported benchmarks.\par
-\noindent\textbf{Conclusion:} Transition certificates offer an effective and practical framework for LTL verification of continuous-state dynamical systems. By combining safety and persistence reasoning, the approach improves efficiency and reduces conservatism relative to prior methods.
+\noindent\textbf{Conclusion:} Transition certificates provide a proof framework for LTL verification of continuous-state dynamical systems. By combining safety and persistence reasoning, the approach reduces the search space on the reported benchmarks and gives a less conservative route for persistence-style specifications.
 \end{abstract}
 
 \begin{highlights}
 \item We propose transition safety and transition persistence certificates for LTL verification.
 \item We design an automated counterexample-guided inductive synthesis procedure for transition certificates using both polynomial and neural templates, with solver-guided counterexample refinement.
-\item On 1D/2D Kuramoto and a two-room temperature benchmark, the method verifies the target LTL properties and consistently reduces synthesis time compared with closure certificate baselines.
+\item On 1D/2D Kuramoto and a two-room temperature benchmark, the method verifies the target LTL properties and reduces synthesis time in the reported comparison.
 \end{highlights}
 
 \begin{keywords}
