@@ -2,32 +2,26 @@
 
 ## Paper
 
-- Current root manuscript: `main.tex`
-- Alternative/latest manuscript: `latest-paper/main.tex`
-- Journal template variant: `els-cas-templates/main.tex`
-- Bibliography: `reference.bib`
-- ACM sample assets retained for reference: `template_assets/acm/`
+- Current manuscript root: `paper/`
+- Main manuscript: `paper/main.tex`
+- Bibliography: `paper/reference.bib`
+- Cover letter: `paper/coverletter/letter.tex`
 
-## Code
+## Artifact
 
-- Current implementation: `project-new/`
-- Earlier implementation: `project/`
-- Supporting source: `src/`
+- Current implementation: `artifact/`
+- Sanity check: `artifact/tools/check_sanity.py`
+- Main experiment families: `artifact/src/ex1/`, `artifact/src/ex2/`, `artifact/src/ex3/`
+- Requirements: `artifact/requirements.txt`
 
 ## Removed From Git
 
-The repository previously tracked generated PDFs, LaTeX build products, zip/rar backups and downloaded literature PDFs. These were removed from Git to keep the project source clean.
-
-For literature full text, use the parent workflow PDF store:
-
-```text
-E:\fyh\_literature_pdf_store\
-```
+The repository previously tracked old manuscript variants, generated PDFs/logs, zip/rar backups, downloaded literature PDFs, duplicate code roots, and scratch results. These were removed to keep the repository at the active paper plus reproducibility artifact boundary.
 
 ## What Not To Commit
 
-- Compiled PDFs.
 - LaTeX build files.
 - Downloaded literature PDFs.
 - Old archive snapshots.
 - Local model checkpoints and raw result pools.
+- Duplicate manuscript roots or duplicate code roots.

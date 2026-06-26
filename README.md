@@ -1,24 +1,24 @@
 # Transition Certificates for LTL Verification
 
-This repository is maintained as one paper project inside the research workflow hub.
+This repository is maintained as one active paper project.
 
 ## Current Entry Points
 
 | Purpose | Path |
 |---|---|
-| Main manuscript candidate | `main.tex` |
-| Latest paper variant | `latest-paper/main.tex` |
-| Elsevier/CAS variant | `els-cas-templates/main.tex` |
-| Current code workspace | `project-new/` |
-| Legacy code workspace | `project/` |
-| Project maintenance index | `PROJECT_INDEX.md` |
+| Main manuscript | `paper/main.tex` |
+| Cover letter | `paper/coverletter/letter.tex` |
+| Open-source/reproducibility artifact | `artifact/` |
+| Stable experiment/code entry | `artifact/README.md` |
+| Project index | `PROJECT_INDEX.md` |
 
-## Maintenance Rules
+## Directory Policy
 
-- Keep LaTeX source, BibTeX and reproducible code in Git.
-- Do not keep compiled PDFs, LaTeX build logs, old zip archives or downloaded literature PDFs in Git.
-- Downloaded literature belongs in the parent workflow PDF store and should be represented here by BibTeX/notes only.
-- Record server runs and claim support in the parent workflow repository under `project_meta/02_persistence_certificate/`.
+- `paper/` contains the current manuscript, appendix/supplement material, bibliography, figures, and submission support files.
+- `artifact/` contains the current reproducible code, scripts, configs, small manifests, and paper-relevant results.
+- Do not reintroduce old manuscript roots such as `latest-paper/`, root-level `main.tex`, or template snapshots.
+- Do not reintroduce old code roots such as `project-new/` or `project/`; use `artifact/`.
+- Do not commit LaTeX build products, downloaded literature PDFs, old archive snapshots, local checkpoints, or large raw result pools.
 
 ## Parent Workflow
 
