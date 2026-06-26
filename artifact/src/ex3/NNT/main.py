@@ -4,8 +4,21 @@ import argparse
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from dreal import *
-import dreal as dreal_api
+try:
+    import dreal as dreal_api
+    from dreal import *
+except ModuleNotFoundError:
+    dreal_api = None
+    And = CheckSatisfiability = Config = Not = Or = Variable = if_then_else = None
+
+
+def require_dreal():
+    if dreal_api is None:
+        raise RuntimeError(
+            "dReal Python binding is unavailable. Use --verify-backend z3 for the "
+            "z3-only diagnostic, or install dReal before selecting dreal/hybrid."
+        )
+
 import random
 import time
 import numpy as np
@@ -343,6 +356,7 @@ class MonotoneReLUNetwork(nn.Module):
 
 def get_Bp_dreal(B_net):
     """Build a dReal expression for the learned raw-input template."""
+    require_dreal()
 
     if isinstance(B_net, MonotoneReLUNetwork):
         dirs = B_net.directions().detach().cpu().numpy()
@@ -798,6 +812,7 @@ def verify_with_dreal(B_net, dreal_precision=1e-6):
     """
     Verify persistence certificate with dreal
     """
+    require_dreal()
     # Create dreal config
     config = Config()
     config.precision = dreal_precision
@@ -1172,6 +1187,7 @@ def verify_with_hybrid(B_net, dreal_precision=1e-4, z3_timeout_ms=30000):
     - non-increasing is certified by an exact Z3 structural proof;
     - nonnegativity and strict-decrease are checked by dReal.
     """
+    require_dreal()
     noninc_ok, noninc_reason = exact_symmetric_noninc_proof(B_net, timeout_ms=z3_timeout_ms)
     counterexamples = {'non_inc': [], 'strict_dec': []}
     if not noninc_ok:
