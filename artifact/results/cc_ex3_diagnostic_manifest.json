@@ -1,0 +1,25 @@
+{
+  "experiment_id": "cc_ex3_result_contract_repair_p2",
+  "status": "diagnostic-manifest-only",
+  "failure_classification": "weak-signal",
+  "signal_level": "weak-signal",
+  "run_root": "E:\\fyh\\05persistence-certificate-one-column\\artifact",
+  "repo_root": "E:\\fyh\\05persistence-certificate-one-column",
+  "repo_commit": "a9b63acc39c8bb32c15e71d48e3c17e87cddda1e",
+  "python_version": "3.10.10",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "timeout_sec": 21600,
+  "summary_manifest": "E:\\fyh\\05persistence-certificate-one-column\\artifact\\results\\cc_ex3_summary_manifest.json",
+  "summary_manifest_sha256": "0005bc8f7bcbca993bfef780639ef732464b8c931847d512e0270877fbc477d6",
+  "wrapper": "E:\\fyh\\05persistence-certificate-one-column\\artifact\\scripts\\run_cc_ex3_r2_diagnostic.sh",
+  "wrapper_sha256": "882b7ec00f36e521a2975c7d39a44cd69967d0f1d3d2a8d224fa4897a15bb19a",
+  "result_contract": {
+    "result_exists": true,
+    "test_report_exists": true,
+    "result_success": false,
+    "test_passed": true,
+    "coefficients_present": false,
+    "first_failed_check": null
+  },
+  "claim_boundary": "This diagnostic can support only evidence-signal or weak-signal. It does not approve a server run and does not prove the paper theorem."
+}

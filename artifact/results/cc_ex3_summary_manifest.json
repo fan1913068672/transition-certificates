@@ -1,0 +1,22 @@
+{
+  "experiment_id": "cc_ex3_result_contract_repair_p2",
+  "command": "python src/ex3/CC/main.py --out src/ex3/CC/res_cc_ex3_gfb.json; python src/ex3/CC/test.py --result src/ex3/CC/res_cc_ex3_gfb.json --out src/ex3/CC/test_result_100x0_res_cc_ex3_gfb.json",
+  "exit_code": 0,
+  "result_path": "E:\\fyh\\05persistence-certificate-one-column\\artifact\\src\\ex3\\CC\\res_cc_ex3_gfb.json",
+  "test_report_path": "E:\\fyh\\05persistence-certificate-one-column\\artifact\\src\\ex3\\CC\\test_result_100x0_res_cc_ex3_gfb.json",
+  "result_exists": true,
+  "test_report_exists": true,
+  "result_success": false,
+  "test_passed": true,
+  "first_failed_check": null,
+  "backend": {
+    "synth": "z3",
+    "verify": "z3"
+  },
+  "mode": "state",
+  "coefficients_present": false,
+  "elapsed_sec": 25.191898107528687,
+  "result_sha256": "9e1a50ae3cf6c5a80246c929923b8c8b62e279326bfa254a78c48208ad31b5d3",
+  "test_report_sha256": "f2a8c1e5fe3716a2a2b8be5ba23868630bc2fe554a85bfa8bb1d4b3a1a9092da",
+  "failure_classification": "weak-signal"
+}
