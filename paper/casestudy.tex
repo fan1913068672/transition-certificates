@@ -104,6 +104,8 @@ We primarily compare our approach with the state-triplet method~\cite{wongpiroms
 
 We conduct two groups of comparisons: (1) polynomial-template CEGIS versus the state-triplet method and closure certificates, and (2) neural-template CEGIS versus neural closure certificates. The detailed experimental configurations are provided in Appendix~\ref{appendix-experiment}. Table~\ref{tab:results-poly} and Table~\ref{tab:results-neural} report only locally reproduced, formally verified results under a five-hour timeout. For the CC and NCC baselines, the implementations follow the original synthesis-and-verification schemes; previous guarded-transition or interval-overapproximation variants are not counted in these tables. ``Timeout'' means that no formally verified certificate was produced within the timeout. The original closure-certificate paper reports successful CC synthesis on these benchmarks, but until the corresponding faithful local rerun produces a verified certificate, the reproduced entry is recorded as Timeout.
 
+The comparison separates proof soundness from search success. The theorems in Section~\ref{sec:method} state that a certificate satisfying the displayed inequalities proves the corresponding LTL property. The experiments evaluate whether the chosen polynomial or neural template, solver configuration, and finite synthesis budget can find such certificates on the benchmark instances. Thus a timeout or an unsuccessful bounded diagnostic is evidence about the tested search procedure and template capacity, not a counterexample to the transition-certificate proof rule and not evidence that a baseline paper is incorrect.
+
 \begin{table}[t]
 \centering
 \caption{Synthesis time comparison for polynomial-template methods (seconds)}
