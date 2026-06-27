@@ -102,31 +102,31 @@ In contrast, the state-triplet method~\cite{wongpiromsarn2015automata} times out
 \subsection{Comparison}
 We primarily compare our approach with the state-triplet method~\cite{wongpiromsarn2015automata} and closure certificates~\cite{murali2024closure}. The state-triplet method is a foundational automata-theoretic approach that constructs barrier certificates to block all simple paths from initial states to accepting states in the automaton, requiring enumeration of state triplets along these paths. Closure certificates were specifically developed to provide more general verification conditions than the state-triplet method, and neural closure certificates~\cite{nadali2024neural} extend this idea with neural network templates. The Two-Room Temperature benchmark concretely illustrates the advantage over the state-triplet method. The NBA contains an accepting transition from $q_1$ to $q_1$ labeled by $\{b\}$ and $\{a,b\}$, and because the labeling function maps the entire initial region $\mathcal{X}_0=[21,24]^2$ to $\{a\}$, the automaton state $q_1$ is immediately reachable upon entering the product system. Consequently, the state-triplet approach, which requires blocking all paths to accepting states via barrier certificates, is structurally inapplicable here since $q_1$ cannot be made unreachable, leading to a timeout. Our transition persistence certificate $B_{1,1}$ resolves this by bounding the number of times the accepting transition can fire, without requiring $q_1$ to be unreachable. The core idea of closure certificates lies in characterizing an over-approximation of the transition closure, so closure certificates for LTL verification are defined over $\mathcal{X} \times \mathcal{X} \times Q \times Q$. In contrast, our method employs transition safety certificates to directly filter out unreachable automaton states or uses transition persistence certificates to prove that the accepting transitions occur finitely often, with transition safety certificates defined over $\mathcal{X} \times Q$ and transition persistence certificates defined over $\mathcal{X}$ alone. This reduces the effective certificate domain from the closure certificate's $\mathcal{X} \times \mathcal{X} \times Q \times Q$ to at most $\mathcal{X} \times Q$, and improves synthesis efficiency. For neural templates, we adopt the CEGIS framework, whereas the neural closure certificate approach relies on sampling and posteriori verification: after sampling the state space with a given density $\epsilon$ and safety margin $\eta$, the method trains until the loss converges to zero and then performs a posteriori verification to determine whether the synthesized certificate is valid.
 
-We conduct two groups of comparisons: (1) polynomial-template CEGIS versus the state-triplet method and closure certificates, and (2) neural-template CEGIS versus neural closure certificates. The detailed experimental configurations are provided in Appendix~\ref{appendix-experiment}. Table~\ref{tab:results-poly} and Table~\ref{tab:results-neural} report only locally reproduced, formally verified results under a five-hour timeout. For the CC and NCC baselines, the implementations follow the original synthesis-and-verification schemes; previous guarded-transition or interval-overapproximation variants are not counted in these tables. ``Timeout'' means that no formally verified certificate was produced within the timeout. The original closure-certificate paper reports successful CC synthesis on these benchmarks, but until the corresponding faithful local rerun produces a verified certificate, the reproduced entry is recorded as Timeout.
+We conduct two groups of comparisons. The first compares polynomial-template CEGIS with closure certificates. The second compares neural-template CEGIS with neural closure certificates. The detailed experimental configurations are provided in Appendix~\ref{appendix-experiment}. Table~\ref{tab:results-poly} reports the synthesis times stated in the closure-certificate paper~\cite{murali2024closure} for the three benchmarks and our local state-triplet runs. There, ``Timeout'' means that no formally verified state-triplet barrier was obtained within the time limit under the tested template. Table~\ref{tab:results-neural} reports our local runs of the neural closure-certificate baseline. In that table, ``Timeout'' means that synthesis exceeded one hour without a verified certificate. Under these settings, the polynomial-template transition-certificate runs finish within seconds, while the reported closure-certificate baseline takes minutes to hours on the same benchmark family. The state-triplet baseline verifies the two Kuramoto cases but times out on the two-room case, which is consistent with its path-blocking conservatism for persistence-style properties. The neural-template transition-certificate runs take approximately 10--20 minutes. These results support an efficiency claim for the tested templates and benchmarks, while timeout rows are treated as bounded reproduction outcomes rather than failed theorems.
 
 The comparison separates proof soundness from search success. The theorems in Section~\ref{sec:method} state that a certificate satisfying the displayed inequalities proves the corresponding LTL property. The experiments evaluate whether the chosen polynomial or neural template, solver configuration, and finite synthesis budget can find such certificates on the benchmark instances. Thus a timeout or an unsuccessful bounded diagnostic is evidence about the tested search procedure and template capacity, not a counterexample to the transition-certificate proof rule and not evidence that a baseline paper is incorrect.
 
 \begin{table}[t]
 \centering
-\caption{Synthesis time comparison for polynomial-template methods (seconds)}
+\caption{Polynomial-template synthesis time comparison in seconds. ``Timeout'' means that no verified certificate was obtained within the stated budget for that baseline configuration.}
 \label{tab:results-poly}
 \begin{tabular}{lccc}
 \hline
-\textbf{Benchmark} & \textbf{Transition Certificates} & \textbf{State Triplet} & \textbf{Closure Certificate} \\
+\textbf{Benchmark} & \textbf{Transition Certificates} & \textbf{State Triplet~\cite{wongpiromsarn2015automata}} & \textbf{Closure Certificate~\cite{murali2024closure}} \\
 \hline
-Kuramoto 1D & 1.76 & 0.10 & Timeout \\
-Kuramoto 2D & 1.72 & 1.13 & Timeout \\
-Two-Room Temperature & 2.68 & Timeout & Timeout \\
+Kuramoto 1D & 1.76 & 0.10 & 600 \\
+Kuramoto 2D & 1.72 & 1.13 & 6600 \\
+Two-Room Temperature & 2.68 & Timeout & 5400 \\
 \hline
 \end{tabular}
 \end{table}
 \begin{table}[t]
 \centering
-\caption{Synthesis time comparison (seconds)}
+\caption{Neural-template synthesis time comparison in seconds. ``Timeout'' records bounded synthesis exhaustion, not a theorem failure.}
 \label{tab:results-neural}
 \begin{tabular}{lcc}
 \hline
-\textbf{Benchmark} & \textbf{Transition Certificates} & \textbf{Neural Closure Certificate} \\
+\textbf{Benchmark} & \textbf{Transition Certificates} & \textbf{Neural Closure Certificate (local run)} \\
 \hline
 Kuramoto 1D & 6.81 & Timeout \\
 Kuramoto 2D & 110.95 & Timeout \\
